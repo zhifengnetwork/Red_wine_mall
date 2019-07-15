@@ -44,6 +44,12 @@
         font-size: 3.5em;
         margin: 40px;
     }
+    .sp_bottom a{
+        display: block;
+        text-decoration:none;
+        color: #151515;
+        -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+    }
     .sp_bottom_r{
         float: right;
     }
@@ -78,12 +84,16 @@
         <div>上级名称：我的菜</div>
     </div>
     <div class="sp_bottom">
-        <span>明细记录</span>
-        <span class="sp_bottom_r">></span>
+        <a href="{:U('/Mobile/User/mixi')}">
+            <span>明细记录</span>
+            <span class="sp_bottom_r">></span>
+        </a>
     </div>
     <div class="sp_bottom">
-        <span>团队列表</span>
-        <span class="sp_bottom_r">></span>
+        <a href="{:U('/Mobile/User/group')}">
+            <span>团队列表</span>
+            <span class="sp_bottom_r">></span>
+        </a>
     </div>
 </body>
 </html>

@@ -1,0 +1,67 @@
+<include file="public/header" title="明细记录" body=""/>
+<include file="public/header_nav" title="明细记录" href="javascript:history.back(-1)"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
+<style>
+.mixi .mixi_top{
+    display: flex;
+    width: 100%;
+    height: 100px;
+    background: #ff91ad;
+    font-size: 2.5em;
+    text-align: center;
+    line-height: 100px;
+}
+.mixi .top_box{
+    flex: 1;
+    /* font-size: 2em; */
+}
+.mixibox .mixi_top{
+    display: flex;
+    width: 100%;
+    height: 100px;
+    background: #ffebf0;
+    font-size: 2.5em;
+    text-align: center;
+    line-height: 100px;
+}
+.mixibox:nth-child(2n) .mixi_top{
+    background: #fae1e8;
+}
+.mixibox .top_box{
+    flex: 1;
+}
+</style>
+
+<div class="mixi">
+    <div class="mixi_top">
+        <div class="top_box">日期</div>
+        <div class="top_box">佣金</div>
+        <div class="top_box">描述</div>
+    </div>
+</div>
+
+<div class="mixibox">
+    <div class="mixi_top">
+        <div class="top_box">2019-07-01 17:53:53</div>
+        <div class="top_box">￥50</div>
+        <div class="top_box">一级升级县代理</div>
+    </div>
+</div>
+
+<div class="mixibox">
+    <div class="mixi_top">
+        <div class="top_box">2019-07-01 17:53:53</div>
+        <div class="top_box">￥50</div>
+        <div class="top_box">二级升级县代理</div>
+    </div>
+</div>
+
+<div class="mixibox">
+    <div class="mixi_top">
+        <div class="top_box">2019-07-01 17:53:53</div>
+        <div class="top_box">￥50</div>
+        <div class="top_box">月度领导奖</div>
+    </div>
+</div>
+

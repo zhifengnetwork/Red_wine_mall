@@ -174,6 +174,8 @@ class User extends MobileBase
         return 0;
     }
 
+    
+
     //上传凭证
     /**
      * 上传支付凭证
@@ -737,6 +739,21 @@ class User extends MobileBase
         $this->assign('leader',$leader);
         // $this->assign('count',$count);
         // $this->assign('team',$team_list);
+        return $this->fetch();
+    }
+
+    /**
+     * 明细记录
+     */
+    public function mixi(){
+        return $this->fetch();
+    }
+
+
+    /**
+     * 团队列表
+     */
+    public function group(){
         return $this->fetch();
     }
 
