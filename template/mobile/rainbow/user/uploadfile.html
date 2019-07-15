@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>上传凭证</title>
+		<script type="text/javascript" src="/__STATIC__/js/rem.js" ></script>
+		<link rel="stylesheet" type="text/css" href="/__STATIC__/css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="/__STATIC__/css/header.css"/>
+		<link rel="stylesheet" type="text/css" href="/__STATIC__/css/my/uploadfile.css"/>
+	</head>
+	<body>
+	<form method="post" enctype="multipart/form-data" id="uploads" action="">
+		<div class="everyColor">
+			<div class="lb_headWrap">
+				<p class="lb_headWrap_return" data-num="1" onclick="returnFun()">
+                    <i class="lb_headWrap_return_img"></i>
+                </p>
+				<span>上传凭证</span>
+            </div>
+            <!--内容-->
+            <div class="content">
+            	<!--选择方式-->
+            	<div class="mode_wrap">
+					<div class="pay">
+						<div class="way">购买会员天数：</div>
+						<div class="pull_box time">
+							<p im="{$package.0.id}" id="pack">{$package.0.pack_name}(￥{$package.0.pack_money})：{$package.0.pack_time}天</p><span class="rot"></span>
+							<ul class="info">
+								{foreach name="package" item="pack"}
+								<li im="{$pack.id}" onclick="sele(this)">{$pack.pack_name}(￥{$pack.pack_money})：{$pack.pack_time}天</li>
+								{/foreach}
+							</ul>
+						</div>
+					</div>
+					<div class="pay">
+						<div class="way">支付方式</div>
+						<div class="pull_box pop">
+							<p im="{$pay.0.img}" id="default_img">{$pay.0.name}:{$pay.0.value}</p><span class="rotate"></span>
+							<ul class="fl">
+	            				<li onclick="difficut(this)" im="{$pay.1.img}">{$pay.1.name}:{$pay.1.value}</li>
+								<li onclick="difficut(this)" im="commission_pay">余额支付</li>
+	            			</ul>
+						</div>
+					</div>
+
+            	</div>
+            	<!--二维码-->
+            	<div class="code_wrap">
+            		<div class="code_img">
+            			<img id="code_img" src="{$pay.0.img}" />
+            		</div>
+            	</div>
+            	<!--上传图片区-->
+            	<div class="pix_tu">
+            		<h2>上传凭证图片</h2>
+            		<div class="kuang">
+            			<div class="add_wrap">
+            				<img  src="/__STATIC__/image/my/jia.png" />
+            				<p>上传凭证</p>
+            			</div>
+						<img src="" class="img_base_url" id="img_base_up">
+            			<input type="file" name="file" id="upLoadImg" />
+						<canvas id="canvas" hidden><!--图片过大，压缩--></canvas>
+            		</div>
+            	</div>
+            	<!--提交按钮-->
+            	<a class="put_btn">提交</a>
+            </div>
+            
+       	</div>
+	</form>
+</body>
+       
+<script src="/__STATIC__/js/jquery-1.8.3.js"></script>
+<script src="/__STATIC__/js/public.js"></script>
+<script src="/public/static/admin/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+	/*图片base64=>后台*/
+	var img_base = null;
+	$(function() {
+		$('.pop').on('click',function(){
+			$('.fl').slideToggle();
+		})
+		$('.time').on('click',function(){
+			$('.info').slideToggle();
+		})
+		$('#img_base_up').on('click',function(){
+			// console.log(6666);
+			$('#upLoadImg').trigger('click');
+		});
+		/*上传图片*/
+		$('#upLoadImg').change(function(){
+			console.log($('#upLoadImg')[0].files);
+			var files_data = $('#upLoadImg')[0].files[0];
+			if(files_data){
+				fileType = files_data.type;
+				if(/image\/\w+/.test(fileType)) {
+					var fileReader = new FileReader();
+					fileReader.readAsDataURL(files_data);
+					fileReader.onload = function(event) {
+						var result = event.target.result; //返回的dataURL
+						var image = new Image();
+						image.src = result;
+						//若图片大小大于1M，压缩后再上传，否则直接上传
+						if(files_data.size>1024*1024){
+							image.onload = function() {
+								//创建一个image对象，给canvas绘制使用
+								var canvas = document.getElementById("canvas");
+								canvas.width = image.width;
+								canvas.height = image.height; //计算等比缩小后图片宽高
+								var ctx = canvas.getContext('2d');
+								ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+								var newImageData = canvas.toDataURL(fileType, 0.8); //重新生成图片
+								console.log('压缩图片:',newImageData);
+								$("#canvas").hide();
+								img_base = newImageData;
+								$('.img_base_url').attr('src',newImageData);
+								$('.img_base_url').show();
+							}
+						}else{
+							//创建一个image对象，给canvas绘制使用
+							image.onload = function() {
+								console.log('图片:',result);
+								img_base = result;
+								$('.img_base_url').attr('src',result);
+								$('.img_base_url').show();
+							}
+						}
+					}
+				} else {
+					alert("请选择图片");
+				}
+
+			}else {
+				console.log('取消选择图片！')
+			}
+
+		})
+	})
+
+	//根据支付方式切换付款码
+	function difficut(obj) { //<span class="rotate"></span>
+		var new_img=$(obj).attr('im');
+		var new_value=$(obj).text();
+		var old_img=$('#default_img').attr('im');
+		var old_value=$('#default_img').text();
+		// console.log(new_value)
+		// console.log(old_value)
+		$('#default_img').attr('im',new_img);
+		$('#default_img').text(new_value);
+		$(obj).attr('im',old_img+'?t='+new Date().getTime());
+		$(obj).text(old_value);
+		if(new_img == "commission_pay"){
+			$('.code_wrap').hide()
+			$('.pix_tu').hide()
+		}else{
+			$('.code_wrap').show()
+			$('.pix_tu').show()
+			$('#code_img').attr('src',new_img+'?t='+new Date().getTime());
+		}
+		if(old_img=='commission_pay'){
+			$(obj).attr('im',old_img);
+		}
+	}
+	function sele(obj) {
+		var new_pack=$(obj).attr('im');
+		var new_value=$(obj).text();
+		var old_pack=$('#pack').attr('im');
+		var old_value=$('#pack').text();
+		$('#pack').attr('im',new_pack);
+		$('#pack').text(new_value);
+		$(obj).attr('im',old_pack);
+		// $(obj).text(old_value);
+	}
+
+	$('.put_btn').click(function () {
+		var packages=$('#pack').attr('im');
+		var pays=$('#default_img').text();
+		// var files=$('#files').text();
+		console.log('图片=》后台base64:',img_base);
+		$.ajax({
+			type:"post",
+			url:"{:url('index/User/upload')}",
+			data:{'pack':packages,'pays':pays,'files':img_base},
+			success:function (data) {
+				if (data.status == 1){
+					layer.msg(data.msg, {icon:1, time:1000},function () {
+						window.location.href = '/index/index/index'
+					})
+				} else {
+					layer.msg(data.msg, {icon:2, time:1000})
+				}
+			},
+			error:function (data) {
+				layer.msg('服务器繁忙，请稍后再试');
+			}
+		})
+	})
+</script>
+</html>

@@ -1,0 +1,83 @@
+
+<style>
+    .tabBar{border-bottom: 2px solid rgb(221, 215, 179);}
+    .tabBar span{border-right: solid 0.1em rgb(243, 242, 242);}
+    .tabBar span.current{background-color: rgb(221, 215, 179);}
+</style>
+<body>
+
+<section class="Hui-article-box">
+    <div class="Hui-article">
+        <article class="cl pd-20">
+            <form action="{:url('admin/system/pay_setting')}" method="post" enctype="multipart/form-data" class="form form-horizontal" id="form-article-add">
+                <div id="tab-system" class="HuiTab">
+
+                    <div class="row cl">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>支付宝账号：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <input type="text" name="ali_name" value="{$data.ali_name ?? ''} " class="input-text">
+                        </div>
+                    </div>
+                    <div class="row cl">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>微信账号：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <input type="text" name="wechat_name"  value="{$data.wechat_name ?? ''}" class="input-text">
+                        </div>
+                    </div>
+                    <div class="row cl">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>支付宝收款码：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <span class="btn-upload form-group">
+                                <!--<input class="input-text upload-url" type="text" name="ali_code" id="ali_code" value="{$data.ali_code ?? ''}" readonly nullmsg="请添加附件！" style="width:200px">-->
+                                <img src="{$data.ali_code}?t={:time()}" style="width: 30px;height:25px;">
+                                <input class="input-text upload-url" name="ali_code" id="ali_code" readonly nullmsg="请添加附件！" style="width:500px">
+                                <a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+                                <input type="file" multiple name="file_1" class="input-file" >
+                            </span>
+                            <!--<span class="btn-upload form-group">-->
+                              <!--<input class="input-text upload-url radius" type="text" name="xiao" id="xiao" readonly><a href="javascript:void();" class="btn btn-primary radius"><i class="iconfont">&#xf0020;</i> 浏览文件</a>-->
+                              <!--<input type="file" multiple name="file-1" class="input-file" >-->
+                            <!--</span>-->
+                        </div>
+                    </div>
+                    <div class="row cl">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>微信收款码：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <span class="btn-upload form-group">
+                                <img src="{$data.wechat_code}?t={:time()}" style="width: 30px;height:25px;" class="img22">
+
+                                <input class="input-text upload-url" type="text" name="wechat_code" id="wechat_code" readonly nullmsg="请添加附件！" style="width:500px">
+                                <a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+                                <input type="file" multiple name="file_2" class="input-file">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                        <button onClick="article_save_submit();" class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+                        <button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+                    </div>
+                </div>
+            </form>
+        </article>
+    </div>
+</section>
+</body>
+<script type="text/javascript">
+    $(function(){
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+        $('#tab-system').Huitab({index:"{$index}"});
+    });
+
+    function article_save_submit() {
+
+        $('.img22').src=$('.img22').src+"?"+Math.random();
+        console.log($('.img22').src+"?"+Math.random())
+
+    }
+</script>
