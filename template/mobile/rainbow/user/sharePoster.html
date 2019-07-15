@@ -3,58 +3,12 @@
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
 <style>
-    body,html{
-        background: #f2f2f2;
-    }
-    .sp_top{
-        font-size: 3.5em;
-        text-align: center;
-        /* color: #e4e0e0; */
-    }
-    .sp_sekuai{
-        height: 300px;
-        background: #ef1442;
-        margin: 40px;
-        padding-top: 60px;
-    }
-    .sp_sekuai p{
-        text-align: center;
-        font-size: 3.5em;
-        /* line-height: 4em; */
-        color: #ffffff;
-    }
-    .sp_conent{
-        background: #fff;
-        font-size: 3.5em;
-        margin: 40px;
-        padding: 40px;
-    }
-    .sp_conent_p{
-        overflow: hidden;
-    }
-    .sp_conent_pl{
-        float:left;
-    }
-    .sp_conent_pr{
-        float: right;
-    }
-    .sp_bottom{
-        background: #fff;
-        padding: 20px 40px;
-        font-size: 3.5em;
-        margin: 40px;
-    }
-    .sp_bottom a{
-        display: block;
-        text-decoration:none;
-        color: #151515;
-        -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
-    }
-    .sp_bottom_r{
-        float: right;
-    }
+   #my_poster_src{
+       width: 100%;
+       height: 100%;
+   }
 </style>
-    <!-- <if condition="$share_error eq 1">
+    <if condition="$share_error eq 1">
     <div class="text-center article-title centent_body">
         <p>暂时还不能分享</p>
     </div>
@@ -62,38 +16,7 @@
     <img id="my_poster_src" src="{$my_poster_src}?v={:time(
         
     )}">
-    </if> -->
-    <div class="sp_top">统计时间：2019-05-11 02：55：30</div>
-    <div class="sp_sekuai">
-        <p>总业绩</p>
-        <p>￥100000.00</p>
-    </div>
-    <div class="sp_sekuai">
-        <p>累积返利</p>
-        <p>￥300000.00</p>
-    </div>
-    <div class="sp_sekuai">
-        <p>团队总人数</p>
-        <p>8</p>
-    </div>
-    <div class="sp_conent">
-        <p class="sp_conent_p">
-            <span class="sp_conent_pl">上级ID:85296</span>
-            <span class="sp_conent_pr">我的ID:85296</span>
-        </p>
-        <div>上级名称：我的菜</div>
-    </div>
-    <div class="sp_bottom">
-        <a href="{:U('/Mobile/User/mixi')}">
-            <span>明细记录</span>
-            <span class="sp_bottom_r">></span>
-        </a>
-    </div>
-    <div class="sp_bottom">
-        <a href="{:U('/Mobile/User/group')}">
-            <span>团队列表</span>
-            <span class="sp_bottom_r">></span>
-        </a>
-    </div>
+    </if>
+   
 </body>
 </html>
