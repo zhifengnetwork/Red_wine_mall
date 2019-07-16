@@ -1,10 +1,31 @@
 <include file="public/header" title="个人中心" body=""/>
 <link rel="stylesheet" type="text/css" href="__STATIC__/css/personal.css"/>
+<style>
+body{
+    background: #f2f2f2;
+}
+.user_down_span{
+    position: relative;
+   padding-right: 30px;
+}
+.user_down_span i{
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: scale(0.6);
+}
+.user_down_yue p{
+    color: #d90830;
+    font-weight: bold;
+}
+</style>
 <div class="z_user_vs">
     <div class="z_user_head" style="height:8.74rem;">
         <div class="z_user_top">
             <div class="user_top_tx">
-                <notempty name="$user.head_pic"><img src="{$user.head_pic}"/><else/><img src="/public/images/user_default_icon.jpg"/></notempty>
+                <a href="/Mobile/User/userinfo.html">
+                    <notempty name="$user.head_pic"><img src="{$user.head_pic}"/><else/><img src="/public/images/user_default_icon.jpg"/></notempty>
+                </a>
             </div>
             <div class="user_top_name">
                 <a href="javascript:void(0);">{$user['nickname']}</a>
@@ -28,13 +49,19 @@
         <div class="z_user_down">
             <!-- <div class="user_down_bg" style="background:url(__STATIC__/images/user_info.png) no-repeat;"></div> -->
             <ul>
-                <li style="width:100%;background: white;opacity: .4;">
+                <li style="width:100%;background: white;">
                     <a href="{:U('Mobile/User/account')}">
-                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem">余额<p>{$user['user_money']}</p></div>
+                        <div class="user_down_yue" style="color:#151515;font-size:0.64rem;margin-top: 0.4266666666666667rem"><p>{$user['user_money']}</p><span class="user_down_span">余额<i class="zMright"></i></span></div>
                         <!-- <div class="user_down_name">余额</div> -->
-                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem">总佣金<p>{$user['distribut_money']}</p></div>
-                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem">今日佣金<p>{$user['today_comm']}</p></div>
-                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem">推广名额<p>{$user['today_comm']}</p></div>
+                    </a>
+                    <a href="{:U('Mobile/User/account')}">
+                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem"><p>{$user['distribut_money']}</p><span class="user_down_span">总佣金<i class="zMright"></i></span></div>
+                    </a>
+                    <a href="{:U('Mobile/User/account')}">
+                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem"><p>{$user['today_comm']}</p><span class="user_down_span">今日佣金<i class="zMright"></i></span></div>
+                    </a>
+                    <a href="{:U('Mobile/User/tuiguang')}">
+                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem"><p>{$user['today_comm']}</p><span class="user_down_span">推广名额<i class="zMright"></i></span></div>
                     </a>
                 </li>
                 <!-- <li>
@@ -46,28 +73,28 @@
             </ul>
         </div>
         
-       <div class="z_user_icon">
+       <!-- <div class="z_user_icon">
        	<a href="/Mobile/User/userinfo.html">
        		<i></i>
        	</a>
-       </div> 
+       </div>  -->
     </div>
     <div class="z_user_li_wrap">
         <volist name="menu_list" id="menu">
             <switch name="$menu['menu_id']">
                 <case value="1">
-                        <div class="z_user_list border10">
+                        <div class="z_user_list zuser_list">
 
                                
                             <a href="{$menu.menu_url}">
                                 <div class="user_list_cont padd10">
                                     <div class="cont_fl">
-                                        <img src="__PUBLIC__/static/images/mlist.png"/>
+                                        <!-- <img src="__PUBLIC__/static/images/mlist.png"/> -->
                                         <span>我的订单</span>
                                     </div>
                                     <div class="cont_fr">
                                                 <span>
-                                                    查看全部
+                                                    查看全部订单
                                                 </span>
                                         <i class="zMright"></i>
                                     </div>
@@ -77,28 +104,28 @@
                             <ul>
                                 <li>
                                     <a href="{:U('/Mobile/Order/order_list',array('type'=>'WAITPAY'))}">
-                                        <img src="__PUBLIC__/static/images/q1.png"/>
+                                        <img src="__PUBLIC__/static/images/hong1.png"/>
 
                                         <p>待付款</p>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{:U('/Mobile/Order/order_list',array('type'=>'WAITSEND'))}">
-                                        <img src="__PUBLIC__/static/images/q4.png"/>
+                                        <img src="__PUBLIC__/static/images/hong2.png"/>
 
                                         <p>待发货</p>
                                     </a>
                                     </li>
                                 <li>
                                     <a href="{:U('/Mobile/Order/wait_receive',array('type'=>'WAITRECEIVE'))}">
-                                        <img src="__PUBLIC__/static/images/q2.png"/>
+                                        <img src="__PUBLIC__/static/images/hong3.png"/>
 
                                         <p>待收货</p>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{:U('Mobile/Order/comment',array('status'=>0))}">
-                                        <img src="__PUBLIC__/static/images/q3.png"/>
+                                        <img src="__PUBLIC__/static/images/hong4.png"/>
 
                                         <p>待评价</p>
                                     </a>
@@ -120,7 +147,7 @@
                         <if condition="$menu.menu_name == '我的VIP'">
                                   <else/>
                                   <a href="{$menu.menu_url}">
-                                        <div class="z_user_list <if condition='$menu.is_tab eq 1'>border10</if>">
+                                        <div class="z_user_list <if condition='$menu.is_tab eq 1'></if>">
                                             <div class="user_list_cont padd10">
                                                 <div class="cont_fl">
                                                     <img src="__PUBLIC__/static/images/ww{$menu.menu_id}.png"/>
@@ -153,7 +180,7 @@
              
             </switch>
         </volist>
-        <if condition="isset($app)">
+        <!-- <if condition="isset($app)">
             <a onclick="app_download();">
                 <div class="z_user_list border10" style="border-color: rgb(248, 248, 248);">
                     <div class="user_list_cont padd10">
@@ -167,7 +194,7 @@
                     </div>
                 </div>
             </a>
-        </if>
+        </if> -->
     </div>
 </div>
 <!--底部导航-start-->

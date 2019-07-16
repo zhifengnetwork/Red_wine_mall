@@ -3,10 +3,10 @@
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
 <style>
-    .group_t{
-        font-size: 3.5em;
-        margin: 20px
-    }
+.group_t{
+    font-size: 3.5em;
+    margin: 20px
+}
 .group .group_top{
     display: flex;
     width: 100%;
@@ -35,6 +35,11 @@
 .groupbox .top_box{
     flex: 1;
 }
+.top_box a{
+    text-decoration:none;
+    color: #151515;
+    -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+}
 </style>
 <div class="group_t">名称：pei先 DI：44445的下级</div>
 <div class="group">
@@ -49,7 +54,9 @@
     <div class="group_top">
         <div class="top_box">4584554</div>
         <div class="top_box">冷漠之秋二小姐</div>
-        <div class="top_box">查看</div>
+        <div class="top_box">
+            <a href="{:U('/Mobile/User/order')}">查看</a>
+        </div>
     </div>
 </div>
 
@@ -57,6 +64,8 @@
     <div class="group_top">
         <div class="top_box">4584554</div>
         <div class="top_box">冷漠之秋二小姐</div>
-        <div class="top_box">查看</div>
+        <div class="top_box">
+            <a href="{:U('/Mobile/User/order')}">查看</a>
+        </div>
     </div>
 </div>

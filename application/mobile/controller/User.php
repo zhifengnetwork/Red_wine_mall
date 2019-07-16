@@ -757,6 +757,20 @@ class User extends MobileBase
         return $this->fetch();
     }
 
+    /**
+     * 团队订单
+     */
+    public function order(){
+        return $this->fetch();
+    }
+
+    /**
+     * 推广名额
+     */
+    public function tuiguang(){
+        return $this->fetch();
+    }
+
 
     /**
      * 我的VIP
