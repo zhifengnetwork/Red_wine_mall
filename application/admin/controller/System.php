@@ -259,10 +259,30 @@ class System extends Base
     }
     public function distribut()
     {
+     
         $config = tpCache('distribut');
         $this->assign('config',$config);//当前配置项
         return $this->fetch();
     }
+
+
+
+    public function commission(){
+        $config=tpCache('commission');
+        $confModel=Db::name('config');
+        $pop_person=$confModel->where('name','=','pop_person_num')->find();
+        $county_bonus= $confModel->where('name','=','county_bonus')->find();
+        $sec_county= $confModel->where('name','=','sec_county_bonus')->find();
+        $bonus_cash= $confModel->where('name','=','bonus_cash_exchange')->find();
+        $this->assign([
+            'pop_person'=>$pop_person,
+            'county_bonus'=>$county_bonus,
+            'sec_county'=>$sec_county,
+            'bonus_cash'=>$bonus_cash
+        ]);
+         return $this->fetch();
+    }
+
 
     /**
      * 会员中心自定义
@@ -319,7 +339,47 @@ class System extends Base
             default:
                 $this->success("操作成功",U('System/index',array('inc_type'=>$inc_type)));
         }
-	}
+    }
+    
+
+
+    //设置佣金配置
+    public function commison_conf()
+    {
+        if(request()->isPost()){
+            $data=input(); 
+            $confModel=Db::name('config');
+
+            $pop_person= $confModel->where('name','=','pop_person_num')->find();
+            if($pop_person){
+                $confModel->update(['id'=>$pop_person['id'],'name'=>'pop_person_num','value'=>$data['pop_person_num'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'pop_person_num','value'=>$data['pop_person_num'],'inc_type'=>'commison_conf']);
+            }
+
+            $count_bonus= $confModel->where('name','=','county_bonus')->find();
+            if($count_bonus){
+                $confModel->update(['id'=>$count_bonus['id'],'name'=>'county_bonus','value'=>$data['county_bonus'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'county_bonus','value'=>$data['county_bonus'],'inc_type'=>'commison_conf']);
+            }
+
+            $sec_county= $confModel->where('name','=','sec_county_bonus')->find();
+            if($sec_county){
+                $confModel->update(['id'=>$sec_county['id'],'name'=>'sec_county_bonus','value'=>$data['sec_county_bonus'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'sec_county_bonus','value'=>$data['sec_county_bonus'],'inc_type'=>'commison_conf']);
+            }
+
+            $bonus_cash= $confModel->where('name','=','bonus_cash_exchange')->find();
+            if($bonus_cash){
+                   $confModel->update(['id'=>$bonus_cash['id'],'name'=>'bonus_cash_exchange','value'=>$data['bonus_cash_exchange'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'bonus_cash_exchange','value'=>$data['bonus_cash_exchange'],'inc_type'=>'commison_conf']);
+            }
+            $this->success("操作成功!!!",U('Admin/System/commission'));
+        }
+    }
         
        /**
         * 自定义导航
