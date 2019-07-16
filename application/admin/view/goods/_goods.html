@@ -264,34 +264,8 @@
                     <span class="err" id="err_cost_price"></span>
                 </dd>
             </dl>
-            <dl class="row">
-                <dt class="tit">
-                    <label>是否为礼包</label>
-                </dt>
-                <dd class="opt">
-                    <input type="radio" name="is_gift_pack" value="0"  checked="checked" class="rad_gift" />不是礼包
 
-                    <input type="radio" name="is_gift_pack" value="1"   class="rad_gift"/>礼包商品
-
-                    <div id="show_gift" style="display: none">
-                            <label>金卡价</label>
-                  <input type="text" value="{$goods.gold_card_price}" name="gold_card_price" class="t_mane"
-                       onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"/>
-                        <label>砖石价</label>
-                        <input type="text" value="{$goods.brick_card_price}" name="brick_card_price" class="t_mane"
-                               onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"/>
-                        <label>精砖价</label>
-                        <input type="text" value="{$goods.fine_brick_card_price}" name="fine_brick_card_price" class="t_mane"
-                               onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"/>
-                        <label>二次购买折扣</label>
-                        <input type="text" value="{$goods.second_buy_price}" name="second_buy_price" class="t_mane"
-                               onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"/>
-                    </div>
-
-                </dd>
-            </dl>
-
-            <dl class="row">
+            <!-- <dl class="row">
               <dt class="tit">
                 <label for="ac_sort">奖励</label>
               </dt>
@@ -358,7 +332,7 @@
                   </table>
                   <p class="notic">填写的前四列为第一购买奖励，后五列为第二次购买奖励，0即不奖励</p>
                 </dd>
-            </dl>
+            </dl> -->
             <!--<dl class="row">-->
                 <!--<dt class="tit">-->
                     <!--<label>佣金</label>-->
@@ -370,7 +344,7 @@
 
                     <!--<p class="notic">用于分销的分成金额</p>-->
                 <!--</dd>-->
-            <!--</dl>-->
+            <!--</dl> -->
             <dl class="row">
                 <dt class="tit">
                     <label>图片上传</label>
@@ -496,7 +470,7 @@
                     <p class="notic">多个关键词，用空格隔开</p>
                 </dd>
             </dl>
-            <dl class="row">
+            <!-- <dl class="row">
                 <dt class="tit">
                   <label><em>*</em>是否有购买业绩</label>
                 </dt>
@@ -509,9 +483,9 @@
                   </div>
                   <p class="notic">选是，用户购买该商品时，产生购买业绩。</p>
                 </dd>
-            </dl>
+            </dl> -->
 
-            <dl class="row">
+            <!-- <dl class="row">
                 <dt class="tit">
                     <label>团队奖励商品</label>
                 </dt>
@@ -526,8 +500,8 @@
                     </div>
                     <p class="notic">选是，用户购买该商品时，直推上级获得团队奖励。后面为奖励占比，默认为0,0即不奖励。</p>
                 </dd>
-            </dl>
-            <dl class="row">
+            </dl> -->
+            <!-- <dl class="row">
                 <dt class="tit">
                     <label>是否为会员卡</label>
                 </dt>
@@ -540,10 +514,10 @@
                     </div>
                     <p class="notic">选是，表示该商品为1000元会员卡</p>
                 </dd>
-            </dl>
+            </dl> -->
             <dl class="row">
                 <dt class="tit">
-                    <label>确认收货后返佣</label>
+                    <label>分销商品</label>
                 </dt>
                 <dd class="opt">
                     <div class="onoff">
@@ -552,7 +526,7 @@
                         <input id="is_receiving_commission1" name="is_receiving_commission" value="1" type="radio" <if condition="$goods['is_receiving_commission'] eq 1">checked</if>>
                         <input id="is_receiving_commission2" name="is_receiving_commission" value="0" type="radio" <if condition="$goods['is_receiving_commission'] eq 0">checked</if>>
                     </div>
-                    <p class="notic">选是，用户确认收货后才返佣。否则付款后返佣</p>
+                    <p class="notic">选是，则为分销商品</p>
                 </dd>
             </dl>
             <dl class="row">
