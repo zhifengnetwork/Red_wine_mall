@@ -17,7 +17,7 @@
 }
 .zuser_list{
 	background: #fff;
-	margin: 40px;
+	margin: .8rem;
 	border-radius: 12px;
 }
 .border10{
@@ -52,7 +52,7 @@
 }    
 .z_user_top{
 	width: 100%;
-	padding-top: 180px;
+	padding-top: 2rem;
 	height: 5.973333333333334rem;
 	/* text-align: center; */
 	color: #FFFFFF;
@@ -73,7 +73,7 @@
 .user_top_name{
 	/* padding-top: 0.256rem; */
 	font-size: 0.64rem;
-	line-height: 80px;
+	line-height: 1rem;
 }
 .user_top_title{
 	/* font-size: 0.4266666666666667rem; */
@@ -82,8 +82,8 @@
 	background-image: url(../images/title.png);
 	background-repeat: no-repeat;
 	background-size: cover;
-	padding: 30px 80px;
-	margin-top: -50px;
+	padding: 0.4rem 1rem;
+	margin-top: -0.8rem;
 }
 .user_top_name a,.user_top_title a{
 	width: 100%;

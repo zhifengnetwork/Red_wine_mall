@@ -299,7 +299,11 @@
 					 vertical-align: center; 
 			
 				}
-
+				.hide{
+					overflow: hidden;
+					height: 100%;
+					display: none;
+				}
 		</style>
 	</head>
 
@@ -443,7 +447,7 @@
 
 
 		<!-- 遮罩 -->
-		<div style="width: 100%;height: 100%;">
+		<div style="width: 100%;height: 100%;" class="hide">
 			<div style="position: absolute;top: 0%;left: 0;width: 100%;height: 100%;background: #000;opacity: 0.8;z-index: 999;"></div>
 			<div>
 				<img src="__STATIC__/images/zhezhao.png" style="width: 90%;position: fixed;z-index: 1000;transform: translate(-50%);left: 50%;top: 300px;" />
@@ -570,7 +574,25 @@
 		       
 		    }
 
-			
+
+
+		var display =$('.hide').css('display');
+		if(display == 'none'){
+		
+		}else{
+			function bodyScroll(event){ 
+			event.preventDefault(); 
+			}
+			document.body.addEventListener('touchmove',bodyScroll,false); 
+			$('body').css({'position':'fixed',"height":"100%"});
+		}
+
+			$(".hide").click(function(){
+			$(".hide").hide();
+			document.body.removeEventListener('touchmove',bodyScroll,false); 
+		$("body").css({"position":"initial","height":"auto"});
+			});
+
 		</script>
 	</body>
 
