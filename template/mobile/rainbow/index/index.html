@@ -574,14 +574,19 @@
 		       
 		    }
 
-		// 出现弹窗触发以下函数，使页面不可滚动
-		// function bodyScroll(event){ 
 
-		// event.preventDefault(); 
 
-		// }
-		// document.body.addEventListener('touchmove',bodyScroll,false); 
-		// $('body').css({'position':'fixed',"height":"100%"});
+		var display =$('.hide').css('display');
+		if(display == 'none'){
+		
+		}else{
+			function bodyScroll(event){ 
+			event.preventDefault(); 
+			}
+			document.body.addEventListener('touchmove',bodyScroll,false); 
+			$('body').css({'position':'fixed',"height":"100%"});
+		}
+
 			$(".hide").click(function(){
 			$(".hide").hide();
 			document.body.removeEventListener('touchmove',bodyScroll,false); 
