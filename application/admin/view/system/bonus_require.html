@@ -1,0 +1,121 @@
+<include file="public/layout" />
+<body style="background-color: #FFF; overflow: auto;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title">
+            <div class="subject">
+                <h3>商城设置</h3>
+                <h5>佣金基本配置</h5>
+            </div>
+            <ul class="tab-base nc-row">
+                <foreach name="group_list" item="v" key="k">
+                    <li><a href="{:U('System/index',['inc_type'=> $k])}" <if condition="$k==$inc_type">class="current"</if>><span>{$v}</span></a></li>
+                </foreach>
+            </ul>
+        </div>
+    </div>
+    <!-- 操作说明 -->
+    <div class="explanation" id="explanation">
+        <div class="title" id="checkZoom"><i class="fa fa-lightbulb-o"></i>
+            <h4 title="提示相关设置操作时应注意的要点">操作提示</h4>
+            <span id="explanationZoom" title="收起提示"></span> </div>
+        <ul>
+            <li>若开启分销，普通会员启用默认分销规则，还可以去设置分销商等级设定分销规则</li>
+            <li>分销返佣金额每个商品单独设定，原则上不高于商品价格50%</li>
+            <li>获取推荐下级奖励必须符合以下条件</li>
+        </ul>
+    </div>
+    <form method="post" enctype="multipart/form-data" id="handlepost" action="{:U('System/bonus_require_handle')}">
+        <div class="ncap-form-default">
+            <div id="switch_on_off" >
+                <dl class="row">
+                    <dt class="tit">
+                        <label></label>
+                    </dt>
+                    <dd class="opt">
+                    <div style="display:flex">        
+                      <span style="width:250px;flex:1;">倍数
+                    </span>
+                     <span style="width:250px;flex:1;">业绩要求
+                    </span>  
+                     <span style="flex:1;width:250px">
+                    </span>            
+                      <span style="width:250px;flex:1;">
+                    </span>            
+                    </div>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+            <!-- <dl class="row">
+                <dt class="tit">
+                    <label>四周内业绩要求</label>
+                </dt>
+                <dd class="opt">
+                    <input name="pop_person_num" id="distribut_third_rate" value=""onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text"> 
+                    <input name="pop_person_num" id="distribut_third_rate" value=""onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <input name="pop_person_num" id="distribut_third_rate" value=""onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic"></p>
+                </dd>
+            </dl> -->
+         
+            <dl class="row">
+                <dt class="tit">
+                    <label>第五周业绩要求</label>
+                </dt>
+                <dd class="opt">
+                    <input name="five_week_require[five_week_require]" value="five_week_require" type="hidden"> 
+                    <input name="five_week_require[times]" id="distribut_third_rate" value="{$five_week['value']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <input name="five_week_require[money]" id="distribut_third_rate" value="{$five_week['desc']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+         
+            <dl class="row">
+                <dt class="tit">
+                    <label>六周后业绩要求</label>
+                </dt>
+                <dd class="opt">
+                    <input name="six_week_require[six_week_require]" value="six_week_require" type="hidden"> 
+                    <input name="six_week_require[times]" id="distribut_third_rate" value="{$six_week['value']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text"> 
+                    <input name="six_week_require[money]" id="distribut_third_rate" value="{$six_week['desc']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+         
+            </div>
+            <div class="bot">
+                <a href="JavaScript:void(0);" class="ncap-btn-big ncap-btn-green" onclick="adsubmit()">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="goTop"> <a href="JavaScript:void(0);" id="btntop"><i class="fa fa-angle-up"></i></a><a href="JavaScript:void(0);" id="btnbottom"><i class="fa fa-angle-down"></i></a></div>
+<script>
+    // $('#distribut_pattern').change(function(){
+    //     if($(this).val() == 1)
+    //         $('#distribut_order_rate').show();
+    //     else
+    //         $('#distribut_order_rate').hide();
+    // });
+
+    function adsubmit(){
+        $('#handlepost').submit();
+    }
+    
+    function qr_back_call_back(fileurl_tmp)
+    {
+      $("#qr_back").val(fileurl_tmp);
+      $("#qr_back_a").attr('href', fileurl_tmp);
+      $("#qr_back_i").attr('onmouseover', "layer.tips('<img src="+fileurl_tmp+">',this,{tips: [1, '#fff']});");
+    }
+    function qr_big_back_call_back(fileurl_tmp)
+    {
+      $("#qr_big_back").val(fileurl_tmp);
+      $("#qr_big_back_a").attr('href', fileurl_tmp);
+      $("#qr_big_back_i").attr('onmouseover', "layer.tips('<img src="+fileurl_tmp+">',this,{tips: [1, '#fff']});");
+    }
+</script>
+</body>
+</html>
