@@ -1,5 +1,5 @@
-<include file="public/header" title="明细记录" body=""/>
-<include file="public/header_nav" title="明细记录" href="javascript:history.back(-1)"/>
+<include file="public/header" title="团队列表" body=""/>
+<include file="public/header_nav" title="团队列表" href="javascript:history.back(-1)"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
 <style>
@@ -41,7 +41,7 @@
     -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
 }
 </style>
-<div class="group_t">名称：pei先 DI：44445的下级</div>
+<div class="group_t">名称：{$nickname} DI：{$user_id}的下级</div>
 <div class="group">
     <div class="group_top">
         <div class="top_box">用户ID</div>
@@ -49,23 +49,14 @@
         <div class="top_box">订单</div>
     </div>
 </div>
-
+<foreach name="get_all_lower" item="vo" key="k"  >
 <div class="groupbox">
     <div class="group_top">
-        <div class="top_box">4584554</div>
-        <div class="top_box">冷漠之秋二小姐</div>
+        <div class="top_box">{$vo[user_id]}</div>
+        <div class="top_box">{$vo[nickname]}</div>
         <div class="top_box">
-            <a href="{:U('/Mobile/User/order')}">查看</a>
+            <a href="{:U('/Mobile/User/order',array('id'=>$vo[user_id]))}">查看</a>
         </div>
     </div>
 </div>
-
-<div class="groupbox">
-    <div class="group_top">
-        <div class="top_box">4584554</div>
-        <div class="top_box">冷漠之秋二小姐</div>
-        <div class="top_box">
-            <a href="{:U('/Mobile/User/order')}">查看</a>
-        </div>
-    </div>
-</div>
+</foreach>

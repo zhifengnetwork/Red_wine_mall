@@ -102,6 +102,22 @@ function getAllUp($invite_id, &$userList = array())
 
 }
 
+function getDownUserUids2($uid){
+    global $g_down_Uids;
+	if($uid){
+        $member_arr = Db::name('users')->field('user_id,first_leader,nickname')->where(['first_leader'=>$uid])->limit(0,10)->select();
+		foreach($member_arr as $mb){
+           
+			if($mb['user_id'] && $mb['user_id'] != $uid){
+                $g_down_Uids[] = $mb;
+                getDownUserUids2($mb['user_id']);
+            }
+		}
+    }
+	return $g_down_Uids;
+}
+
+
 //获取所有下级id
 function get_all_lower($user_id){
     $all_lower = Db::query("select `user_id` from `tp_parents_cache` where find_in_set($user_id,parents)");

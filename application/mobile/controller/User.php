@@ -885,6 +885,14 @@ class User extends MobileBase
      * 团队列表
      */
     public function group(){
+        $user_id = $this->user_id;
+        $user = M('users')->where(['user_id'=>$user_id])->field('user_id,nickname,mobile,distribut_level,distribut_money,head_pic')->find();
+        $get_all_lower = getDownUserUids2($user_id);
+        $nickname = $this->nickname;
+        $this->assign('nickname',$user['nickname']);
+        $this->assign('user_id',$user_id);
+        $this->assign('get_all_lower',$get_all_lower);
+
         return $this->fetch();
     }
 
@@ -892,6 +900,10 @@ class User extends MobileBase
      * 团队订单
      */
     public function order(){
+        $user_id = $_GET['id'];
+        $orders = Db::name('order')->where(['user_id'=>$user_id])->field('order_sn,consignee,add_time')->select();
+        $this->assign('orders',$orders);
+        // dump($orders);die;
         return $this->fetch();
     }
 

@@ -33,6 +33,7 @@
         background: #fae1e8;
     }
     .orderbox .top_box{
+        width: 200px;
         flex: 1;
     }
     .top_box a{
@@ -51,17 +52,12 @@
     </div>
     
     <div class="orderbox">
-        <div class="order_top">
-            <div class="top_box">2019070611056</div>
-            <div class="top_box">荷包蛋</div>
-            <div class="top_box">2019-07-06</div>
-        </div>
+        <foreach name="orders" item="vo" key="k"  >
+            <div class="order_top">
+                <div class="top_box">{$vo[order_sn]}</div>
+                <div class="top_box">{$vo[consignee]}</div>
+                <div class="top_box">{:date('Y-m-d H:i:s',$vo[add_time])}</div>
+            </div>
+        </foreach>
     </div>
     
-    <div class="orderbox">
-        <div class="order_top">
-            <div class="top_box">2019070611056</div>
-            <div class="top_box">荷包蛋</div>
-            <div class="top_box">2019-07-06</div>
-        </div>
-    </div>
