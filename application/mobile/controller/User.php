@@ -231,7 +231,30 @@ class User extends MobileBase
           }
       }
 
+       //每月定时发放极差奖领导奖  优化方法
+       public function team_bonus(){
+            $allUserPerformace=Db::name('users')->alias('u')->join('agent_performance ap','u.user_id=ap.user_id',LEFT)->field('u.leader_level,u.user_id,u.mobile,u.nickname,,u.distribut_money,ap.ind_per,ap.agent_per')->where('leader_level','<>','0')->select();
+            $time=time();
+            if($allUserPerformace){
+                $commisonLogModel=Db::name('commission_log');
+                foreach($allUserPerformace as $ak=>$av){
+                    $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();
+                    if($av['agent_per']>=$one_agent_level['describe']){
+                        if($av['leader_level']==4){
+                            $commisonLogModel->insert(['user_id'=>$av['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'奖励豪车']);
+                        }else{
+                            $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
+                            $addDistribut=$av['distribut_money']+$bonus;
+                            Db::name('users')->where('user_id','=',$av['user_id'])->update(['distribut_money'=>$addDistribut]);
+                            $commisonLogModel->insert(['user_id'=>$av['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖']);
+                        }
+                    }
+                }
+            }
+       }
 
+
+      
 
     public function index()
     {
