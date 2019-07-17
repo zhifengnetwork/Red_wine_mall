@@ -287,6 +287,43 @@ class System extends Base
          return $this->fetch();
     }
 
+    public function leader_bonus()
+    {
+        $confModel=Db::name('config');
+        $manager=$confModel->where('name','=','manager')->find();
+        $chief=$confModel->where('name','=','chief')->find();
+        $ceo=$confModel->where('name','=','ceo')->find();
+        $partner=$confModel->where('name','=','partner')->find();
+        $this->assign([
+            'manager'=>$manager,
+            'chief'=>$chief,
+            'ceo'=>$ceo,
+            'partner'=>$partner
+        ]);
+        return $this->fetch();
+    }
+
+
+    public function leader_bonus_handle()
+    {
+        $data=input();
+       
+        if($data){
+                foreach($data as $k=>$v){
+                $temData['name']=$data[$k][$k];
+                $temData['value']=$data[$k]['person_num'];
+                $temData['desc']=$data[$k]['persent'];
+                $dataList=Db::name('config')->where('name','=',$temData['name'])->find();
+                if($dataList){
+                    Db::name('config')->update(['id'=>$dataList['id'],'name'=> $temData['name'],'value'=>$temData['value'],'inc_type'=>'commison_conf','desc'=>$temData['desc']]);
+                }else{
+                    Db::name('config')->insert(['name'=>$temData['name'],'value'=>$temData['value'],'inc_type'=>'commison_conf','desc'=>$temData['desc']]);
+                }
+            }
+        }
+        $this->success("操作成功!!!",U('Admin/System/leader_bonus'));
+    }
+
 
     /**
      * 会员中心自定义
