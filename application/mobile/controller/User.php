@@ -208,25 +208,25 @@ class User extends MobileBase
                   $bonus=$v['agent_per']*2/100;
                   $addDistribut=$v['distribut_money']+$bonus;
                   Db::name('users')->where('user_id','=',$v['user_id'])->update(['distribut_money'->$addDistribut]);
-                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖'])
+                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖']);
               }
               if($v['leader_level']==2&&$v['agent_per']>=1000000){
                   $bonus=$v['agent_per']*2/100;
                   $addDistribut=$v['distribut_money']+$bonus;
                   Db::name('users')->where('user_id','=',$v['user_id'])->update(['distribut_money'->$addDistribut]);
-                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖'])
+                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖']);
               }
               if($v['leader_level']==3&&$v['agent_per']>=5000000){
                   $bonus=$v['agent_per']*2/100;
                   $addDistribut=$v['distribut_money']+$bonus;
                   Db::name('users')->where('user_id','=',$v['user_id'])->update(['distribut_money'->$addDistribut]);
-                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖'])
+                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖']);
               }
               if($v['leader_level']==4&&$v['agent_per']>=10000000){
                   // $bonus=$v['agent_per']*2/100;
                   // $addDistribut=$v['distribut_money']+$bonus;
                   // Db::name('users')->where('user_id','=',$v['user_id'])->update(['distribut_money'->$addDistribut]);
-                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'奖励豪车'])
+                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'奖励豪车']);
               }
           }
       }
