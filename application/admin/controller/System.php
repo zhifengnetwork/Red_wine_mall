@@ -410,10 +410,17 @@ class System extends Base
   
           $five_week=Db::name('config')->where('name','=','five_week_require')->find();
           $six_week=Db::name('config')->where('name','=','six_week_require')->find();
-  
+          $district_bonus=Db::name('config')->where('name','=','district_bonus')->find();
+          $city_bonus=Db::name('config')->where('name','=','city_bonus')->find();
+          $province_bonus=Db::name('config')->where('name','=','province_bonus')->find();
+
+
               $this->assign([
                   'five_week'=>$five_week,
-                  'six_week'=>$six_week
+                  'six_week'=>$six_week,
+                  'district_bonus'=>$district_bonus,
+                  'city_bonus'=>$city_bonus,
+                  'province_bonus'=>$province_bonus,
               ]);
   
           return $this->fetch();
@@ -423,6 +430,7 @@ class System extends Base
       public function bonus_require_handle()
       {
           $data=input();
+
           if($data['five_week_require']){
               $fiveData['name']=$data['five_week_require']['five_week_require'];
               $fiveData['value']=$data['five_week_require']['times'];
@@ -447,9 +455,43 @@ class System extends Base
                   Db::name('config')->insert(['name'=>$sixData['name'],'value'=>$sixData['value'],'inc_type'=>'commison_conf','desc'=>$sixData['desc']]);
               }
           }
+
+          if($data['district_bonus']){
+            $district['name']=$data['district_bonus']['district_bonus'];
+            $district['value']=$data['district_bonus']['achievement_require'];
+            $district_require=Db::name('config')->where('name','=',$district['name'])->find();
+            if($district_require){
+                Db::name('config')->update(['id'=>$district_require['id'],'name'=> $district['name'],'value'=>$district['value'],'inc_type'=>'commison_conf','desc'=>$district['desc']]);
+            }else{
+                Db::name('config')->insert(['name'=>$district['name'],'value'=>$district['value'],'inc_type'=>'commison_conf','desc'=>$district['desc']]);
+            }
+          }
+
+          if($data['city_bonus']){
+            $city['name']=$data['city_bonus']['city_bonus'];
+            $city['value']=$data['city_bonus']['achievement_require'];
+            $city_require=Db::name('config')->where('name','=',$city['name'])->find();
+            if($city_require){
+                Db::name('config')->update(['id'=>$city_require['id'],'name'=> $city['name'],'value'=>$city['value'],'inc_type'=>'commison_conf','desc'=>$city['desc']]);
+            }else{
+                Db::name('config')->insert(['name'=>$city['name'],'value'=>$city['value'],'inc_type'=>'commison_conf','desc'=>$city['desc']]);
+            }
+          }
+
+          if($data['province_bonus']){
+            $province['name']=$data['province_bonus']['province_bonus'];
+            $province['value']=$data['province_bonus']['achievement_require'];
+            $province_require=Db::name('config')->where('name','=',$province['name'])->find();
+            if($province_require){
+                Db::name('config')->update(['id'=>$province_require['id'],'name'=> $province['name'],'value'=>$province['value'],'inc_type'=>'commison_conf','desc'=>$province['desc']]);
+            }else{
+                Db::name('config')->insert(['name'=>$province['name'],'value'=>$province['value'],'inc_type'=>'commison_conf','desc'=>$province['desc']]);
+            }
+          }
+
           return $this->success("操作成功");
       }
-        
+
        /**
         * 自定义导航
         */

@@ -146,7 +146,7 @@ class User extends MobileBase
                       //    $recommendInfo['default_period'];
                           $whereStr['user_id']=['=',$recommendInfo['user_id']];
                           $whereStr['period']=['=',$recommendInfo['default_period']];
-                          if($recommenInfo['begin_time']){  //如果时间已经开始再操作下面
+                          if($recommendInfo['begin_time']){  //如果时间已经开始再操作下面
                               $periodInfo=Db::name('pop_period')->where($whereStr)->find();
                               if($periodInfo['poped_per_num']<$periodInfo['person_num']){ //还有位置就操作
                                   Db::name('pop_period')->setInc('poped_per_num');
@@ -155,7 +155,7 @@ class User extends MobileBase
                                   $upPeriodInfo=Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->find();
                                   if($upPeriodInfo){ //如果有上级
                                       //还有下一期的话 分情况   一周内 和一周外
-                                      if(($recommenInfo['begin_time']+3600*24*7)>$time){
+                                      if(($recommendInfo['begin_time']+3600*24*7)>$time){
                                               Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['day_release'=>1]);
                                       }else{
                                               Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['week_release'=>1]);
@@ -208,6 +208,8 @@ class User extends MobileBase
                 foreach($allUserPerformace as $ak=>$av){
                     $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();
                     if($av['agent_per']>=$one_agent_level['describe']){
+                        $bonus=$av['agent_per']*$one_agent_level['retio']/100;
+                        $addDistribut=$av['distribut_money']+$bonus;
                         if($av['leader_level']==4){
                             $commisonLogModel->insert(['user_id'=>$av['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'奖励豪车']);
                         }else{
