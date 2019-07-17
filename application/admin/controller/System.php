@@ -280,14 +280,14 @@ class System extends Base
             'pop_person'=>$pop_person,
             'county_bonus'=>$county_bonus,
             'sec_county'=>$sec_county,
-            'bonus_cash'=>$bonus_cash
+            'bonus_cash'=>$bonus_cash,
             'pop_commission'=>$pop_commission,
             'pop_money'=>$pop_money
         ]);
          return $this->fetch();
     }
 
-
+ 
     /**
      * 会员中心自定义
      * @return mixed
