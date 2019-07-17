@@ -38,7 +38,8 @@
                     <div style="display:flex">        
                       <span style="width:250px;flex:1;">倍数
                     </span>
-                     <span style="width:250px;flex:1;">业绩要求
+                     <span style="width:250px;flex:1;">
+                        <!-- 业绩要求 -->
                     </span>  
                      <span style="flex:1;width:250px">
                     </span>            
@@ -48,18 +49,6 @@
                         <p class="notic"></p>
                     </dd>
                 </dl>
-            <!-- <dl class="row">
-                <dt class="tit">
-                    <label>四周内业绩要求</label>
-                </dt>
-                <dd class="opt">
-                    <input name="pop_person_num" id="distribut_third_rate" value=""onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text"> 
-                    <input name="pop_person_num" id="distribut_third_rate" value=""onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
-                    <input name="pop_person_num" id="distribut_third_rate" value=""onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
-                    <p class="notic"></p>
-                </dd>
-            </dl> -->
-         
             <dl class="row">
                 <dt class="tit">
                     <label>第五周业绩要求</label>
@@ -67,7 +56,7 @@
                 <dd class="opt">
                     <input name="five_week_require[five_week_require]" value="five_week_require" type="hidden"> 
                     <input name="five_week_require[times]" id="distribut_third_rate" value="{$five_week['value']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
-                    <input name="five_week_require[money]" id="distribut_third_rate" value="{$five_week['desc']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <!-- <input name="five_week_require[money]" id="distribut_third_rate" value="{$five_week['desc']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text"> -->
                     <p class="notic"></p>
                 </dd>
             </dl>
@@ -79,7 +68,60 @@
                 <dd class="opt">
                     <input name="six_week_require[six_week_require]" value="six_week_require" type="hidden"> 
                     <input name="six_week_require[times]" id="distribut_third_rate" value="{$six_week['value']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text"> 
-                    <input name="six_week_require[money]" id="distribut_third_rate" value="{$six_week['desc']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <!-- <input name="six_week_require[money]" id="distribut_third_rate" value="{$six_week['desc']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text"> -->
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+         
+            </div>
+            <div id="switch_on_off" >
+                <dl class="row">
+                    <dt class="tit">
+                        <label></label>
+                    </dt>
+                    <dd class="opt">
+                    <div style="display:flex">        
+                      <span style="width:250px;flex:1;">自身代理级别金额
+                    </span>
+                     <span style="width:250px;flex:1;">
+                    </span>  
+                     <span style="flex:1;width:250px">
+                    </span>            
+                      <span style="width:250px;flex:1;">
+                    </span>            
+                    </div>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>县级代理</label>
+                </dt>
+                <dd class="opt">
+                    <input name="district_bonus[district_bonus]" value="district_bonus" type="hidden"> 
+                    <input name="district_bonus[achievement_require]" id="distribut_third_rate" value="{$district_bonus['value']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+         
+            <dl class="row">
+                <dt class="tit">
+                    <label>市级代理</label>
+                </dt>
+                <dd class="opt">
+                    <input name="city_bonus[city_bonus]" value="city_bonus" type="hidden"> 
+                    <input name="city_bonus[achievement_require]" id="distribut_third_rate" value="{$city_bonus['value']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text"> 
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+         
+            <dl class="row">
+                <dt class="tit">
+                    <label>省级代理</label>
+                </dt>
+                <dd class="opt">
+                    <input name="province_bonus[province_bonus]" value="province_bonus" type="hidden"> 
+                    <input name="province_bonus[achievement_require]" id="distribut_third_rate" value="{$province_bonus['value']}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text"> 
                     <p class="notic"></p>
                 </dd>
             </dl>
