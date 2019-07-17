@@ -95,6 +95,144 @@ class User extends MobileBase
         $this->assign('order_status_coment', $order_status_coment);
     }
 
+
+      //推荐
+      public function recommend()
+      {
+          //获取上级id
+          // $user_id=input('user_id');
+          $recommend_id=19945;
+  
+          $user_id=$this->user_id;
+          //判断自己是否已经有直属上级
+          $myInfo=Db::name('users')->where('user_id','=',$user_id)->find();
+          if($myInfo['first_leader']){
+              $this->error("已经有上级不能在被推荐");
+          }
+          $time=time();
+          $firstUpdate=Db::name('users')->update(['user_id'=>$user_id,'first_leader'=>$recommend_id]);
+  
+          //推荐成功 统计上级的直属下级数量 更新上级的身份  经理还是总监
+          $upPopCount=Db::name('users')->where('first_leader','=',$recommend_id)->count(); 
+      
+          if($upPopCount>=8&&$upPopCount<30){
+              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>1]);
+          }
+          if($upPopCount>=30&&$upPopCount<60){
+              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>2]);
+          }
+          if($upPopCount>=60&&$upPopCount<100){
+              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>3]);
+          }
+          if($upPopCount>=100){
+              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>4]);
+          }
+  
+  
+          if($firstUpdate){
+              // return $this->success("直属上级推荐成功");
+              $recommendInfo=Db::name('users')->where('user_id',$recommend_id)->find();
+                  if($recommendInfo['agent_level']){
+                      //如果上级是代理身份,就给上级奖励   //并减少对应的推广额度
+  
+                      //这里有个条件前提   周数和业绩   不同要求不一样
+                          $pop_commission=Db::name('config')->where('name','=','pop_commission')->value('value');
+                          $pop_money=Db::name('config')->where('name','=','pop_money')->value('value');
+                          $addmoney=$pop_money*$pop_commission/100;
+                          $user_money=$recommendInfo['user_money']+$addmoney;
+                          Db::name('users')->update(['user_id'=>$recommend_id,'user_money'=>$user_money]);
+                          Db::name('commission_log')->insert(['user_id'=>$recommend_id,'add_user_id'=>$user_id,'identification'=>2,'num'=>1,'money'=>$addmoney,'addtime'=>$time,'desc'=>'邀请1个新会员奖励50']);
+                      
+                      //    $recommendInfo['default_period'];
+                          $whereStr['user_id']=['=',$recommendInfo['user_id']];
+                          $whereStr['period']=['=',$recommendInfo['default_period']];
+                          if($recommenInfo['begin_time']){  //如果时间已经开始再操作下面
+                              $periodInfo=Db::name('pop_period')->where($whereStr)->find();
+                              if($periodInfo['poped_per_num']<$periodInfo['person_num']){ //还有位置就操作
+                                  Db::name('pop_period')->setInc('poped_per_num');
+                              }else{ //没有位置就跳到上一级    如果没有上一级就修改用户表    
+                                  $upPeriod=$recommendInfo['default_period']+1; 
+                                  $upPeriodInfo=Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->find();
+                                  if($upPeriodInfo){ //如果有上级
+                                      //还有下一期的话 分情况   一周内 和一周外
+                                      if(($recommenInfo['begin_time']+3600*24*7)>$time){
+                                              Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['day_release'=>1]);
+                                      }else{
+                                              Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['week_release'=>1]);
+                                      }
+                                      // Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['poped_per_num'=>1,'begin_time'=>$time]);
+                                      // Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['default_period'=>$upPeriod]);
+                                  }else{
+                                      Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0]);
+                                  }
+  
+                              }
+                             
+                          }
+                         
+                  }                
+  
+          }
+      }
+  
+      //每日定时释放推广名额
+      public function day_release_handle()
+      {
+          $dayList=Db::name('pop_period')->where('day_release','=',1)->select();
+          $time=time();
+          foreach($dayList as $dk=>$dv){
+              Db::name('users')->where('user_id','=',$dv['user_id'])->setInc('default_period');
+              Db::name('pop_period')->where('user_id','=',$dv['user_id'])->where('period','=',$dv['period'])->update(['begin_time'=>$time,'day_release'=>0]);
+          }
+      }
+  
+      //每周定时释放推广名额
+      public function week_release_handle()
+      {
+          $dayList=Db::name('pop_period')->where('week_release','=',1)->select();
+          $time=time();
+          foreach($dayList as $dk=>$dv){
+              Db::name('users')->where('user_id','=',$dv['user_id'])->setInc('default_period');
+              Db::name('pop_period')->where('user_id','=',$dv['user_id'])->where('period','=',$dv['period'])->update(['begin_time'=>$time,'week_release'=>0]);
+          }
+      }
+  
+      //每月定时发放极差奖领导奖
+      public function team_bonus()
+      {
+          $allUserPerformace=Db::name('users')->alias('u')->join('agent_performance ap','u.user_id=ap.user_id',LEFT)->field('u.leader_level,u.user_id,u.mobile,u.nickname,,u.distribut_money,ap.ind_per,ap.agent_per')->where('leader_level','<>','0')->select();
+          // var_dump($allUserPerformace);die;
+          $time=time();
+          foreach($allUserPerformace as $k=>$v){
+              if($v['leader_level']==1&&$v['agent_per']>=80000){
+                  $bonus=$v['agent_per']*2/100;
+                  $addDistribut=$v['distribut_money']+$bonus;
+                  Db::name('users')->where('user_id','=',$v['user_id'])->update(['distribut_money'->$addDistribut]);
+                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖'])
+              }
+              if($v['leader_level']==2&&$v['agent_per']>=1000000){
+                  $bonus=$v['agent_per']*2/100;
+                  $addDistribut=$v['distribut_money']+$bonus;
+                  Db::name('users')->where('user_id','=',$v['user_id'])->update(['distribut_money'->$addDistribut]);
+                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖'])
+              }
+              if($v['leader_level']==3&&$v['agent_per']>=5000000){
+                  $bonus=$v['agent_per']*2/100;
+                  $addDistribut=$v['distribut_money']+$bonus;
+                  Db::name('users')->where('user_id','=',$v['user_id'])->update(['distribut_money'->$addDistribut]);
+                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖'])
+              }
+              if($v['leader_level']==4&&$v['agent_per']>=10000000){
+                  // $bonus=$v['agent_per']*2/100;
+                  // $addDistribut=$v['distribut_money']+$bonus;
+                  // Db::name('users')->where('user_id','=',$v['user_id'])->update(['distribut_money'->$addDistribut]);
+                  Db::name('commission_log')->insert(['user_id'=>$v['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'奖励豪车'])
+              }
+          }
+      }
+
+
+
     public function index()
     {
         $agent_level = M('agent_level')->field('level,level_name')->select();

@@ -67,6 +67,24 @@
                     <p class="notic">奖金币和现金互转比例  单位：10:1  填10</p>
                 </dd>
             </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>推广奖励应得金额</label>
+                </dt>
+                <dd class="opt">
+                    <input name="pop_money" id="distribut_first_rate" value="{$pop_money.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">推广奖励应得金额 用户实际到账金额为应得金额*奖励比例  单位：%</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>推广奖励比例</label>
+                </dt>
+                <dd class="opt">
+                    <input name="pop_commission" id="distribut_first_rate" value="{$pop_commission.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">推广奖励比例 用户实际到账金额为应得金额*奖励比例  单位：%</p>
+                </dd>
+            </dl>
             </div>
             <div class="bot">
                 <a href="JavaScript:void(0);" class="ncap-btn-big ncap-btn-green" onclick="adsubmit()">确认提交</a>
