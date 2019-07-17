@@ -274,11 +274,15 @@ class System extends Base
         $county_bonus= $confModel->where('name','=','county_bonus')->find();
         $sec_county= $confModel->where('name','=','sec_county_bonus')->find();
         $bonus_cash= $confModel->where('name','=','bonus_cash_exchange')->find();
+        $pop_commission= $confModel->where('name','=','pop_commission')->find();
+        $pop_money= $confModel->where('name','=','pop_money')->find();
         $this->assign([
             'pop_person'=>$pop_person,
             'county_bonus'=>$county_bonus,
             'sec_county'=>$sec_county,
             'bonus_cash'=>$bonus_cash
+            'pop_commission'=>$pop_commission,
+            'pop_money'=>$pop_money
         ]);
          return $this->fetch();
     }
@@ -377,9 +381,74 @@ class System extends Base
             }else{
                 $confModel->insert(['name'=>'bonus_cash_exchange','value'=>$data['bonus_cash_exchange'],'inc_type'=>'commison_conf']);
             }
+
+            $pop_commission= $confModel->where('name','=','pop_commission')->find();
+            if($pop_commission){
+                   $confModel->update(['id'=>$pop_commission['id'],'name'=>'pop_commission','value'=>$data['pop_commission'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'pop_commission','value'=>$data['pop_commission'],'inc_type'=>'commison_conf']);
+            }
+
+            $pop_money= $confModel->where('name','=','pop_money')->find();
+            if($pop_money){
+                   $confModel->update(['id'=>$pop_money['id'],'name'=>'pop_money','value'=>$data['pop_money'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'pop_money','value'=>$data['pop_money'],'inc_type'=>'commison_conf']);
+            }
+            
             $this->success("操作成功!!!",U('Admin/System/commission'));
         }
     }
+
+      //佣金限制
+      public function bonus_require()
+      {
+          // $bonusList=Db::name('bonus_require')->select();
+          //  $this->assign([
+          //     'bonusList'=>$bonusList
+          // ]);
+  
+          $five_week=Db::name('config')->where('name','=','five_week_require')->find();
+          $six_week=Db::name('config')->where('name','=','six_week_require')->find();
+  
+              $this->assign([
+                  'five_week'=>$five_week,
+                  'six_week'=>$six_week
+              ]);
+  
+          return $this->fetch();
+      } 
+      
+      //佣金插入表
+      public function bonus_require_handle()
+      {
+          $data=input();
+          if($data['five_week_require']){
+              $fiveData['name']=$data['five_week_require']['five_week_require'];
+              $fiveData['value']=$data['five_week_require']['times'];
+              $fiveData['desc']=$data['five_week_require']['money'];
+              // var_dump($data['five_week_require']['times']);die;
+              $five_week_require=Db::name('config')->where('name','=',$fiveData['name'])->find();
+              if($five_week_require){
+                  Db::name('config')->update(['id'=>$five_week_require['id'],'name'=> $fiveData['name'],'value'=>$fiveData['value'],'inc_type'=>'commison_conf','desc'=>$fiveData['desc']]);
+              }else{
+                  Db::name('config')->insert(['name'=>$fiveData['name'],'value'=>$fiveData['value'],'inc_type'=>'commison_conf','desc'=>$fiveData['desc']]);
+              }
+          }
+          
+          if($data['six_week_require']){
+              $sixData['name']=$data['six_week_require']['six_week_require'];
+              $sixData['value']=$data['six_week_require']['times'];
+              $sixData['desc']=$data['six_week_require']['money'];
+              $six_week_require=Db::name('config')->where('name','=',$sixData['name'])->find();
+              if($six_week_require){
+                  Db::name('config')->update(['id'=>$six_week_require['id'],'name'=> $sixData['name'],'value'=>$sixData['value'],'inc_type'=>'commison_conf','desc'=>$sixData['desc']]);
+              }else{
+                  Db::name('config')->insert(['name'=>$sixData['name'],'value'=>$sixData['value'],'inc_type'=>'commison_conf','desc'=>$sixData['desc']]);
+              }
+          }
+          return $this->success("操作成功");
+      }
         
        /**
         * 自定义导航
