@@ -226,7 +226,7 @@ class Cart extends MobileBase {
         $address = Db::name('user_address')->where("address_id", $address_id)->find();
         $cartLogic = new CartLogic();
         $pay = new Pay();
-        Db::rollback();
+        Db::startTrans();
         try {
             $cartLogic->setUserId($this->user_id);
             if ($action == 'buy_now') {
@@ -277,8 +277,8 @@ class Cart extends MobileBase {
         //判断购买代理商品的用户本身是不是代理，如果是代理就不能再买
         $user_agent_info=Db::name('users')->where('user_id','=',$order['user_id'])->field('agent_level')->find();
         if($user_agent_info['agent_level']){
-            exception('用户是代理身份不能重复购买',100006);
             $this->ajaxReturn('用户是代理身份不能重复购买');
+            exception('用户是代理身份不能重复购买',100006);
         }
         if($order['agent_good']==1){ 
             $time=time();
