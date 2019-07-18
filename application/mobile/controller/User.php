@@ -229,10 +229,12 @@ class User extends MobileBase
     public function index()
     {
         $agent_level = M('agent_level')->field('level,level_name')->select();
+        // dump($agent_level);
         if($agent_level){
             foreach($agent_level as $v){
                 $agnet_name[$v['level']] = $v['level_name'];
             }
+            // dump($agnet_name);
             $this->assign('agnet_name', $agnet_name);
         }
 
