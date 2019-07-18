@@ -267,7 +267,7 @@ class User extends MobileBase
         //总佣金
         $distribut_money = Db::name('account_log')->where(['user_id'=>$user_id,'type'=>['in',[2,3,4,5]]])->sum(user_money);
         $comm2 = Db::name('commission_log')->where(['user_id' => $user_id])->order('id','desc')->sum('money');
-        
+
         //今日佣金
         $comm = $this->today_commission();
 
@@ -925,6 +925,18 @@ class User extends MobileBase
      * 推广名额
      */
     public function tuiguang(){
+        $user_id = $this->user_id;
+        $pop_period = Db::name('pop_period')->where(['user_id'=>$user_id])->select();
+        $users_period = [];
+        foreach($pop_period as $key => $veal)
+        {
+            $pop_period[$key]['nums'] = $veal['person_num'] - $veal['poped_per_num'];
+            $users_period[] = Db::name('account_log')->where(['user_id'=>$user_id,'type'=>2,'change_time'=>['>=',$pop_period['begin_time']]])->select();
+            // $pop_period[$key]['users_period'] = $users_period;
+        }
+        // dump($users_period);die;
+        $this->assign('pop_period',$pop_period);
+        $this->assign('users_period',$users_period);
         return $this->fetch();
     }
 
