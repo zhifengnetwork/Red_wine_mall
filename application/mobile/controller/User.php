@@ -95,13 +95,147 @@ class User extends MobileBase
         $this->assign('order_status_coment', $order_status_coment);
     }
 
+
+      //推荐
+      public function recommend()
+      {
+          //获取上级id
+          // $user_id=input('user_id');
+          $recommend_id=19945;
+  
+          $user_id=$this->user_id;
+          //判断自己是否已经有直属上级
+          $myInfo=Db::name('users')->where('user_id','=',$user_id)->find();
+          if($myInfo['first_leader']){
+              $this->error("已经有上级不能在被推荐");
+          }
+          $time=time();
+          $firstUpdate=Db::name('users')->update(['user_id'=>$user_id,'first_leader'=>$recommend_id]);
+  
+          //推荐成功 统计上级的直属下级数量 更新上级的身份  经理还是总监
+          $upPopCount=Db::name('users')->where('first_leader','=',$recommend_id)->count(); 
+      
+          if($upPopCount>=8&&$upPopCount<30){
+              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>1]);
+          }
+          if($upPopCount>=30&&$upPopCount<60){
+              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>2]);
+          }
+          if($upPopCount>=60&&$upPopCount<100){
+              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>3]);
+          }
+          if($upPopCount>=100){
+              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>4]);
+          }
+  
+  
+          if($firstUpdate){
+              // return $this->success("直属上级推荐成功");
+              $recommendInfo=Db::name('users')->where('user_id',$recommend_id)->find();
+                  if($recommendInfo['agent_level']){
+                      //如果上级是代理身份,就给上级奖励   //并减少对应的推广额度
+  
+                      //这里有个条件前提   周数和业绩   不同要求不一样
+                          $pop_commission=Db::name('config')->where('name','=','pop_commission')->value('value');
+                          $pop_money=Db::name('config')->where('name','=','pop_money')->value('value');
+                          $addmoney=$pop_money*$pop_commission/100;
+                          $user_money=$recommendInfo['user_money']+$addmoney;
+                          Db::name('users')->update(['user_id'=>$recommend_id,'user_money'=>$user_money]);
+                          Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$addmoney,'pay_points'=>0,'change_time'=>$time,'desc'=>'邀请1个新会员奖励50','type'=>2]);
+                      
+                      //    $recommendInfo['default_period'];
+                          $whereStr['user_id']=['=',$recommendInfo['user_id']];
+                          $whereStr['period']=['=',$recommendInfo['default_period']];
+                          $periodInfo=Db::name('pop_period')->where($whereStr)->find();
+                          if($periodInfo['begin_time']){  //如果时间已经开始再操作下面
+                              if($periodInfo['poped_per_num']<$periodInfo['person_num']){ //还有位置就操作
+                                  Db::name('pop_period')->setInc('poped_per_num');
+                              }else{ //没有位置就跳到上一级    如果没有上一级就修改用户表    
+                                  $upPeriod=$recommendInfo['default_period']+1; 
+                                  $upPeriodInfo=Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->find();
+                                  if($upPeriodInfo){ //如果有上级
+                                      //还有下一期的话 分情况   一周内 和一周外
+                                      if(($periodInfo['begin_time']+3600*24*7)>$time){
+                                              Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['day_release'=>1]);
+                                      }else{
+                                              Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['week_release'=>1]);
+                                      }
+                                      // Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['poped_per_num'=>1,'begin_time'=>$time]);
+                                      // Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['default_period'=>$upPeriod]);
+                                  }else{
+                                      Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0,'add_agent_time'=>0]);
+                                  }
+  
+                              }
+                             
+                          }
+                         
+                  }                
+  
+          }
+      }
+  
+      //每日定时释放推广名额
+      public function day_release_handle()
+      {
+          $dayList=Db::name('pop_period')->where('day_release','=',1)->select();
+          $time=time();
+          foreach($dayList as $dk=>$dv){
+              Db::name('users')->where('user_id','=',$dv['user_id'])->setInc('default_period');
+              Db::name('pop_period')->where('user_id','=',$dv['user_id'])->where('period','=',$dv['period'])->update(['begin_time'=>$time,'day_release'=>0]);
+          }
+      }
+  
+      //每周定时释放推广名额
+      public function week_release_handle()
+      {
+          $dayList=Db::name('pop_period')->where('week_release','=',1)->select();
+          $time=time();
+          foreach($dayList as $dk=>$dv){
+              Db::name('users')->where('user_id','=',$dv['user_id'])->setInc('default_period');
+              Db::name('pop_period')->where('user_id','=',$dv['user_id'])->where('period','=',$dv['period'])->update(['begin_time'=>$time,'week_release'=>0]);
+          }
+      }
+  
+    
+
+       //每月定时发放极差奖领导奖  优化方法
+       public function team_bonus(){
+            $allUserPerformace=Db::name('users')->alias('u')->join('agent_performance ap','u.user_id=ap.user_id',LEFT)->field('u.leader_level,u.user_id,u.mobile,u.nickname,,u.distribut_money,ap.ind_per,ap.agent_per')->where('leader_level','<>','0')->select();
+            $time=time();
+            if($allUserPerformace){
+                $accountLogModel=Db::name('account_log');
+                foreach($allUserPerformace as $ak=>$av){
+                    $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();
+                    if($av['agent_per']>=$one_agent_level['describe']){
+                        $bonus=$av['agent_per']*$one_agent_level['retio']/100;
+                        $addDistribut=$av['distribut_money']+$bonus;
+                        if($av['leader_level']==4){
+                            $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$addDistribut,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>5]);
+                        }else{
+                            $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
+                            $addDistribut=$av['distribut_money']+$bonus;
+                            Db::name('users')->where('user_id','=',$av['user_id'])->update(['distribut_money'=>$addDistribut]);
+                            $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$addDistribut,'pay_points'=>0,'change_time'=>$time,'desc'=>'级差奖领导奖','type'=>5]);
+                        }
+                    }
+                }
+            }
+       }
+
+
+      
+
     public function index()
     {
+        $user_id = $this->user_id;
         $agent_level = M('agent_level')->field('level,level_name')->select();
+        // dump($agent_level);
         if($agent_level){
             foreach($agent_level as $v){
                 $agnet_name[$v['level']] = $v['level_name'];
             }
+            // dump($agnet_name);
             $this->assign('agnet_name', $agnet_name);
         }
 
@@ -119,14 +253,34 @@ class User extends MobileBase
                 $this->assign('app', $app);
             }
         }
+        //用户余额
+        $user_money = Db::name('users')->where(['user_id'=>$user_id])->field('user_money,user_id')->find();
 
+        //推广人数
+        $pop_periods = Db::name('pop_period')->where(['user_id'=>$user_id])->select();
+        $person_num = 0;
+        $poped_per_num = 0;
+        foreach($pop_periods as $key => $veal){
+            $person_num += $veal['person_num'];
+            $poped_per_num += $veal['poped_per_num'];
+        }
+        //总佣金
+        $distribut_money = Db::name('account_log')->where(['user_id'=>$user_id,'type'=>['in',[2,3,4,5]]])->sum(user_money);
+        $comm2 = Db::name('commission_log')->where(['user_id' => $user_id])->order('id','desc')->sum('money');
         
+        //今日佣金
         $comm = $this->today_commission();
+
         $is_vip = $this->user['end_time'] > time()?1:0;
         $this->user['today_comm'] = $comm;
+        $this->assign('person_num', $person_num-$poped_per_num);
+        $this->assign('user_money', $user_money);
         $this->assign('menu_list', $menu_list);
+        $this->assign('distribut_money', $distribut_money+$comm2);
+        $this->assign('comm', $comm);
         $this->assign('is_vip', $is_vip);
         $this->assign('mobile_validated', $this->user['mobile'] ? 0 : 1);
+        
         return $this->fetch();
     }
 
@@ -136,13 +290,13 @@ class User extends MobileBase
         $user_id = $this->user_id;
         $where['to_user_id'] = $user_id;
         $where['type'] = ['in',[1,2,3]];
-
-        $comm = Db::name('distrbut_commission_log')->where($where)->order('log_id','desc')->whereTime('create_time','today')->sum('money');
-        $vip  = Db::name('vip_commission_log')->where(['to_user_id' =>$user_id ])->order('log_id','desc')->whereTime('create_time','today')->sum('money');
+        $day_account_log = Db::name('account_log')->where(['user_id'=>$user_id,'type'=>['in',[2,3,4,5]]])->whereTime('change_time','today')->sum(user_money);
+        // $comm = Db::name('distrbut_commission_log')->where($where)->order('log_id','desc')->whereTime('create_time','today')->sum('money');
+        // $vip  = Db::name('vip_commission_log')->where(['to_user_id' =>$user_id ])->order('log_id','desc')->whereTime('create_time','today')->sum('money');
         //邀请奖励
         $comm2 = Db::name('commission_log')->where(['user_id' => $user_id])->order('id','desc')->whereTime('addtime','today')->sum('money');
 
-        $money = $comm + $vip + $comm2;
+        $money = $comm2 + $day_account_log;
         return $money;
     }
 
@@ -699,46 +853,30 @@ class User extends MobileBase
     public function team_list()
     {
         $user_id = $this->user_id;
-        // $id_array = $this->lower_id($user_id); //获取下级id列表
-        // dump($this->lower_id(8831));exit;
 
-        // //获取对应下级id的数据
-        // $team_list = M('users')->where('user_id','in',$id_array)->field('user_id,nickname,mobile,distribut_level,distribut_money,head_pic')->page(1,10)->select();
-        // //获取等级
-        // $level = M('agent_level')->column('level,level_name');
-
-        // foreach($team_list as $k1 => $v1){
-        //     $team_list[$k1]['level_name'] = $level[$v1['distribut_level']];
-        // }
-
-        // $count = count($team_list);
-
-        $leader_id = M('users')->where('user_id',$user_id)->value('first_leader');
-        $leader = M('users')->where('user_id',$leader_id)->field('nickname,mobile,head_pic')->find();
-
-        $first = M('users')->where('first_leader',$user_id)->column('user_id');
-        $second = $first ? M('users')->where(['first_leader'=>['in',$first]])->column('user_id') : [];
-        $third = $second ? M('users')->where(['first_leader'=>['in',$second]])->column('user_id') : [];
-
-        $first_count = count($first);
-        $second_count = count($second);
-        $third_count = count($third);
+        $leader_id = M('users')->where('user_id',$user_id)->field('nickname,first_leader,user_id')->find();
+        $leader = M('users')->where(['user_id'=>$leader_id['first_leader']])->field('nickname,user_id')->find();
 
         $team_count = Db::query("SELECT count(*) as count FROM tp_parents_cache where find_in_set('$user_id',`parents`)");
         //个人业绩  团队业绩
-
         $Ad  = M('agent_performance');
 
         $performance = $Ad->where(['user_id' => $user_id])->find();
-        //$team_count = Db::query("SELECT count(*) as count FROM tp_users where find_in_set('$user_id',`parents`)");
+        $performance = $performance['ind_per']+$performance['agent_per'];
+        if(empty($performance)){
+            $performance = 0;
+        }
+        $performance = bcadd($performance,'0.00',2);
+        $bonus = Db::name('account_log')->where(['user_id'=>$user_id,'type'=>['in','2,3,4,5']])->sum('user_money'); 
+        $bonus = bcadd($bonus,'0.00',2);
+
         $this->assign('performance',$performance);
-        $this->assign('first_count',$first_count);
-        $this->assign('second_count',$second_count);
-        $this->assign('third_count',$third_count);
+        $this->assign('bonus',$bonus);
         $this->assign('team_count',$team_count[0]['count'] ? $team_count[0]['count'] : 0);
         $this->assign('leader',$leader);
-        // $this->assign('count',$count);
-        // $this->assign('team',$team_list);
+        $this->assign('user_id',$user_id);
+        $this->assign('leader_id',$leader_id['first_leader']);
+
         return $this->fetch();
     }
 
@@ -746,6 +884,9 @@ class User extends MobileBase
      * 明细记录
      */
     public function mixi(){
+        $user_id = $this->user_id;
+        $account_log = M('account_log')->where(['user_id'=>$user_id,'type'=>2])->select();
+        $this->assign('account_log',$account_log);
         return $this->fetch();
     }
 
@@ -754,6 +895,18 @@ class User extends MobileBase
      * 团队列表
      */
     public function group(){
+        $user_id = $this->user_id;
+        $user = M('users')->where(['user_id'=>$user_id])->field('user_id,nickname,mobile,distribut_level,distribut_money,head_pic')->find();
+        $get_all_lower = get_all_lower($user_id);
+        foreach($get_all_lower as $key => $vale){
+            // dump($vale);
+            $get_all_lower[$key] = M('users')->where(['user_id'=>$vale])->field('user_id,nickname,mobile')->find();
+            // dump($user);
+        }
+        $this->assign('nickname',$user['nickname']);
+        $this->assign('user_id',$user_id);
+        $this->assign('get_all_lower',$get_all_lower);
+
         return $this->fetch();
     }
 
@@ -761,6 +914,10 @@ class User extends MobileBase
      * 团队订单
      */
     public function order(){
+        $user_id = $_GET['id'];
+        $orders = Db::name('order')->where(['user_id'=>$user_id])->field('order_sn,consignee,add_time')->select();
+        $this->assign('orders',$orders);
+        // dump($orders);die;
         return $this->fetch();
     }
 
@@ -2423,6 +2580,11 @@ class User extends MobileBase
             if ($data['money'] <= 0) {
                 $this->ajaxReturn(['status'=>0, 'msg'=>'提现额度必须大于0']);
             }
+            if ($data['money']%100 !== 0)
+            {
+                $this->ajaxReturn(['status'=>0,'msg'=>"提现金额必须为100的倍数"]);
+                exit;
+            }
 
             // 统计所有0，1的金额
             $status = ['in','0,1'];
@@ -2495,34 +2657,34 @@ class User extends MobileBase
         $user_extend=Db::name('user_extend')->where('user_id='.$this->user_id)->find();
 
         //获取用户绑定openId
-        $oauthUsers = M("OauthUsers")->where(['user_id'=>$this->user_id, 'oauth'=>'wx'])->find();
-        $openid = $oauthUsers['openid'];
-        if(empty($oauthUsers)){
-            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->value('openid');
-        }
+//        $oauthUsers = M("OauthUsers")->where(['user_id'=>$this->user_id, 'oauth'=>'wx'])->find();
+//        $openid = $oauthUsers['openid'];
+//        if(empty($oauthUsers)){
+//            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->value('openid');
+//        }
 
 
         $this->assign('user_extend',$user_extend);
         $this->assign('cash_config', tpCache('cash'));//提现配置项
         $this->assign('user_money', $this->user['user_money']);    //用户余额
-        $this->assign('openid',$openid);    //用户绑定的微信openid
+//        $this->assign('openid',$openid);    //用户绑定的微信openid
         return $this->fetch();
     }
 
-    //手机端是通过扫码PC端来绑定微信,需要ajax获取一下openID
-    public function get_openid(){
-        //halt($this->user_id); 22
-        $oauthUsers = M("OauthUsers")->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->find();
-        $openid = $oauthUsers['openid'];
-        if(empty($oauthUsers)){
-            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'wx'])->value('openid');
-        }
-        if($openid){
-            $this->ajaxReturn(['status'=>1,'result'=>$openid]);
-        }else{
-            $this->ajaxReturn(['status'=>0,'result'=>'']);
-        }
-    }
+//    //手机端是通过扫码PC端来绑定微信,需要ajax获取一下openID
+//    public function get_openid(){
+//        //halt($this->user_id); 22
+//        $oauthUsers = M("OauthUsers")->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->find();
+//        $openid = $oauthUsers['openid'];
+//        if(empty($oauthUsers)){
+//            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'wx'])->value('openid');
+//        }
+//        if($openid){
+//            $this->ajaxReturn(['status'=>1,'result'=>$openid]);
+//        }else{
+//            $this->ajaxReturn(['status'=>0,'result'=>'']);
+//        }
+//    }
 
     /**
      * 申请记录列表

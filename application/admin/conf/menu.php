@@ -20,8 +20,8 @@ return	array(
 					array('name'=>'清除缓存','act'=>'cleanCache','op'=>'System'),
 					array('name' => '运费模板', 'act'=>'index', 'op'=>'Freight'),
 					array('name' => '快递公司', 'act'=>'index', 'op'=>'Shipping'),
-				array('name' => '支付配置', 'act'=>'pay_setting', 'op'=>'System'),
-				array('name' => '支付审核', 'act'=>'pay_check', 'op'=>'Member'),
+				// array('name' => '支付配置', 'act'=>'pay_setting', 'op'=>'System'),
+				// array('name' => '支付审核', 'act'=>'pay_check', 'op'=>'Member'),
 			)),
 
 			array('name' => '会员','child' => array(
@@ -146,6 +146,7 @@ return	array(
 					array('name' => '返佣日志', 'act'=>'commission_log', 'op'=>'Distribution'),
 					// array('name' => '分销设置', 'act'=>'distribut', 'op'=>'System'),
 					array('name' => '佣金设置', 'act'=>'commission', 'op'=>'System'),
+					array('name' => '佣金限制', 'act'=>'bonus_require', 'op'=>'System'),
 					// array('name' => '销售日志', 'act'=>'sales_log', 'op'=>'Distribut'),
 			)),
 

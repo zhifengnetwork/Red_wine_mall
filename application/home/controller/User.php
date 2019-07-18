@@ -21,16 +21,17 @@ use think\Verify;
 use think\Db;
 class User extends Base{
 
-	public $user_id = 0;
+	public $user_id = 8891;
 	public $user = array();
-	
-    public function _initialize() {      
+
+    public function _initialize() {
         parent::_initialize();
-        if(session('?user'))
-        {
+//        if(session('?user'))
+//        {
         	$user = session('user');
-            $user = M('users')->where("user_id", $user['user_id'])->find();
-            session('user',$user);  //覆盖session 中的 user               
+//            $user = M('users')->where("user_id", $user['user_id'])->find();
+            $user = M('users')->where("user_id", 8891)->find();
+            session('user',$user);  //覆盖session 中的 user
         	$this->user = $user;
         	$this->user_id = $user['user_id'];
         	$this->assign('user',$user); //存储用户信息
@@ -39,20 +40,20 @@ class User extends Base{
             $messageLogic = new MessageLogic();
             $user_message_count = $messageLogic->getUserMessageCount();
             $this->assign('user_message_count', $user_message_count);
-        }else{
-        	$nologin = array(
-        			'login','pop_login','do_login','logout','verify','set_pwd','finished',
-        			'verifyHandle','reg','send_sms_reg_code','identity','check_validate_code',
-                'forget_pwd', 'check_captcha', 'check_username', 'send_validate_code','bind_account','bind_guide','bind_reg',
-        	);
-        	if(!in_array(ACTION_NAME,$nologin)){
-                $this->redirect('Home/User/login');
-        		exit;
-        	}
-        }
+//        }else{
+//        	$nologin = array(
+//        			'login','pop_login','do_login','logout','verify','set_pwd','finished',
+//        			'verifyHandle','reg','send_sms_reg_code','identity','check_validate_code',
+//                'forget_pwd', 'check_captcha', 'check_username', 'send_validate_code','bind_account','bind_guide','bind_reg',
+//        	);
+//        	if(!in_array(ACTION_NAME,$nologin)){
+//                $this->redirect('Home/User/login');
+//        		exit;
+//        	}
+//        }
         //用户中心面包屑导航
         $navigate_user = navigate_user();
-        $this->assign('navigate_user',$navigate_user);        
+        $this->assign('navigate_user',$navigate_user);
     }
 
     /*
@@ -821,18 +822,25 @@ class User extends Base{
      * 申请提现记录
      */
     public function withdrawals(){
+
     	if(IS_POST)
     	{
-            if(!$this->verifyHandle('withdrawals')){
-                $this->ajaxReturn(['status'=>0,'msg'=>'图像验证码错误']);
-            };
+//            if(!$this->verifyHandle('withdrawals')){
+//                $this->ajaxReturn(['status'=>0,'msg'=>'图像验证码错误']);
+//            };
     		$data = I('post.');
     		$data['user_id'] = $this->user_id;    		    		
     		$data['create_time'] = time();                
-                $distribut_min = tpCache('basic.min'); // 最少提现额度
-                if($data['money'] < $distribut_min)
+//                $distribut_min = tpCache('basic.min'); // 最少提现额度
+
+//                if($data['money'] < $distribut_min)
+//                {
+//                    $this->ajaxReturn(['status'=>0,'msg'=>'每次最少提现额度100'.$distribut_min]);
+//                        exit;
+//                }
+                if($data['money']%100 !== 0)
                 {
-                    $this->ajaxReturn(['status'=>0,'msg'=>'每次最少提现额度'.$distribut_min]);
+                    $this->ajaxReturn(['status'=>0,'msg'=>"提现金额必须为100的倍数"]);
                         exit;
                 }
                 if($data['money'] > $this->user['user_money'])
@@ -840,6 +848,8 @@ class User extends Base{
                     $this->ajaxReturn(['status'=>0,'msg'=>"你最多可提现{$this->user['user_money']}账户余额."]);
                         exit;
                 }
+
+
             if(encrypt($data['paypwd']) != $this->user['paypwd']){
                 $this->ajaxReturn(['status'=>0,'msg'=>"支付密码错误"]);
             }
@@ -852,7 +862,6 @@ class User extends Base{
                 exit;
     		}
     	}
-
        /* $Userlogic = new UsersLogic();
         $result= $Userlogic->get_withdrawals_log($this->user_id);  //用户资金变动记录
         $this->assign('show',$result['show']);// 赋值分页输出
@@ -1084,4 +1093,95 @@ class User extends Base{
         $this->assign('visit_log', $visit_log); //浏览记录
         return $this->fetch();
     }
+
+    /**
+     * 奖金币互转
+     * */
+    public function  between()
+    {
+        if (IS_POST) {
+            $data = I('post.');
+            $data['user_id'] = $this->user_id;
+            $data['create_time'] = time();
+            //接收方id
+            $userid = Db::name('users')->where('user_id',$data['accept_id'])->find();
+
+            if($userid){
+                $accept_id = $data['accept_id'];
+            }else{
+                $this->ajaxReturn(['status'=>0,'msg'=>'用户不存在']);
+                exit;
+            }
+            //转出多少奖金币
+            if($data['turnhow']%100 !== 0)
+            {
+                $this->ajaxReturn(['status'=>0,'msg'=>"转赠金额必须为100的倍数"]);
+                exit;
+            }
+            $turnhow = $data['turnhow'];
+            $payp = Db::name('users')->where('user_id',$this->user_id)->field('pay_points')->find();
+
+            $balances = $turnhow + $userid['pay_points'];
+            $balance = $payp['pay_points']-$turnhow;
+
+            if ($payp['pay_points'] > $turnhow){
+
+                // 启动事务
+                Db::startTrans();
+                try {
+                        $res1 = Db::name('users')->where('user_id',$accept_id)->setInc('pay_points',$turnhow);
+                        $result = Db::execute("update tp_users set pay_points = pay_points-$turnhow where user_id = $this->user_id ");
+
+                //赠出奖金币记录
+                    $res = Db::name('menber_balance_log')->insert([
+                        'user_id' => $this->user_id,
+                        'balance_type' => 0,
+                        'log_type' => 1,
+//                        'source_type' => 5,
+//                        'source_id' => $data['refund_sn'],
+                        'money' => $turnhow,
+                        'old_balance' => $payp['pay_points'],
+                        'balance' => $balance,
+                        'create_time' => time(),
+                        'note' => '赠送奖金币'
+                    ]);
+                    if(!$res){
+                        Db::rollback();
+                        return false;
+                    }
+
+                //收到奖金币记录
+                    $res = Db::name('menber_balance_log')->insert([
+                        'user_id' => $accept_id,
+                        'balance_type' => 0,
+                        'log_type' => 1,
+//                        'source_type' => 5,
+//                        'source_id' => $data['refund_sn'],
+                        'money' => $turnhow,
+                        'old_balance' => $userid['pay_points'],
+                        'balance' => $balances,
+                        'create_time' => time(),
+                        'note' => '收到奖金币'
+                    ]);
+                    if(!$res){
+                        Db::rollback();
+                        return false;
+                    }
+                    // 提交事务
+                    Db::commit();
+                } catch (\Exception $e) {
+                    // 回滚事务
+                    Db::rollback();
+                }
+                $this->ajaxReturn(['status'=>1,'msg'=>"转赠成功"]);
+            }else{
+                $this->ajaxReturn(['status'=>0,'msg'=>"奖金币余额不足"]);
+                exit;
+            }
+
+        }
+
+//        return $this->fetch();
+    }
+
 }

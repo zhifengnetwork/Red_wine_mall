@@ -226,6 +226,7 @@ class Cart extends MobileBase {
         $address = Db::name('user_address')->where("address_id", $address_id)->find();
         $cartLogic = new CartLogic();
         $pay = new Pay();
+        Db::startTrans();
         try {
             $cartLogic->setUserId($this->user_id);
             if ($action == 'buy_now') {
@@ -249,14 +250,95 @@ class Cart extends MobileBase {
                     ->setUserNote($user_note)->setTaxpayer($taxpayer)->setInvoiceDesc($invoice_desc)->setPayPsw($pay_pwd)->setTakeTime($take_time)->addNormalOrder();
                 $cartLogic->clear();
                 $order = $placeOrder->getOrder();
+                //设置推广用户名额
+                $this->set_pop_person($order['order_sn']);
+               
                 $this->ajaxReturn(['status' => 1, 'msg' => '提交订单成功', 'result' => $order['order_sn']]);
             }
             $this->ajaxReturn(['status' => 1, 'msg' => '计算成功', 'result' => $pay->toArray()]);
+            Db::commit();   
         } catch (TpshopException $t) {
             $error = $t->getErrorArr();
             $this->ajaxReturn($error);
+            Db::rollback();
         }
     }
+
+    public function set_pop_person($order_sn)
+    {   
+            // $order_sn='201907161126392756';
+            $order=Db::name('order')
+            ->alias('or')
+            ->join('order_goods og','or.order_id=og.order_id',LEFT)
+            ->join('goods g',"g.goods_id=og.goods_id",LEFT)
+            ->field('g.agent_good,or.user_id')
+            ->where('or.order_sn','=',$order_sn)->find();
+        //  var_dump($order);die;
+        //判断购买代理商品的用户本身是不是代理，如果是代理就不能再买
+        $user_agent_info=Db::name('users')->where('user_id','=',$order['user_id'])->field('agent_level')->find();
+        if($user_agent_info['agent_level']){
+            $this->ajaxReturn('用户是代理身份不能重复购买');
+            exception('用户是代理身份不能重复购买',100006);
+        }
+        if($order['agent_good']==1){ 
+            $time=time();
+            Db::name('users')->update(['user_id'=>$order['user_id'],'agent_level'=>1,'default_period'=>1,'add_agent_time'=>$time]);
+            $pop_person_num=Db::name('config')->where('name','=','pop_person_num')->value('value');
+            $period_count=ceil($pop_person_num/12);
+            static $current_num='';
+            $current_num=$pop_person_num;
+            $popPeriodModel=Db::name('pop_period');
+           for($i=1;$i<=$period_count;$i++){
+                if($current_num>12){
+                    $current_num-=12;
+                    if($i==1){
+                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>$time,'end_time'=>'']);
+                    }else{
+                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>'','end_time'=>'']);
+                    }
+                }else{
+                    $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>$current_num,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>'','end_time'=>'']);
+                }
+           }
+
+            //升级奖励上级和上上级
+            $this->pay_leader($order['user_id']);
+        }
+    }
+
+    //晋升为县代奖励上级
+    public function pay_leader($userid)
+    {
+        $userModel=Db::name('users');
+        $accountLogModel=Db::name('account_log');
+        $achievement=Db::name('order')->where('user_id','=',$userid)->sum('total_amount');
+        $county_bonus=Db::name('config')->where('name','=','conty_bonus')->value('value');
+        $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus')->value('value');
+        $firstLeader= $userModel->where('user_id','=',$userid)->find();
+        $time=time();
+        if($firstLeader['first_leader']){
+            //插入上级
+            $firstBonus=$achievement*$county_bonus/100;
+            $distribut_money=$firstLeader['distribut_money']+$firstBonus;
+            $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
+            
+            $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
+
+            $secondLeader= $userModel->where('user_id','=',$firstLeader['user_id'])->find();
+            if($secondLeader['first_leader']){
+                // 插入二级上级
+                $secondBonus=$achievement*$sec_county_bonus/100;
+                $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
+                 $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
+                 $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
+            }
+        }
+    }
+
+
+    
+
+
     /*
      * 订单支付页面
      */
