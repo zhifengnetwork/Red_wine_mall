@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <include file="public/header" title="团队列表" body=""/>
 <include file="public/header_nav" title="团队列表" href="javascript:history.back(-1)"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
@@ -70,4 +71,78 @@
     </div>
 </div>
 </else>
+=======
+<include file="public/header" title="团队列表" body=""/>
+<include file="public/header_nav" title="团队列表" href="javascript:history.back(-1)"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
+<style>
+.group_t{
+    font-size: .54rem;
+    margin: 20px
+}
+.group .group_top{
+    display: flex;
+    width: 100%;
+    height: 1.5rem;
+    background: #ff91ad;
+    font-size: .54rem;
+    text-align: center;
+    line-height: 1.5rem;
+}
+.group .top_box{
+    flex: 1;
+    /* font-size: 2em; */
+}
+.groupbox .group_top{
+    display: flex;
+    width: 100%;
+    height: 1.5rem;
+    background: #ffebf0;
+    font-size: .54rem;
+    text-align: center;
+    line-height: 1.5rem;
+}
+.groupbox:nth-child(2n) .group_top{
+    background: #fae1e8;
+}
+.groupbox .top_box{
+    flex: 1;
+}
+.top_box a{
+    text-decoration:none;
+    color: #151515;
+    -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+}
+</style>
+<div class="group_t">名称：{$nickname} DI：{$user_id}的下级</div>
+<div class="group">
+    <div class="group_top">
+        <div class="top_box">用户ID</div>
+        <div class="top_box">名称</div>
+        <div class="top_box">订单</div>
+    </div>
+</div>
+<if condition="!empty($get_all_lower)">
+<foreach name="get_all_lower" item="vo" key="k"  >
+<div class="groupbox">
+    <div class="group_top">
+        <div class="top_box">{$vo[user_id]}</div>
+        <div class="top_box">{$vo[nickname]}</div>
+        <div class="top_box">
+            <a href="{:U('/Mobile/User/order',array('id'=>$vo[user_id]))}">查看</a>
+        </div>
+    </div>
+</div>
+</foreach>
+<else>
+<div class="comment_con p">
+    <div class="none">
+        <img src="__STATIC__/images/none2.png">
+        <br><br>
+        抱歉未查到数据！
+    </div>
+</div>
+</else>
+>>>>>>> d1e70c992dbb97b95fbb99cbab5f07a5aa90936d
 </if>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <include file="public/header" title="我的分销" body="g4"/>
 <include file="public/header_nav" title="我的分销" href="javascript:history.back(-1)"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
@@ -168,4 +169,176 @@
     );
 </script>
 </body>
+=======
+<include file="public/header" title="我的分销" body="g4"/>
+<include file="public/header_nav" title="我的分销" href="javascript:history.back(-1)"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
+<style>
+ body,html{
+        background: #f2f2f2;
+    }
+    .sp_top{
+        font-size: .7rem;
+        text-align: center;
+        /* color: #e4e0e0; */
+        line-height: 1.5rem;
+    }
+    .sp_sekuai{
+        height: 4rem;
+        background: #ef1442;
+        margin: .8rem;
+        padding-top: .7rem;
+    }
+    .sp_sekuai p{
+        text-align: center;
+        font-size: .7rem;
+        /* line-height: 4em; */
+        color: #ffffff;
+    }
+    .sp_conent{
+        background: #fff;
+        font-size: .7rem;
+        margin: .8rem;
+        padding: .3rem .8rem;
+    }
+    .sp_conent_p{
+        overflow: hidden;
+    }
+    .sp_conent_pl{
+        float:left;
+    }
+    .sp_conent_pr{
+        float: right;
+    }
+    .sp_bottom{
+        background: #fff;
+        padding: .3rem .8rem;
+        font-size: .7rem;
+        margin: .8rem;
+    }
+    .sp_bottom a{
+        display: block;
+        text-decoration:none;
+        color: #151515;
+        -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+    }
+    .sp_bottom_r{
+        float: right;
+    }
+</style>
+<div class="sp_top">统计时间：2019-05-11 02：55：30</div>
+<div class="sp_sekuai">
+    <p>总业绩</p>
+    <p>￥{$performance}</p>
+</div>
+<div class="sp_sekuai">
+    <p>累积返利</p>
+    <p>￥{$bonus}</p>
+</div>
+<div class="sp_sekuai">
+    <p>团队总人数</p>
+    <p>{$team_count}</p>
+</div>
+<div class="sp_conent">
+    <p class="sp_conent_p">
+        <span class="sp_conent_pl">上级ID:{$leader_id}</span>
+        <span class="sp_conent_pr">我的ID:{$user_id}</span>
+    </p>
+    <div>上级名称：{$leader['nickname']}</div>
+</div>
+<div class="sp_bottom">
+    <a href="{:U('/Mobile/User/mixi')}">
+        <span>明细记录</span>
+        <span class="sp_bottom_r">></span>
+    </a>
+</div>
+<div class="sp_bottom">
+    <a href="{:U('/Mobile/User/group')}">
+        <span>团队列表</span>
+        <span class="sp_bottom_r">></span>
+    </a>
+</div>
+<script type="text/javascript" src="__PUBLIC__/js/layer/layer.js"></script>
+<script>
+     $(document).ready(function(){
+        get_distribut(1);
+    });
+
+    //滚动加载更多
+    var type_1 = '';
+    var page = 1;
+    var temp = 0;
+    var bool = true;
+
+    function get_distribut(type){
+        bool = false;
+        if (type != type_1) {
+            temp = 0;
+            page = 1;
+            $('.team_list').empty();
+            $('#getmore').html("加载中...");
+        }
+        type_1 = type;
+        $.ajax({
+            type: 'POST',
+            url: '/mobile/user/three_level',
+            data: {'type':type,'page':page},
+            success: function(data){
+                console.log(data);
+                if(data.length > 0){
+                    page ++;
+                    bool = true;
+                    var html = '';
+                    for(let i = 0; i < data.length; i++){
+                        var user_name = data[i].nickname ? data[i].nickname : data[i].mobile;
+                        var head_pic = data[i].head_pic ? data[i].head_pic : '/public/images/user_default_icon.jpg';
+                        var url = '/Mobile/User/purchase_log';
+                        html += '<ul class="ul_liebiao"><li class="li1" style="margin:line-height;"><span><img src="' + head_pic
+                             + '" style="border-radius:50%;" class="touxiang"><span class="nickname">' +user_name
+                             + '</span></span></li><li class="li2" style="width:20%;">'+data[i].user_id
+                             + '</li><li class="li2" style="width:30%;"><span>' + data[i].level_name
+                             + '</span></li><li class="li2"><span>' + data[i].distribut_money
+                             + '</span></li><li class="li1" style="width:25%; margin:line-height;"><span><a href="' + url 
+                             + '?id=' + data[i].user_id 
+                             + '" style="color:dodgerblue">查看</a></span></li></ul>';
+                    }
+                    // console.log(html);
+                    $('.team_list').append(html);
+                } else {
+                    if($('.team_list').children().length == 0){
+                        $('#getmore').html("暂无数据");
+                    } else {
+                        $('#getmore').html("没有更多数据啦");
+                    }
+                }
+            }
+        });
+        
+        // if ($('.team_list').children().length < 15) {
+        //     $('#getmore').html("没有更多数据啦");
+        // }
+    }
+
+    $(window).scroll(
+        function() {
+            var scrollTop = parseInt($(this).scrollTop());
+            var scrollHeight = parseInt($(document).height());
+            var windowHeight = parseInt($(this).height());
+            
+            if (!bool) {
+                return false;
+            }
+            if (temp > scrollTop) {
+                return false;
+            }
+            if (scrollTop + windowHeight >= scrollHeight-60) {
+                temp = scrollTop;
+                get_distribut(type_1);//调用加载更多
+            }
+        }
+    );
+</script>
+</body>
+>>>>>>> d1e70c992dbb97b95fbb99cbab5f07a5aa90936d
 </html>
