@@ -228,6 +228,7 @@ class User extends MobileBase
 
     public function index()
     {
+        $user_id = $this->user_id;
         $agent_level = M('agent_level')->field('level,level_name')->select();
         // dump($agent_level);
         if($agent_level){
@@ -252,14 +253,34 @@ class User extends MobileBase
                 $this->assign('app', $app);
             }
         }
+        //用户余额
+        $user_money = Db::name('users')->where(['user_id'=>$user_id])->field('user_money,user_id')->find();
 
+        //推广人数
+        $pop_periods = Db::name('pop_period')->where(['user_id'=>$user_id])->select();
+        $person_num = 0;
+        $poped_per_num = 0;
+        foreach($pop_periods as $key => $veal){
+            $person_num += $veal['person_num'];
+            $poped_per_num += $veal['poped_per_num'];
+        }
+        //总佣金
+        $distribut_money = Db::name('account_log')->where(['user_id'=>$user_id,'type'=>['in',[2,3,4,5]]])->sum(user_money);
+        $comm2 = Db::name('commission_log')->where(['user_id' => $user_id])->order('id','desc')->sum('money');
         
+        //今日佣金
         $comm = $this->today_commission();
+
         $is_vip = $this->user['end_time'] > time()?1:0;
         $this->user['today_comm'] = $comm;
+        $this->assign('person_num', $person_num-$poped_per_num);
+        $this->assign('user_money', $user_money);
         $this->assign('menu_list', $menu_list);
+        $this->assign('distribut_money', $distribut_money+$comm2);
+        $this->assign('comm', $comm);
         $this->assign('is_vip', $is_vip);
         $this->assign('mobile_validated', $this->user['mobile'] ? 0 : 1);
+        
         return $this->fetch();
     }
 
@@ -269,13 +290,13 @@ class User extends MobileBase
         $user_id = $this->user_id;
         $where['to_user_id'] = $user_id;
         $where['type'] = ['in',[1,2,3]];
-
-        $comm = Db::name('distrbut_commission_log')->where($where)->order('log_id','desc')->whereTime('create_time','today')->sum('money');
-        $vip  = Db::name('vip_commission_log')->where(['to_user_id' =>$user_id ])->order('log_id','desc')->whereTime('create_time','today')->sum('money');
+        $day_account_log = Db::name('account_log')->where(['user_id'=>$user_id,'type'=>['in',[2,3,4,5]]])->whereTime('change_time','today')->sum(user_money);
+        // $comm = Db::name('distrbut_commission_log')->where($where)->order('log_id','desc')->whereTime('create_time','today')->sum('money');
+        // $vip  = Db::name('vip_commission_log')->where(['to_user_id' =>$user_id ])->order('log_id','desc')->whereTime('create_time','today')->sum('money');
         //邀请奖励
         $comm2 = Db::name('commission_log')->where(['user_id' => $user_id])->order('id','desc')->whereTime('addtime','today')->sum('money');
 
-        $money = $comm + $vip + $comm2;
+        $money = $comm2 + $day_account_log;
         return $money;
     }
 
