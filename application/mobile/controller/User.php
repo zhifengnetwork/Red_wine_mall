@@ -141,7 +141,7 @@ class User extends MobileBase
                           $addmoney=$pop_money*$pop_commission/100;
                           $user_money=$recommendInfo['user_money']+$addmoney;
                           Db::name('users')->update(['user_id'=>$recommend_id,'user_money'=>$user_money]);
-                          Db::name('commission_log')->insert(['user_id'=>$recommend_id,'add_user_id'=>$user_id,'identification'=>2,'num'=>1,'money'=>$addmoney,'addtime'=>$time,'desc'=>'邀请1个新会员奖励50']);
+                          Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$addmoney,'pay_points'=>0,'change_time'=>$time,'desc'=>'邀请1个新会员奖励50','type'=>2]);
                       
                       //    $recommendInfo['default_period'];
                           $whereStr['user_id']=['=',$recommendInfo['user_id']];
@@ -204,19 +204,19 @@ class User extends MobileBase
             $allUserPerformace=Db::name('users')->alias('u')->join('agent_performance ap','u.user_id=ap.user_id',LEFT)->field('u.leader_level,u.user_id,u.mobile,u.nickname,,u.distribut_money,ap.ind_per,ap.agent_per')->where('leader_level','<>','0')->select();
             $time=time();
             if($allUserPerformace){
-                $commisonLogModel=Db::name('commission_log');
+                $accountLogModel=Db::name('account_log');
                 foreach($allUserPerformace as $ak=>$av){
                     $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();
                     if($av['agent_per']>=$one_agent_level['describe']){
                         $bonus=$av['agent_per']*$one_agent_level['retio']/100;
                         $addDistribut=$av['distribut_money']+$bonus;
                         if($av['leader_level']==4){
-                            $commisonLogModel->insert(['user_id'=>$av['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'奖励豪车']);
+                            $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$addDistribut,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>5]);
                         }else{
                             $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
                             $addDistribut=$av['distribut_money']+$bonus;
                             Db::name('users')->where('user_id','=',$av['user_id'])->update(['distribut_money'=>$addDistribut]);
-                            $commisonLogModel->insert(['user_id'=>$av['user_id'],'add_user_id'=>0,'identification'=>5,'num'=>1,'money'=>$addDistribut,'addtime'=>$time,'desc'=>'级差奖领导奖']);
+                            $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$addDistribut,'pay_points'=>0,'change_time'=>$time,'desc'=>'级差奖领导奖','type'=>5]);
                         }
                     }
                 }
