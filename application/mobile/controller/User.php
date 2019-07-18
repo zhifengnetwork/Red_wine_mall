@@ -2559,6 +2559,11 @@ class User extends MobileBase
             if ($data['money'] <= 0) {
                 $this->ajaxReturn(['status'=>0, 'msg'=>'提现额度必须大于0']);
             }
+            if ($data['money']%100 !== 0)
+            {
+                $this->ajaxReturn(['status'=>0,'msg'=>"提现金额必须为100的倍数"]);
+                exit;
+            }
 
             // 统计所有0，1的金额
             $status = ['in','0,1'];
@@ -2631,34 +2636,34 @@ class User extends MobileBase
         $user_extend=Db::name('user_extend')->where('user_id='.$this->user_id)->find();
 
         //获取用户绑定openId
-        $oauthUsers = M("OauthUsers")->where(['user_id'=>$this->user_id, 'oauth'=>'wx'])->find();
-        $openid = $oauthUsers['openid'];
-        if(empty($oauthUsers)){
-            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->value('openid');
-        }
+//        $oauthUsers = M("OauthUsers")->where(['user_id'=>$this->user_id, 'oauth'=>'wx'])->find();
+//        $openid = $oauthUsers['openid'];
+//        if(empty($oauthUsers)){
+//            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->value('openid');
+//        }
 
 
         $this->assign('user_extend',$user_extend);
         $this->assign('cash_config', tpCache('cash'));//提现配置项
         $this->assign('user_money', $this->user['user_money']);    //用户余额
-        $this->assign('openid',$openid);    //用户绑定的微信openid
+//        $this->assign('openid',$openid);    //用户绑定的微信openid
         return $this->fetch();
     }
 
-    //手机端是通过扫码PC端来绑定微信,需要ajax获取一下openID
-    public function get_openid(){
-        //halt($this->user_id); 22
-        $oauthUsers = M("OauthUsers")->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->find();
-        $openid = $oauthUsers['openid'];
-        if(empty($oauthUsers)){
-            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'wx'])->value('openid');
-        }
-        if($openid){
-            $this->ajaxReturn(['status'=>1,'result'=>$openid]);
-        }else{
-            $this->ajaxReturn(['status'=>0,'result'=>'']);
-        }
-    }
+//    //手机端是通过扫码PC端来绑定微信,需要ajax获取一下openID
+//    public function get_openid(){
+//        //halt($this->user_id); 22
+//        $oauthUsers = M("OauthUsers")->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->find();
+//        $openid = $oauthUsers['openid'];
+//        if(empty($oauthUsers)){
+//            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'wx'])->value('openid');
+//        }
+//        if($openid){
+//            $this->ajaxReturn(['status'=>1,'result'=>$openid]);
+//        }else{
+//            $this->ajaxReturn(['status'=>0,'result'=>'']);
+//        }
+//    }
 
     /**
      * 申请记录列表
