@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <include file="public/header" title="查看订单" body=""/>
 <include file="public/header_nav" title="查看订单" href="javascript:history.back(-1)"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
@@ -71,4 +72,79 @@
     </else>
     </if>
             
+=======
+<include file="public/header" title="查看订单" body=""/>
+<include file="public/header_nav" title="查看订单" href="javascript:history.back(-1)"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
+<style>
+    .order_t{
+        font-size: .54rem;
+        margin: 20px
+    }
+    .order .order_top{
+        display: flex;
+        width: 100%;
+        height: 1.5rem;
+        background: #ff91ad;
+        font-size: .54rem;
+        text-align: center;
+        line-height: 1.5rem;
+    }
+    .order .top_box{
+        flex: 1;
+        /* font-size: 2em; */
+    }
+    .orderbox .order_top{
+        display: flex;
+        width: 100%;
+        height: 1.5rem;
+        background: #ffebf0;
+        font-size: .54rem;
+        text-align: center;
+        line-height: 1.5rem;
+    }
+    .orderbox:nth-child(2n) .order_top{
+        background: #fae1e8;
+    }
+    .orderbox .top_box{
+        width: 200px;
+        flex: 1;
+    }
+    .top_box a{
+        text-decoration:none;
+        color: #151515;
+        -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+    }
+    </style>
+    <!-- <div class="order_t">名称：荷包蛋 DI：45665的下级</div> -->
+    <div class="order">
+        <div class="order_top">
+            <div class="top_box">订单编号</div>
+            <div class="top_box">收货人</div>
+            <div class="top_box">下单时间</div>
+        </div>
+    </div>
+    <if condition="!empty($orders)">
+    <foreach name="orders" item="vo" key="k"  >
+    <div class="orderbox">
+            <div class="order_top">
+                <div class="top_box">{$vo[order_sn]}</div>
+                <div class="top_box">{$vo[consignee]}</div>
+                <div class="top_box">{:date('Y-m-d H:i:s',$vo[add_time])}</div>
+            </div>
+        </div>
+    </foreach>
+    <else>
+    <div class="comment_con p">
+        <div class="none">
+            <img src="__STATIC__/images/none2.png">
+            <br><br>
+            抱歉未查到数据！
+        </div>
+    </div>
+    </else>
+    </if>
+            
+>>>>>>> d1e70c992dbb97b95fbb99cbab5f07a5aa90936d
     
