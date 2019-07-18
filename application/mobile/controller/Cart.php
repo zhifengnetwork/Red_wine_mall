@@ -316,13 +316,13 @@ class Cart extends MobileBase {
             
             $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
 
-            $secondLeader= $userModel->where('user_id','=',$firstLeader)->find();
+            $secondLeader= $userModel->where('user_id','=',$firstLeader['user_id'])->find();
             if($secondLeader['first_leader']){
                 // 插入二级上级
                 $secondBonus=$achievement*$sec_county_bonus/100;
-                $sec_distribut_money=$sceondLeader['distribut_money']+$secondBonus;
+                $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
                  $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
-                 $accountLogModel->insert(['user_id'=>$seconLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
+                 $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
             }
         }
     }
