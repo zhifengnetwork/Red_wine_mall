@@ -58,22 +58,22 @@
 <div class="sp_top">统计时间：2019-05-11 02：55：30</div>
 <div class="sp_sekuai">
     <p>总业绩</p>
-    <p>￥100000.00</p>
+    <p>￥{$performance}</p>
 </div>
 <div class="sp_sekuai">
     <p>累积返利</p>
-    <p>￥300000.00</p>
+    <p>￥{$bonus}</p>
 </div>
 <div class="sp_sekuai">
     <p>团队总人数</p>
-    <p>8</p>
+    <p>{$team_count}</p>
 </div>
 <div class="sp_conent">
     <p class="sp_conent_p">
-        <span class="sp_conent_pl">上级ID:85296</span>
-        <span class="sp_conent_pr">我的ID:85296</span>
+        <span class="sp_conent_pl">上级ID:{$leader_id}</span>
+        <span class="sp_conent_pr">我的ID:{$user_id}</span>
     </p>
-    <div>上级名称：我的菜</div>
+    <div>上级名称：{$leader['nickname']}</div>
 </div>
 <div class="sp_bottom">
     <a href="{:U('/Mobile/User/mixi')}">

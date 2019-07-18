@@ -229,10 +229,12 @@ class User extends MobileBase
     public function index()
     {
         $agent_level = M('agent_level')->field('level,level_name')->select();
+        // dump($agent_level);
         if($agent_level){
             foreach($agent_level as $v){
                 $agnet_name[$v['level']] = $v['level_name'];
             }
+            // dump($agnet_name);
             $this->assign('agnet_name', $agnet_name);
         }
 
@@ -830,46 +832,30 @@ class User extends MobileBase
     public function team_list()
     {
         $user_id = $this->user_id;
-        // $id_array = $this->lower_id($user_id); //获取下级id列表
-        // dump($this->lower_id(8831));exit;
 
-        // //获取对应下级id的数据
-        // $team_list = M('users')->where('user_id','in',$id_array)->field('user_id,nickname,mobile,distribut_level,distribut_money,head_pic')->page(1,10)->select();
-        // //获取等级
-        // $level = M('agent_level')->column('level,level_name');
-
-        // foreach($team_list as $k1 => $v1){
-        //     $team_list[$k1]['level_name'] = $level[$v1['distribut_level']];
-        // }
-
-        // $count = count($team_list);
-
-        $leader_id = M('users')->where('user_id',$user_id)->value('first_leader');
-        $leader = M('users')->where('user_id',$leader_id)->field('nickname,mobile,head_pic')->find();
-
-        $first = M('users')->where('first_leader',$user_id)->column('user_id');
-        $second = $first ? M('users')->where(['first_leader'=>['in',$first]])->column('user_id') : [];
-        $third = $second ? M('users')->where(['first_leader'=>['in',$second]])->column('user_id') : [];
-
-        $first_count = count($first);
-        $second_count = count($second);
-        $third_count = count($third);
+        $leader_id = M('users')->where('user_id',$user_id)->field('nickname,first_leader,user_id')->find();
+        $leader = M('users')->where(['user_id'=>$leader_id['first_leader']])->field('nickname,user_id')->find();
 
         $team_count = Db::query("SELECT count(*) as count FROM tp_parents_cache where find_in_set('$user_id',`parents`)");
         //个人业绩  团队业绩
-
         $Ad  = M('agent_performance');
 
         $performance = $Ad->where(['user_id' => $user_id])->find();
-        //$team_count = Db::query("SELECT count(*) as count FROM tp_users where find_in_set('$user_id',`parents`)");
+        $performance = $performance['ind_per']+$performance['agent_per'];
+        if(empty($performance)){
+            $performance = 0;
+        }
+        $performance = bcadd($performance,'0.00',2);
+        $bonus = Db::name('account_log')->where(['user_id'=>$user_id,'type'=>['in','2,3,4,5']])->sum('user_money'); 
+        $bonus = bcadd($bonus,'0.00',2);
+
         $this->assign('performance',$performance);
-        $this->assign('first_count',$first_count);
-        $this->assign('second_count',$second_count);
-        $this->assign('third_count',$third_count);
+        $this->assign('bonus',$bonus);
         $this->assign('team_count',$team_count[0]['count'] ? $team_count[0]['count'] : 0);
         $this->assign('leader',$leader);
-        // $this->assign('count',$count);
-        // $this->assign('team',$team_list);
+        $this->assign('user_id',$user_id);
+        $this->assign('leader_id',$leader_id['first_leader']);
+
         return $this->fetch();
     }
 
@@ -890,8 +876,12 @@ class User extends MobileBase
     public function group(){
         $user_id = $this->user_id;
         $user = M('users')->where(['user_id'=>$user_id])->field('user_id,nickname,mobile,distribut_level,distribut_money,head_pic')->find();
-        $get_all_lower = getDownUserUids2($user_id);
-        $nickname = $this->nickname;
+        $get_all_lower = get_all_lower($user_id);
+        foreach($get_all_lower as $key => $vale){
+            // dump($vale);
+            $get_all_lower[$key] = M('users')->where(['user_id'=>$vale])->field('user_id,nickname,mobile')->find();
+            // dump($user);
+        }
         $this->assign('nickname',$user['nickname']);
         $this->assign('user_id',$user_id);
         $this->assign('get_all_lower',$get_all_lower);

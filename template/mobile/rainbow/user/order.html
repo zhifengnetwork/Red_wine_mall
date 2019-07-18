@@ -42,7 +42,7 @@
         -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
     }
     </style>
-    <div class="order_t">名称：荷包蛋 DI：45665的下级</div>
+    <!-- <div class="order_t">名称：荷包蛋 DI：45665的下级</div> -->
     <div class="order">
         <div class="order_top">
             <div class="top_box">订单编号</div>
@@ -50,14 +50,25 @@
             <div class="top_box">下单时间</div>
         </div>
     </div>
-    
+    <if condition="!empty($orders)">
+    <foreach name="orders" item="vo" key="k"  >
     <div class="orderbox">
-        <foreach name="orders" item="vo" key="k"  >
             <div class="order_top">
                 <div class="top_box">{$vo[order_sn]}</div>
                 <div class="top_box">{$vo[consignee]}</div>
                 <div class="top_box">{:date('Y-m-d H:i:s',$vo[add_time])}</div>
             </div>
-        </foreach>
+        </div>
+    </foreach>
+    <else>
+    <div class="comment_con p">
+        <div class="none">
+            <img src="__STATIC__/images/none2.png">
+            <br><br>
+            抱歉未查到数据！
+        </div>
     </div>
+    </else>
+    </if>
+            
     
