@@ -302,7 +302,7 @@ class Cart extends MobileBase {
     public function pay_leader($userid)
     {
         $userModel=Db::name('users');
-        $commissionLogModel=Db::name('commission_log');
+        $accountLogModel=Db::name('account_log');
         $achievement=Db::name('order')->where('user_id','=',$userid)->sum('total_amount');
         $county_bonus=Db::name('config')->where('name','=','conty_bonus')->value('value');
         $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus')->value('value');
@@ -313,7 +313,8 @@ class Cart extends MobileBase {
             $firstBonus=$achievement*$county_bonus/100;
             $distribut_money=$firstLeader['distribut_money']+$firstBonus;
             $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
-            $commissionLogModel->insert(['user_id'=>$firstLeader['user_id'],'add_user_id'=>$userid,'identification'=>3,'num'=>1,'money'=>$firstBonus,'addtime'=>$time,'desc'=>'下级用户晋升为县级奖励',]);
+            
+            $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
 
             $secondLeader= $userModel->where('user_id','=',$firstLeader)->find();
             if($secondLeader['first_leader']){
@@ -321,7 +322,7 @@ class Cart extends MobileBase {
                 $secondBonus=$achievement*$sec_county_bonus/100;
                 $sec_distribut_money=$sceondLeader['distribut_money']+$secondBonus;
                  $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
-                $commissionLogModel->insert(['user_id'=>$seconLeader['user_id'],'add_user_id'=>$userid,'identification'=>3,'num'=>1,'money'=>$secondBonus,'addtime'=>$time,'desc'=>'二级用户晋升为县级奖励']);
+                 $accountLogModel->insert(['user_id'=>$seconLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
             }
         }
     }
