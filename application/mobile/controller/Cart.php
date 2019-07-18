@@ -226,9 +226,8 @@ class Cart extends MobileBase {
         $address = Db::name('user_address')->where("address_id", $address_id)->find();
         $cartLogic = new CartLogic();
         $pay = new Pay();
-
+        Db::rollback();
         try {
-
             $cartLogic->setUserId($this->user_id);
             if ($action == 'buy_now') {
                 $cartLogic->setGoodsModel($goods_id);
@@ -257,11 +256,11 @@ class Cart extends MobileBase {
                 $this->ajaxReturn(['status' => 1, 'msg' => '提交订单成功', 'result' => $order['order_sn']]);
             }
             $this->ajaxReturn(['status' => 1, 'msg' => '计算成功', 'result' => $pay->toArray()]);
-
+            Db::commit();   
         } catch (TpshopException $t) {
             $error = $t->getErrorArr();
             $this->ajaxReturn($error);
-
+            Db::rollback();
         }
     }
 
