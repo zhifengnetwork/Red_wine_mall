@@ -23,6 +23,39 @@ define("EXTEND_H5",6);//添加终端h5
 define('TIME_MOUTH', 4);
 
 
+function useJson($data, $msg = '操作成功！', $code = 200)
+{
+  header("Content-Type:text/html; charset=utf-8");
+  header('Access-Control-Allow-Origin: *');
+  header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+  header('Access-Control-Allow-Methods: GET, POST, PUT');
+  $result = array();
+  $result['code'] = $code;
+  $result['msg'] = $msg;
+  $result['data'] = $data;
+  $json = json_encode($result,JSON_UNESCAPED_UNICODE);
+  exit($json);
+}
+
+
+function delFileUnderDir_new( $dirName )
+{
+    if ( $handle = opendir( "$dirName" ) ) {
+        while ( false !== ( $item = readdir( $handle ) ) ) {
+            if ( $item != "." && $item != ".." ) {
+                if ( is_dir( "$dirName/$item" ) ) {
+                    delFileUnderDir_new( "$dirName/$item" );
+                } else {
+                    if( unlink( "$dirName/$item" ) ){
+                        //echo "成功删除文件： $dirName/$item\n";
+                    };
+                }
+            }
+        }
+    closedir( $handle );
+    }
+}
+
 
 function share_deal_after($xiaji,$shangji){
    
