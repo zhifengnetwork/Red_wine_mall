@@ -49,6 +49,7 @@
         <div class="top_box">订单</div>
     </div>
 </div>
+<if condition="!empty($get_all_lower)">
 <foreach name="get_all_lower" item="vo" key="k"  >
 <div class="groupbox">
     <div class="group_top">
@@ -60,3 +61,13 @@
     </div>
 </div>
 </foreach>
+<else>
+<div class="comment_con p">
+    <div class="none">
+        <img src="__STATIC__/images/none2.png">
+        <br><br>
+        抱歉未查到数据！
+    </div>
+</div>
+</else>
+</if>
