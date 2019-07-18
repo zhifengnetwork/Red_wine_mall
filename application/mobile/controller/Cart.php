@@ -252,11 +252,11 @@ class Cart extends MobileBase {
                 $order = $placeOrder->getOrder();
                 //设置推广用户名额
                 $this->set_pop_person($order['order_sn']);
-               
+                 Db::commit();
                 $this->ajaxReturn(['status' => 1, 'msg' => '提交订单成功', 'result' => $order['order_sn']]);
             }
             $this->ajaxReturn(['status' => 1, 'msg' => '计算成功', 'result' => $pay->toArray()]);
-            Db::commit();   
+             
         } catch (TpshopException $t) {
             $error = $t->getErrorArr();
             $this->ajaxReturn($error);
@@ -277,8 +277,8 @@ class Cart extends MobileBase {
         //判断购买代理商品的用户本身是不是代理，如果是代理就不能再买
         $user_agent_info=Db::name('users')->where('user_id','=',$order['user_id'])->field('agent_level')->find();
         if($user_agent_info['agent_level']){
-            $this->ajaxReturn('用户是代理身份不能重复购买');
-            exception('用户是代理身份不能重复购买',100006);
+            $this->ajaxReturn(['status' => -1, 'msg' => '用户是代理身份不能重复购买']);
+
         }
         if($order['agent_good']==1){ 
             $time=time();

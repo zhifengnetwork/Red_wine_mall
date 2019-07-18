@@ -54,38 +54,43 @@
         <div class="top_box">剩余名额</div>
     </div>
 </div>
-
-<div class="tuiguangbox">
-    <div class="tuiguang_fff">
-        <div class="top_box">第一期</div>
-        <div class="top_box">7</div>
-        <div class="top_box">5</div>
+<if condition="!empty($pop_period)">
+<foreach name="pop_period" item="vo" key="k"  >
+    <div class="tuiguangbox">
+        <div class="tuiguang_fff">
+            <div class="top_box">第{$vo['period']}期</div>
+            <div class="top_box">{$vo['person_num']}</div>
+            <div class="top_box">{$vo['nums']}</div>
+        </div>
+    </div>
+    <!-- <if condition="!empty($users_period)">
+        <div class="tuiguang ">
+            <div class="tuiguang_top">
+                <div class="top_box">时间</div>
+                <div class="top_box">推荐人</div>
+                <div class="top_box">佣金</div>
+                <div class="top_box">实收佣金</div>
+            </div>
+        </div>
+        <foreach name="users_period" item="voo" key="ko">
+            <div class="tuiguangbox">
+                <div class="tuiguang_top">
+                    <div class="top_box">{:date('YmdHis',$voo[reg_time])}</div>
+                    <div class="top_box">{$voo['nickname']}</div>
+                    <div class="top_box">￥{$voo['user_money']}</div>
+                    <div class="top_box">￥{$voo['pay_points']}</div>
+                </div>
+            </div>
+        </foreach>
+    </if> -->
+</foreach>
+<else>
+<div class="comment_con p">
+    <div class="none">
+        <img src="__STATIC__/images/none2.png">
+        <br><br>
+        抱歉未查到数据！
     </div>
 </div>
-
-<div class="tuiguang">
-    <div class="tuiguang_top">
-        <div class="top_box">时间</div>
-        <div class="top_box">推荐人</div>
-        <div class="top_box">佣金</div>
-        <div class="top_box">实收佣金</div>
-    </div>
-</div>
-
-<div class="tuiguangbox">
-    <div class="tuiguang_top">
-        <div class="top_box">20190705</div>
-        <div class="top_box">用户名</div>
-        <div class="top_box">￥50</div>
-        <div class="top_box">￥40</div>
-    </div>
-</div>
-
-<div class="tuiguangbox">
-    <div class="tuiguang_top">
-        <div class="top_box">20190705</div>
-        <div class="top_box">用户名</div>
-        <div class="top_box">￥50</div>
-        <div class="top_box">￥40</div>
-    </div>
-</div>
+</else>
+</if>
