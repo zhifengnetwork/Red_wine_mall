@@ -3,6 +3,9 @@
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
 <style>
+body{
+    background: #f2f2f2;
+}
 .remainingsum_top{
     width: 90%;
     margin-left: 5%;
@@ -20,7 +23,6 @@
     width: 90%;
     margin-left: 5%;
     height: 5rem;
-    background: pink;
     /* padding-top: 1rem; */
 }
 .remainingsum_cl{
@@ -33,6 +35,112 @@
     margin-top: 1rem;
     margin-left: 2rem;
 }
+.remainingsum_cr{
+    float: left;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    font-size: .64rem;
+}
+/* 金额 */
+.money{
+    border-bottom: 1px solid #7d7d7d;
+    font-size: .64rem;
+    line-height: 1.5rem;
+    margin: 0 5%;
+}
+.money>input{
+    margin-top: 1rem;
+    border: none;
+    background: none;
+    margin-left: 1rem;
+    border: none;
+   outline: none;
+   -webkit-appearance: none;
+}
+/* 确认转账 */
+.zhuanzhang{
+    margin-top: 4rem;
+    width: 90%;
+    margin-left: 5%;
+    background: #ec1355;
+    color: #fff;
+    height: 1.8rem;
+    font-size: .64rem;
+    line-height: 1.8rem;
+    text-align: center;
+    border-radius: 1.8rem;
+}
+.hiddenbox{
+    overflow: hidden;
+    display: none;
+}
+.showbox{
+    position: absolute;
+    top: 4rem;
+    left: 10%;
+    width: 80%;
+    z-index: 1000;
+    background: #fff;
+    height: 8rem;
+}
+.show_top{
+    height: 1.5rem;
+    font-size: .64rem;
+    line-height: 1.5rem;
+}
+.show_topl{
+    float: left;
+    margin-left: 3rem;
+}
+.show_topr{
+    float: left;
+    margin-left: .5rem;
+}
+
+/* 密码 */
+
+
+.guanbi{
+    float: right;
+    margin-right: .5rem;
+}
+
+.pwd-box{
+	    width: 7.2rem;
+	    padding-left: 1px;
+	    position: relative;
+	    border: 1px solid #9f9fa0;
+	    border-radius: 3px;
+        overflow: hidden;
+        margin-left: 3rem;
+	}
+	.pwd-box input[type="tel"]{
+		width: 99%;
+	    height: 45px;
+	    color: transparent;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    border: none;
+	    font-size: 18px;
+	    opacity: 0;
+	    z-index: 1;
+	    letter-spacing: 35px;
+	}
+	.fake-box input{
+		width: 44px;
+	    height: 48px;
+	    border: none;
+	    border-right: 1px solid #e5e5e5;
+	    text-align: center;
+	    font-size: 30px;
+	}
+	.fake-box input:nth-last-child(1){
+		border:none;
+	}
+
+
+
 </style>
 
 <div class="remainingsum_top">
@@ -46,5 +154,82 @@
     <div class="remainingsum_cl_imgbox">
         <img src="__STATIC__/images/touxiang.png">
     </div>
-    <div></div>
+    <div class="remainingsum_cr">
+        <p>昵称：倾城小美人</p>
+        <span>DI:81345</span>
+    </div>
 </div>
+
+<!-- 金额 -->
+<div class="money">
+    <span>金额</span><input type="text" placeholder="10000">
+</div>
+
+<!-- 备注 -->
+<div class="money">
+    <span>备注</span><input type="text">
+</div>
+
+<!-- 确认转账 -->
+<div class="zhuanzhang">
+    确认转账
+</div>
+
+<div class="hiddenbox">
+    <div style="position: absolute;top: 0%;left: 0;width: 100%;height: 100%;background: #000;opacity: 0.8;z-index: 999;"></div>
+    <!-- <div>
+        <img src="__STATIC__/images/zhezhao.png" style="width: 90%;position: fixed;z-index: 1000;transform: translate(-50%);left: 50%;top: 300px;" />
+    </div> -->
+    <div class="showbox">
+        <div class="show_top">
+            <div class="show_topl">
+                <img src="__STATIC__/images/xiaotouxiang.png">
+            </div>
+            <div class="show_topr">向倾城小美人转账</div>
+            <div class="guanbi">X</div>
+        </div>
+        <div style="font-size: .64rem;line-height: 1.5rem;text-align: center;margin-top: .4rem">余额</div>
+        <div style="font-size: .64rem;line-height: 1.5rem;text-align: center;">10000.00</div>
+        <div class="pwd-box">
+            <input type="tel" maxlength="6" class="pwd-input" id="pwd-input">
+            <div class="fake-box">
+                <input type="password" readonly="">
+                <input type="password" readonly="">
+                <input type="password" readonly="">
+                <input type="password" readonly="">
+                <input type="password" readonly="">
+                <input type="password" readonly="">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+var $input = $(".fake-box input");
+			$("#pwd-input").on("input", function() {
+				var pwd = $(this).val().trim();
+				for (var i = 0, len = pwd.length; i < len; i++) {
+					$input.eq("" + i + "").val(pwd[i]);
+				}
+				$input.each(function() {
+					var index = $(this).index();
+					if (index >= len) {
+						$(this).val("");
+					}
+				});
+				if (len == 6) {
+					//执行其他操作
+				}
+			});
+
+$(".zhuanzhang").click(function(){
+    $(".hiddenbox").show();
+    // document.body.removeEventListener('touchmove',bodyScroll,false); 
+// $("body").css({"position":"initial","height":"auto"});
+    });
+ $(".guanbi").click(function(){
+    $(".hiddenbox").hide();
+ })
+</script>
