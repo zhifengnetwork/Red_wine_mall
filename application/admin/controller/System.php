@@ -144,6 +144,11 @@ class System extends Base
             $val['y'] = $data['y'] ? $data['y'] : 0;
             
             $value = json_encode($val);
+            // dump($value);die;
+            if( !file_exists($image_path) ){
+                ajaxReturn(['status' => 0, 'msg' => '文件缺失，默认演示二维码不存在！']);
+                    // exit;
+            }
 
             # 移动背景图片
             $re = rename($image_path,$load_dir.'qr_backgroup.png');
