@@ -40,28 +40,18 @@
         <div class="top_box">描述</div>
     </div>
 </div>
-
+<if condition="!empty($account_log)">
+<foreach name="account_log" item="vo" key="k"  >
 <div class="mixibox">
     <div class="mixi_top">
-        <div class="top_box">2019-07-01 17:53:53</div>
-        <div class="top_box">￥50</div>
-        <div class="top_box">一级升级县代理</div>
+        <div class="top_box">{:date('Y-m-d H:i:s',$vo[change_time])}</div>
+        <div class="top_box">{$vo[user_money]}</div>
+        <div class="top_box">{$vo[desc]}</div>
     </div>
 </div>
-
-<div class="mixibox">
-    <div class="mixi_top">
-        <div class="top_box">2019-07-01 17:53:53</div>
-        <div class="top_box">￥50</div>
-        <div class="top_box">二级升级县代理</div>
-    </div>
-</div>
-
-<div class="mixibox">
-    <div class="mixi_top">
-        <div class="top_box">2019-07-01 17:53:53</div>
-        <div class="top_box">￥50</div>
-        <div class="top_box">月度领导奖</div>
-    </div>
-</div>
+</foreach>
+<else>
+    无数据！！！
+</else>
+</if>
 

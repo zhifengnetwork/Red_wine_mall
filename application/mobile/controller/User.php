@@ -877,6 +877,9 @@ class User extends MobileBase
      * 明细记录
      */
     public function mixi(){
+        $user_id = $this->user_id;
+        $account_log = M('account_log')->where(['user_id'=>$user_id,'type'=>2])->select();
+        $this->assign('account_log',$account_log);
         return $this->fetch();
     }
 
