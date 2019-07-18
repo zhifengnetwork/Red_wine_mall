@@ -307,33 +307,142 @@ class Cart extends MobileBase {
     }
 
     //晋升为县代奖励上级
-    public function pay_leader($userid)
-    {
-        $userModel=Db::name('users');
-        $accountLogModel=Db::name('account_log');
-        $achievement=Db::name('order')->where('user_id','=',$userid)->sum('total_amount');
-        $county_bonus=Db::name('config')->where('name','=','conty_bonus')->value('value');
-        $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus')->value('value');
-        $firstLeader= $userModel->where('user_id','=',$userid)->find();
-        $time=time();
-        if($firstLeader['first_leader']){
-            //插入上级
-            $firstBonus=$achievement*$county_bonus/100;
-            $distribut_money=$firstLeader['distribut_money']+$firstBonus;
-            $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
-            
-            $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
+public function pay_leader($userid)
+{
+    $userModel=Db::name('users');
+    $accountLogModel=Db::name('account_log');
+    $achievement=Db::name('order')->where('user_id','=',$userid)->sum('total_amount');
+    $county_bonus=Db::name('config')->where('name','=','conty_bonus')->value('value');
+    $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus')->value('value');
+    $firstLeader= $userModel->where('user_id','=',$userid)->find();
+    $time=time();
+    if($firstLeader['first_leader']){
+        $firstAch=Db::name('order')->where('user_id','=',$firstLeader['user_id'])->sum('total_amount');
 
-            $secondLeader= $userModel->where('user_id','=',$firstLeader['user_id'])->find();
-            if($secondLeader['first_leader']){
-                // 插入二级上级
-                $secondBonus=$achievement*$sec_county_bonus/100;
-                $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
-                 $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
-                 $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
+        //上一级的区域代理金额自身要求
+        $bonus_position_firs=$this->get_bonus_position($firstLeader['agent_level']);
+        $five_times=$this->week_times(5);
+        $six_times=$this->week_times(6);
+           //4周内
+        if($this->in_four_week($firstLeader['begin_time'])){
+                //插入上级
+                $firstBonus=$achievement*$county_bonus/100;
+                $distribut_money=$firstLeader['distribut_money']+$firstBonus;
+                $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
+                
+                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
+        }
+        //5周
+        if($this->in_five_week($firstLeader['begin_time'])){
+            if($firstAch>$five_times*$bonus_position_firs){
+                $firstBonus=$achievement*$county_bonus/100;
+                $distribut_money=$firstLeader['distribut_money']+$firstBonus;
+                $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
+                
+                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
             }
         }
+        //6周后
+        if($this->after_six_week($firstLeader['begin_time'])){
+            if($firstAch>$six_times*$bonus_position_firs){
+                $firstBonus=$achievement*$county_bonus/100;
+                $distribut_money=$firstLeader['distribut_money']+$firstBonus;
+                $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
+                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
+            }
+        }
+
+        $secondLeader= $userModel->where('user_id','=',$firstLeader['user_id'])->find();
+        if($secondLeader['first_leader']){
+            $bonus_position_sec=$this->get_bonus_position($secondLeader['agent_level']);
+            $secAch=Db::name('order')->where('user_id','=',$secondLeader['user_id'])->sum('total_amount');
+            //4周内
+            if($this->in_four_week($secondLeader['begin_time'])){
+                    // 插入二级上级
+                    $secondBonus=$achievement*$sec_county_bonus/100;
+                    $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
+                    $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
+                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
+            }
+            //五周内
+            if($this->in_five_week($secondLeader['begin_time'])){
+                if($secAch>$five_times*$bonus_position_sec){
+                    $secondBonus=$achievement*$sec_county_bonus/100;
+                    $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
+                    $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
+                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
+                }
+            }
+              //6周后
+         if($this->after_six_week($secondLeader['begin_time'])){
+            if($secAch>$six_times*$bonus_position_sec){
+                $secondBonus=$achievement*$sec_county_bonus/100;
+                $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
+                $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
+                $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
+            }
+         }
+     }
     }
+}
+
+
+//检查是否在四周内
+public function in_four_week($begin_time){
+    if($begin_time+3600*24*7*4>time()){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+
+//检查是否在第五周
+public function in_five_week($begin_time){
+    if($begin_time+3600*24*7*5>time()&&$firstLeader['begin_time']+3600*24*7*6<time()){
+        return true;
+    }else{
+        return false;
+    }
+    
+}
+
+//检查是否6周后
+public function after_six_week($begin_time){
+    if($begin_time+3600*24*7*6>time()){
+            return true;
+    }else{
+        return false;
+    }
+    
+}
+
+//获取地区代理的自身业绩要求
+public function get_bonus_position($user_level){
+    if($user_level){
+        $bonus_position=Db::name('config')->where('name','=','district_bonus')->value('value');
+    }
+    if($user_level==2){
+        $bonus_position=Db::name('config')->where('name','=','city_bonus')->value('value');
+    }
+    if($user_level==3){
+        $bonus_position=Db::name('config')->where('name','=','province_bonus')->value('value');
+    }
+    return $bonus_position;
+}
+
+
+//获取对应星期的倍数
+public function week_times($num){
+    if($num==5){
+        $week_times=Db::name('config')->where('name','=','five_week_require')->value('value');
+    }
+    if($num==6){
+        $week_times=Db::name('config')->where('name','=','six_week_require')->value('value');
+    }
+    return $week_times;
+}
+
 
 
     

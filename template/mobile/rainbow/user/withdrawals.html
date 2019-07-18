@@ -201,11 +201,11 @@
 	</div>
 
 	<script type="text/javascript">
-	var bank_card_number = '{$user_extend.bank_card_number}';
+	var bank_card_number = '{$user_extend.cash_unionpay}';
 		$(".withdraw-cheng").click(function () {
 			if (cash_type == 0) {
 				$(".withdraw-addpay-pop").show();
-			} else if(cash_type == 2) {
+			} else if(cash_type == 1) {
 				$(".withdraw-addpay-pop").show();
 			}else {
 				var str = $("#bank_card").val();
@@ -226,7 +226,7 @@
 			// 	$('#add_style').html('微信提现');
 			// 	$('#card_title').html('微信账号:')
 			// }
-			if (cash_type == 2) {
+			if (cash_type == 1) {
 				// bank_card_number
 				$('#pop_card').val(bank_card_number);
 				$('#add_style').html('银行卡提现');
