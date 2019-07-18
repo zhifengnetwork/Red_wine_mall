@@ -274,7 +274,12 @@ class Cart extends MobileBase {
             ->field('g.agent_good,or.user_id')
             ->where('or.order_sn','=',$order_sn)->find();
         //  var_dump($order);die;
-   
+        //判断购买代理商品的用户本身是不是代理，如果是代理就不能再买
+        $user_agent_info=Db::name('users')->where('user_id','=',$order['user_id'])->field('agent_level')->find();
+        if($user_agent_info['agent_level']){
+            exception('用户是代理身份不能重复购买',100006);
+            $this->ajaxReturn('用户是代理身份不能重复购买');
+        }
         if($order['agent_good']==1){ 
             $time=time();
             Db::name('users')->update(['user_id'=>$order['user_id'],'agent_level'=>1,'default_period'=>1,'add_agent_time'=>$time]);
