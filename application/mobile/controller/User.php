@@ -929,6 +929,23 @@ class User extends MobileBase
     }
 
 
+    // 转账记录
+    public function transfer(){
+        return $this->fetch();
+    }
+
+    // 余额转账
+    public function balance(){
+        return $this->fetch();
+    }
+
+    // 余额转账详情
+    public function remainingsum(){
+        return $this->fetch();
+    }
+
+
+
     /**
      * 我的VIP
      */
