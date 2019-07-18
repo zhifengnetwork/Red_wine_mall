@@ -163,7 +163,7 @@ class User extends MobileBase
                                       // Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['poped_per_num'=>1,'begin_time'=>$time]);
                                       // Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['default_period'=>$upPeriod]);
                                   }else{
-                                      Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0]);
+                                      Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0,'add_agent_time'=>0]);
                                   }
   
                               }
