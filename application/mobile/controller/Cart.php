@@ -226,7 +226,9 @@ class Cart extends MobileBase {
         $address = Db::name('user_address')->where("address_id", $address_id)->find();
         $cartLogic = new CartLogic();
         $pay = new Pay();
+
         try {
+
             $cartLogic->setUserId($this->user_id);
             if ($action == 'buy_now') {
                 $cartLogic->setGoodsModel($goods_id);
@@ -255,9 +257,11 @@ class Cart extends MobileBase {
                 $this->ajaxReturn(['status' => 1, 'msg' => '提交订单成功', 'result' => $order['order_sn']]);
             }
             $this->ajaxReturn(['status' => 1, 'msg' => '计算成功', 'result' => $pay->toArray()]);
+
         } catch (TpshopException $t) {
             $error = $t->getErrorArr();
             $this->ajaxReturn($error);
+
         }
     }
 
@@ -273,7 +277,8 @@ class Cart extends MobileBase {
         //  var_dump($order);die;
    
         if($order['agent_good']==1){ 
-            Db::name('users')->update(['user_id'=>$order['user_id'],'agent_level'=>1,'default_period'=>1]);
+            $time=time();
+            Db::name('users')->update(['user_id'=>$order['user_id'],'agent_level'=>1,'default_period'=>1,'add_agent_time'=>$time]);
             $pop_person_num=Db::name('config')->where('name','=','pop_person_num')->value('value');
             $period_count=ceil($pop_person_num/12);
             static $current_num='';
@@ -283,7 +288,6 @@ class Cart extends MobileBase {
                 if($current_num>12){
                     $current_num-=12;
                     if($i==1){
-                        $time=time();
                         $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>$time,'end_time'=>'']);
                     }else{
                         $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>'','end_time'=>'']);
