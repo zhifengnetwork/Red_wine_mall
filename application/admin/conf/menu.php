@@ -150,17 +150,17 @@ return	array(
 					// array('name' => '销售日志', 'act'=>'sales_log', 'op'=>'Distribut'),
 			)),
 
-				array('name' => 'VIP等级管理','child' => array(
+				// array('name' => 'VIP等级管理','child' => array(
 					// array('name' => '分销商品', 'act'=>'goods_list', 'op'=>'Distribut'),
 					// array('name' => '分销商列表', 'act'=>'distributor_list', 'op'=>'Distribut'),
 					// array('name' => '分销关系', 'act'=>'tree', 'op'=>'Distribut'),
-					array('name' => 'VIP等级列表', 'act'=>'agent_vip_level', 'op'=>'Distribution'),
+					// array('name' => 'VIP等级列表', 'act'=>'agent_vip_level', 'op'=>'Distribution'),
 					// array('name' => '等级关系', 'act'=>'tree', 'op'=>'Distribution'),
 					// array('name' => '分销设置', 'act'=>'distribut', 'op'=>'System'),
 					// array('name' => '销售日志', 'act'=>'sales_log', 'op'=>'Distribut'),
-					array('name'=>'VIP返佣日志','act'=>'commission_log','op'=>'vip'),
-					array('name'=>'VIP购买记录','act'=>'sales_log','op'=>'vip'),
-			)),
+			// 		array('name'=>'VIP返佣日志','act'=>'commission_log','op'=>'vip'),
+			// 		array('name'=>'VIP购买记录','act'=>'sales_log','op'=>'vip'),
+			// )),
 	     
     	    array('name' => '微信接入','child' => array(
     	        array('name' => '公众号配置', 'act'=>'index', 'op'=>'Wechat'),
