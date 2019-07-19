@@ -331,7 +331,7 @@ public function pay_leader($userid)
                 $distribut_money=$firstLeader['distribut_money']+$firstBonus;
                 $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
                 
-                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
+                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>3]);
         }
         //5周
         if($this->in_five_week($firstLeader['add_agent_time'])){
@@ -340,7 +340,7 @@ public function pay_leader($userid)
                 $distribut_money=$firstLeader['distribut_money']+$firstBonus;
                 $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
                 
-                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
+                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>3]);
             }
         }
         //6周后
@@ -349,7 +349,7 @@ public function pay_leader($userid)
                 $firstBonus=$achievement*$county_bonus/100;
                 $distribut_money=$firstLeader['distribut_money']+$firstBonus;
                 $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
-                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
+                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>3]);
             }
         }
 
@@ -363,7 +363,7 @@ public function pay_leader($userid)
                     $secondBonus=$achievement*$sec_county_bonus/100;
                     $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
                     $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
-                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
+                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"二级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>4]);
             }
             //五周内
             if($this->in_five_week($secondLeader['add_agent_time'])){
@@ -371,7 +371,7 @@ public function pay_leader($userid)
                     $secondBonus=$achievement*$sec_county_bonus/100;
                     $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
                     $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
-                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
+                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"二级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>4]);
                 }
             }
               //6周后
@@ -380,7 +380,7 @@ public function pay_leader($userid)
                 $secondBonus=$achievement*$sec_county_bonus/100;
                 $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
                 $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
-                $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
+                $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"二级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>4]);
             }
          }
      }
