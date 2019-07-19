@@ -53,9 +53,10 @@ class UserInvite extends Model{
         $user_id = intval($user_id);
         $info = Db::name('users')->field('first_leader')->where('user_id',$user_id)->find();
 
-        if($info && $info['first_leader']){
-            $this->invite($info['first_leader'],$user_id);
+        if($info && $info['first_leader']){ 
             $this->recommend($info['first_leader'],$user_id);
+            $this->invite($info['first_leader'],$user_id);
+           
         }
     }
 
