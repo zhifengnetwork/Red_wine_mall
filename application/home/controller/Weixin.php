@@ -36,7 +36,8 @@ class Weixin
             exit($_GET["echostr"]);
         }
         $logic = new WechatLogic($config);
-        $logic->handleMessage();
+		$logic->handleMessage();
+		
     }
 
 	/**
