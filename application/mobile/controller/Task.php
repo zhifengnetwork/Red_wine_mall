@@ -14,7 +14,7 @@ class Task{
         $maxlen = 1024;
         # 查找有上级关系，上级列缓存未完成的用户
         $user = Db::name('users')->field('user_id,first_leader,parents_cache')->where(['parents_cache' => ['=', 0], 'first_leader' => ['>', 0]])->order('first_leader asc')->find();
-
+        // dump($user);die;
         if($user){
             if($user['first_leader'] == $user['user_id']){
                 Db::name('users')->where('user_id', $user['user_id'])->update(['first_leader' => 0]);
