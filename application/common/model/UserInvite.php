@@ -178,6 +178,7 @@ class UserInvite extends Model{
         $money = 0.1;
         $time = time();
         $desc = '邀请第'.$num.'个新会员奖励'.$money;
+        $this->recommend($user_id,$adduser_id);
         $log = Db::name('commission_log')->where(['user_id'=>$user_id,'identification' => 2])->field('`num`')->order('id desc')->find();
         if($log){
             $num   = $log['num'] + 1;
@@ -185,7 +186,7 @@ class UserInvite extends Model{
                 $money = $rule[$num] + 0.1;
             }
             $desc = '邀请第'.$num.'个新会员奖励'.$money;
-            $this->recommend($user_id,$adduser_id);
+        
         }
         // write_log('奖励金额'. $money );
         if($money){
