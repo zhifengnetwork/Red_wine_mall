@@ -72,7 +72,7 @@ class Weixin
 				if ($user['is_employees'] == 1) {
 					return false;
 				} else {
-					if($user['user_id'] == $share_user){
+					if($user['user_id'] == $share_user && $user['first_leader'] == $share_user){
 						return false;
 					}
 					Db::execute("update `tp_users` set `first_leader` = '".$share_user."' where `user_id` = '".$user['user_id']."'");
