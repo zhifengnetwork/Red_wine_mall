@@ -85,27 +85,66 @@ body{
 <div class="searchbox">
     <h4>搜索结果</h4>
     <div class="search_box">
-        <div class="search_imgbox">
-            <img src="__STATIC__/images/touxiang.png" class="touxiang">
-        </div>
-        <div class="search_boxc">
-            <p>昵称：倾城小美人</p>
-            <span>DI：81345</span>
-        </div>
-        <div class="transfer">
-            <a href="{:U('Mobile/User/remainingsum')}">转账</a>
-        </div>
+        <!--<div class="search_imgbox">-->
+            <!--<img src="__STATIC__/images/touxiang.png" class="touxiang">-->
+        <!--</div>-->
+        <!--<div class="search_boxc">-->
+            <!--<p>昵称：倾城小美人</p>-->
+            <!--<span>DI：81345</span>-->
+        <!--</div>-->
+        <!--<div class="transfer">-->
+            <!--<a href="{:U('Mobile/User/remainingsum')}">转账</a>-->
+        <!--</div>-->
     </div>
     <div class="search_box">
-            <div class="search_imgbox">
-                <img src="__STATIC__/images/touxiang.png" class="touxiang">
-            </div>
-            <div class="search_boxc">
-                <p>昵称：倾城小美人</p>
-                <span>DI：81345</span>
-            </div>
-            <div class="transfer">
-                <a href="{:U('Mobile/User/remainingsum')}">转账</a>
-            </div>
-        </div>
+            <!--<div class="search_imgbox">-->
+                <!--<img src="__STATIC__/images/touxiang.png" class="touxiang">-->
+            <!--</div>-->
+            <!--<div class="search_boxc">-->
+                <!--<p>昵称：倾城小美人</p>-->
+                <!--<span>DI：81345</span>-->
+            <!--</div>-->
+            <!--<div class="transfer">-->
+                <!--<a href="{:U('Mobile/User/remainingsum')}">转账</a>-->
+            <!--</div>-->
+    </div>
 </div>
+<script>
+    $("input").keyup(function(){
+        search()
+    });
+    function search(){
+        var html =''
+        var key =  $("input").val()
+        var datas = {'key': key};
+        $.ajax({
+            url: "{:U('Mobile/User/ajax_search')}",
+            data: datas,
+            type: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                if(data.code==1){
+                    $.each(data.data,function(no,items){
+                        //这一步是显示数据的关键，each方法可以遍历二维数组数据
+                        //data.data：php返回的数据；
+                        //no：键值；
+                        //items:内层数组内容
+                        // var url = "{:U('Index/question')}?user_id="+items.id+"
+                        //拼接数据
+                        html+= ' <div class="search_imgbox">' +
+                            '                <img src="'+items.head_pic+'" width="40px" class="touxiang">' +
+                            '            </div>' +
+                            '            <div class="search_boxc">\n' +
+                            '                <p>昵称：'+items.nickname+'</p>\n' +
+                            '                <span>ID：'+items.user_id+'</span>\n' +
+                            '            </div>\n' +
+                            '            <div class="transfer">\n' +
+                            '                <a href="{:U(\'Mobile/User/remainingsum\')}?user_id="+items.user_id+"">转账</a>\n' +
+                            '            </div>'
+                    });
+                    $('.search_box').html(html)//显示数据，同时覆盖上一次搜索的数据
+                }
+            },
+        });
+    }
+</script>

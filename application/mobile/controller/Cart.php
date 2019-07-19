@@ -312,11 +312,12 @@ public function pay_leader($userid)
     $userModel=Db::name('users');
     $accountLogModel=Db::name('account_log');
     $achievement=Db::name('order')->where('user_id','=',$userid)->sum('total_amount');
-    $county_bonus=Db::name('config')->where('name','=','conty_bonus')->value('value');
+    $county_bonus=Db::name('config')->where('name','=','county_bonus')->value('value');
     $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus')->value('value');
-    $firstLeader= $userModel->where('user_id','=',$userid)->find();
+    $user=$userModel->where('user_id','=',$userid)->find();
+    $firstLeader=Db::name('users')->where('user_id','=',$user['first_leader'])->find();
     $time=time();
-    if($firstLeader['first_leader']){
+    if($user['first_leader']){
         $firstAch=Db::name('order')->where('user_id','=',$firstLeader['user_id'])->sum('total_amount');
 
         //上一级的区域代理金额自身要求
@@ -324,7 +325,7 @@ public function pay_leader($userid)
         $five_times=$this->week_times(5);
         $six_times=$this->week_times(6);
            //4周内
-        if($this->in_four_week($firstLeader['begin_time'])){
+        if($this->in_four_week($firstLeader['add_agent_time'])){
                 //插入上级
                 $firstBonus=$achievement*$county_bonus/100;
                 $distribut_money=$firstLeader['distribut_money']+$firstBonus;
@@ -333,7 +334,7 @@ public function pay_leader($userid)
                 $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'下级用户晋升为县级奖励','type'=>3]);
         }
         //5周
-        if($this->in_five_week($firstLeader['begin_time'])){
+        if($this->in_five_week($firstLeader['add_agent_time'])){
             if($firstAch>$five_times*$bonus_position_firs){
                 $firstBonus=$achievement*$county_bonus/100;
                 $distribut_money=$firstLeader['distribut_money']+$firstBonus;
@@ -343,7 +344,7 @@ public function pay_leader($userid)
             }
         }
         //6周后
-        if($this->after_six_week($firstLeader['begin_time'])){
+        if($this->after_six_week($firstLeader['add_agent_time'])){
             if($firstAch>$six_times*$bonus_position_firs){
                 $firstBonus=$achievement*$county_bonus/100;
                 $distribut_money=$firstLeader['distribut_money']+$firstBonus;
@@ -352,12 +353,12 @@ public function pay_leader($userid)
             }
         }
 
-        $secondLeader= $userModel->where('user_id','=',$firstLeader['user_id'])->find();
-        if($secondLeader['first_leader']){
+        $secondLeader= $userModel->where('user_id','=',$firstLeader['first_leader'])->find();
+        if($secondLeader['user_id']){
             $bonus_position_sec=$this->get_bonus_position($secondLeader['agent_level']);
             $secAch=Db::name('order')->where('user_id','=',$secondLeader['user_id'])->sum('total_amount');
             //4周内
-            if($this->in_four_week($secondLeader['begin_time'])){
+            if($this->in_four_week($secondLeader['add_agent_time'])){
                     // 插入二级上级
                     $secondBonus=$achievement*$sec_county_bonus/100;
                     $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
@@ -365,7 +366,7 @@ public function pay_leader($userid)
                     $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'二级用户晋升为县级奖励','type'=>4]);
             }
             //五周内
-            if($this->in_five_week($secondLeader['begin_time'])){
+            if($this->in_five_week($secondLeader['add_agent_time'])){
                 if($secAch>$five_times*$bonus_position_sec){
                     $secondBonus=$achievement*$sec_county_bonus/100;
                     $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
@@ -374,7 +375,7 @@ public function pay_leader($userid)
                 }
             }
               //6周后
-         if($this->after_six_week($secondLeader['begin_time'])){
+         if($this->after_six_week($secondLeader['add_agent_time'])){
             if($secAch>$six_times*$bonus_position_sec){
                 $secondBonus=$achievement*$sec_county_bonus/100;
                 $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
@@ -385,6 +386,7 @@ public function pay_leader($userid)
      }
     }
 }
+
 
 
 //检查是否在四周内
