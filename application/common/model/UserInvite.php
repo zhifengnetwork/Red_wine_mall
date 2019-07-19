@@ -54,11 +54,101 @@ class UserInvite extends Model{
         $info = Db::name('users')->field('first_leader')->where('user_id',$user_id)->find();
 
         if($info && $info['first_leader']){
-           
             $this->invite($info['first_leader'],$user_id);
+            $this->recommend($info['first_leader']);
         }
     }
 
+     //推荐
+     public function recommend($share_user)
+     {
+         //获取上级id
+        
+       //   $recommend_id=19945;
+         $recommend_id=$share_user;
+ 
+         $user_id=$this->user_id;
+         //判断自己是否已经有直属上级
+        //  $myInfo=Db::name('users')->where('user_id','=',$user_id)->find();
+        //  if($myInfo['first_leader']){
+        //      $this->error("已经有上级不能在被推荐");
+        //  }
+         $time=time();
+         // $firstUpdate=Db::name('users')->update(['user_id'=>$user_id,'first_leader'=>$recommend_id]);
+ 
+         //推荐成功 统计上级的直属下级数量 更新上级的身份  经理还是总监
+         $upPopCount=Db::name('users')->where('first_leader','=',$recommend_id)->count(); 
+     
+       $manager_ind_sum=$this->popUpdateCondition(1);  //升级经理的条件
+       $chief_ind_sum=$this->popUpdateCondition(2);    //升级总监的条件
+       $ceo_ind_sum=$this->popUpdateCondition(3);
+       $partner_ind_sum=$this->popUpdateCondition(4);
+
+         if($upPopCount>=$manager_ind_sum&&$upPopCount<$chief_ind_sum){
+             Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>1]);
+         }
+         if($upPopCount>=$chief_ind_sum&&$upPopCount<$ceo_ind_sum){
+             Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>2]);
+         }
+         if($upPopCount>=$ceo_ind_sum&&$upPopCount<$partner_ind_sum){
+             Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>3]);
+         }
+         if($upPopCount>=$partner_ind_sum){
+             Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>4]);
+         }
+ 
+ 
+         // if($firstUpdate){
+                               // return $this->success("直属上级推荐成功");
+             $recommendInfo=Db::name('users')->where('user_id',$recommend_id)->find();
+                 if($recommendInfo['agent_level']){
+                     //如果上级是代理身份,就给上级奖励   //并减少对应的推广额度
+ 
+                     //这里有个条件前提   周数和业绩   不同要求不一样
+                         $pop_commission=Db::name('config')->where('name','=','pop_commission')->value('value');
+                         $pop_money=Db::name('config')->where('name','=','pop_money')->value('value');
+                         $addmoney=$pop_money*$pop_commission/100;
+                         $user_money=$recommendInfo['user_money']+$addmoney;
+                         Db::name('users')->update(['user_id'=>$recommend_id,'user_money'=>$user_money]);
+                         Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$addmoney,'pay_points'=>0,'change_time'=>$time,'desc'=>'邀请1个新会员奖励50','type'=>2]);
+                     
+                         $whereStr['user_id']=['=',$recommendInfo['user_id']];
+                         $whereStr['period']=['=',$recommendInfo['default_period']];
+                         $periodInfo=Db::name('pop_period')->where($whereStr)->find();
+                         if($periodInfo['begin_time']){  //如果时间已经开始再操作下面
+                             if($periodInfo['poped_per_num']<$periodInfo['person_num']){ //还有位置就操作
+                                 Db::name('pop_period')->where($whereStr)->setInc('poped_per_num');
+                             }else{ //没有位置就跳到上一级    如果没有上一级就修改用户表    
+                                 $upPeriod=$recommendInfo['default_period']+1; 
+                                 $upPeriodInfo=Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->find();
+                                 if($upPeriodInfo){ //如果有上级
+                                     //还有下一期的话 分情况   一周内 和一周外
+                                     if(($periodInfo['begin_time']+3600*24*7)>$time){
+                                             Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['day_release'=>1]);
+                                     }else{
+                                             Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['week_release'=>1]);
+                                     }
+                                     // Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['poped_per_num'=>1,'begin_time'=>$time]);
+                                     // Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['default_period'=>$upPeriod]);
+                                 }else{
+                                     Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0,'add_agent_time'=>0]);
+                                 }
+ 
+                             }
+                            
+                         }
+                        
+                 }                
+ 
+         // }
+     }
+
+     //会员升级条件     //符合推广人数   就升级 如：经理
+     public function popUpdateCondition($levelNum)
+     {
+       $ind_goods_sum=Db::name('agent_level')->where('level','=',$levelNum)->value("ind_goods_sum");
+       return $ind_goods_sum;
+     }
 
 
     /**
