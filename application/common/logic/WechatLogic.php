@@ -136,7 +136,7 @@ class WechatLogic
                 'oauth_child' => 'mp',
                 ]);
                 
-                $event = \think\Loader::controller('Admin/User', 'event');
+                $event = \think\Loader::controller('Mobile/User', 'event');
                 $event->recommend($userData['first_leader']); 
             } 
         }
