@@ -55,19 +55,20 @@ class UserInvite extends Model{
 
         if($info && $info['first_leader']){
             $this->invite($info['first_leader'],$user_id);
-            $this->recommend($info['first_leader']);
+            $this->recommend($info['first_leader'],$user_id);
         }
     }
 
      //推荐
-     public function recommend($share_user)
+     public function recommend($share_user,$user_id)
      {
          //获取上级id
         
        //   $recommend_id=19945;
          $recommend_id=$share_user;
  
-         $user_id=$this->user_id;
+        //  $user_id=$this->user_id;
+        //  $user_id=$user_id;
          //判断自己是否已经有直属上级
         //  $myInfo=Db::name('users')->where('user_id','=',$user_id)->find();
         //  if($myInfo['first_leader']){
