@@ -112,7 +112,7 @@ class UserInvite extends Model{
                          $addmoney=$pop_money*$pop_commission/100;
                          $user_money=$recommendInfo['user_money']+$addmoney;
                          Db::name('users')->update(['user_id'=>$recommend_id,'user_money'=>$user_money]);
-                         Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$addmoney,'pay_points'=>0,'change_time'=>$time,'desc'=>'邀请1个新会员奖励50','type'=>2]);
+                         Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$pop_money,'pay_points'=>$addmoney,'change_time'=>$time,'desc'=>'邀请1个新会员奖励50','type'=>2]);
                      
                          $whereStr['user_id']=['=',$recommendInfo['user_id']];
                          $whereStr['period']=['=',$recommendInfo['default_period']];
