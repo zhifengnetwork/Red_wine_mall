@@ -96,7 +96,7 @@ body{
             <!--<a href="{:U('Mobile/User/remainingsum')}">转账</a>-->
         <!--</div>-->
     </div>
-    <div class="search_box">
+    <!-- <div class="search_box"> -->
             <!--<div class="search_imgbox">-->
                 <!--<img src="__STATIC__/images/touxiang.png" class="touxiang">-->
             <!--</div>-->
@@ -107,7 +107,7 @@ body{
             <!--<div class="transfer">-->
                 <!--<a href="{:U('Mobile/User/remainingsum')}">转账</a>-->
             <!--</div>-->
-    </div>
+    <!-- </div> -->
 </div>
 <script>
     $("input").keyup(function(){
@@ -139,7 +139,7 @@ body{
                             '                <span>ID：'+items.user_id+'</span>\n' +
                             '            </div>\n' +
                             '            <div class="transfer">\n' +
-                            '                <a href="{:U(\'Mobile/User/remainingsum\')}?user_id="+items.user_id+"">转账</a>\n' +
+                            '                <a href="{:U(\'Mobile/User/remainingsum\')}?user_id='+items.user_id+'">转账</a>' +
                             '            </div>'
                     });
                     $('.search_box').html(html)//显示数据，同时覆盖上一次搜索的数据

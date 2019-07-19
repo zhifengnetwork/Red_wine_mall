@@ -966,7 +966,55 @@ class User extends MobileBase
 
     // 余额转账详情
     public function remainingsum(){
+        $user_id=input('user_id');
+        $endUser=Db::name('users')->field('user_id,head_pic,mobile,nickname')->where('user_id','=',$user_id)->find();
+        $this->assign([
+            'endUser'=>$endUser,
+        ]);
         return $this->fetch();
+    }
+
+    //处理转账
+    public function exchange_money_handle()
+    {
+        $time=time();
+        $data=input('post.');
+        if(!$data['end_user_id']){
+            $this->ajaxReturn(['status' => -1, 'msg' => '转入人不能为空']);
+        }
+        if(!$data['exchange_money']){
+            $this->ajaxReturn(['status' => -1, 'msg' => '转出金额不能为空']);
+        }
+        $data1['user_id']=$this->user_id;
+        $data1['out_user_id']=$this->user_id;
+        $data1['in_user_id']=$data['end_user_id'];
+        $data1['exchange_money']=$data['exchange_money'];
+        $data1['description']=$data['description'];
+        $data1['create_time']=$time;
+        $data1['type']=2;
+
+        $data2['user_id']=$data['end_user_id'];
+        $data2['out_user_id']=$this->user_id;
+        $data2['in_user_id']=$data['end_user_id'];
+        $data2['exchange_money']=$data['exchange_money'];
+        $data2['description']=$data['description'];
+        $data2['create_time']=$time;
+        $data2['type']=1;
+
+        Db::startTrans();
+        try{
+            $res1 = Db::name('tp_exchange_money')->insert($data1);
+            $res2 = Db::name('tp_exchange_money')->insert($data2);
+            Db::commit();    
+            if($res1&&$res2){
+                $this->ajaxReturn(['status' => 1, 'msg' => '转账成功']);
+            }
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->ajaxReturn(['status' =>-1, 'msg' => '操作失败']);
+        }
+    
+
     }
 
     /** 模糊查询

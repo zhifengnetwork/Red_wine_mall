@@ -148,63 +148,35 @@ body{
     <span>214.52</span>
 </div>
 
+<form id="frm" action="javascript:return false;">
 <!-- 转给人信息 -->
 <div class="remainingsum_c">
     <div class="remainingsum_cl"><b>转给</b></div>
     <div class="remainingsum_cl_imgbox">
-        <img src="__STATIC__/images/touxiang.png">
+        <img style="width:200px;" src="{$endUser['head_pic']}">
     </div>
     <div class="remainingsum_cr">
-        <p>昵称：倾城小美人</p>
-        <span>DI:81345</span>
+        <p>昵称：{$endUser['nickname']}</p>
+        <span>DI:{$endUser['user_id']}</span>
     </div>
 </div>
-
+<input type="text" value="{$endUser['user_id']}" name="end_user_id">
 <!-- 金额 -->
 <div class="money">
-    <span>金额</span><input type="text" placeholder="10000">
+    <span>金额</span><input type="number" name="exchange_money" placeholder="请输入金额" >
 </div>
 
 <!-- 备注 -->
 <div class="money">
-    <span>备注</span><input type="text">
+    <span>备注</span><input name="description" type="text">
 </div>
 
 <!-- 确认转账 -->
-<div class="zhuanzhang">
-    确认转账
+<div class="zhuanzhang" id="go_exchange">
+     确认转账
 </div>
 
-<div class="hiddenbox">
-    <div style="position: absolute;top: 0%;left: 0;width: 100%;height: 100%;background: #000;opacity: 0.8;z-index: 999;"></div>
-    <!-- <div>
-        <img src="__STATIC__/images/zhezhao.png" style="width: 90%;position: fixed;z-index: 1000;transform: translate(-50%);left: 50%;top: 300px;" />
-    </div> -->
-    <div class="showbox">
-        <div class="show_top">
-            <div class="show_topl">
-                <img src="__STATIC__/images/xiaotouxiang.png">
-            </div>
-            <div class="show_topr">向倾城小美人转账</div>
-            <div class="guanbi">X</div>
-        </div>
-        <div style="font-size: .64rem;line-height: 1.5rem;text-align: center;margin-top: .4rem">余额</div>
-        <div style="font-size: .64rem;line-height: 1.5rem;text-align: center;">10000.00</div>
-        <div class="pwd-box">
-            <input type="tel" maxlength="6" class="pwd-input" id="pwd-input">
-            <div class="fake-box">
-                <input type="password" readonly="">
-                <input type="password" readonly="">
-                <input type="password" readonly="">
-                <input type="password" readonly="">
-                <input type="password" readonly="">
-                <input type="password" readonly="">
-            </div>
-        </div>
-
-    </div>
-</div>
-
+</form>
 
 <script>
 var $input = $(".fake-box input");
@@ -231,5 +203,23 @@ $(".zhuanzhang").click(function(){
     });
  $(".guanbi").click(function(){
     $(".hiddenbox").hide();
- })
+ });
+
+
+$("#go_exchange").on('click',function(){
+    var fdata=$("#frm").serialize();
+    $.ajax({
+        url:"{:url('mobile/user/exchange_money_handle')}",
+        data:fdata,
+        method:"post",
+        success:function(res){
+            console.log(res);
+        }
+    })
+});
+
+
+
+
+
 </script>
