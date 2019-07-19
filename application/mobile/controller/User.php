@@ -223,7 +223,7 @@ class User extends MobileBase
                         $bonus=$av['agent_per']*$one_agent_level['retio']/100;
                         $addDistribut=$av['distribut_money']+$bonus;
                         if($av['leader_level']==4){
-                            $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$addDistribut,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>5]);
+                            $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$addDistribut,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>6]);
                         }else{
                             $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
                             $addDistribut=$av['distribut_money']+$bonus;

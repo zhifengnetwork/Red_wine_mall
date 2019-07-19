@@ -135,6 +135,9 @@ class WechatLogic
                 'oauth' => 'weixin',
                 'oauth_child' => 'mp',
                 ]);
+                
+                $event = \think\Loader::controller('User', 'event');
+                $event->recommend($userData['first_leader']); 
             } 
         }
 
