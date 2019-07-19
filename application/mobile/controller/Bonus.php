@@ -44,7 +44,7 @@ class Bonus extends MobileBase {
         // $this->gold_card_price           = $data['gold_card_price'];//金卡会员价格
         // $this->brick_card_price          = $data['brick_card_price'];//钻石会员价格
         // $this->fine_brick_card_price     = $data['fine_brick_card_price'];//精钻会员价格
-        $this->nums        = $data['nums'];//商品数量
+        $this->nums                      = $data['nums'];//商品数量
         return true;
     } 
 

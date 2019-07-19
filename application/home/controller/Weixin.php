@@ -36,8 +36,7 @@ class Weixin
             exit($_GET["echostr"]);
         }
         $logic = new WechatLogic($config);
-		$logic->handleMessage();
-		
+        $logic->handleMessage();
     }
 
 	/**
@@ -77,7 +76,6 @@ class Weixin
 						return false;
 					}
 					Db::execute("update `tp_users` set `first_leader` = '".$share_user."' where `user_id` = '".$user['user_id']."'");
-
 					if($share_user_openid){
 						$wx_content = "会员ID: ".$user['user_id']." 成为了你的下级!";
 						$wechat = new \app\common\logic\wechat\WechatUtil();

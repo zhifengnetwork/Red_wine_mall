@@ -54,7 +54,7 @@ class UserInvite extends Model{
         $info = Db::name('users')->field('first_leader')->where('user_id',$user_id)->find();
 
         if($info && $info['first_leader']){ 
-            $this->recommend($info['first_leader'],$user_id);
+          
             $this->invite($info['first_leader'],$user_id);
            
         }
@@ -185,6 +185,7 @@ class UserInvite extends Model{
                 $money = $rule[$num] + 0.1;
             }
             $desc = '邀请第'.$num.'个新会员奖励'.$money;
+            $this->recommend($user_id,$adduser_id);
         }
         // write_log('奖励金额'. $money );
         if($money){
