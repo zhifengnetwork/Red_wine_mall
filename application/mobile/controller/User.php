@@ -100,7 +100,7 @@ class User extends MobileBase
         public function recommend($share_user)
         {
             //获取上级id
-            // $user_id=input('user_id');
+           
           //   $recommend_id=19945;
             $recommend_id=$share_user;
     
@@ -135,8 +135,8 @@ class User extends MobileBase
             }
     
     
-            if($firstUpdate){
-                // return $this->success("直属上级推荐成功");
+            // if($firstUpdate){
+                                  // return $this->success("直属上级推荐成功");
                 $recommendInfo=Db::name('users')->where('user_id',$recommend_id)->find();
                     if($recommendInfo['agent_level']){
                         //如果上级是代理身份,就给上级奖励   //并减少对应的推广额度
@@ -177,7 +177,7 @@ class User extends MobileBase
                            
                     }                
     
-            }
+            // }
         }
   
         //会员升级条件     //符合推广人数   就升级 如：经理
