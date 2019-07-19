@@ -991,7 +991,7 @@ class User extends MobileBase
         $data1['user_id']=$this->user_id;
         $data1['out_user_id']=$this->user_id;
         $data1['in_user_id']=$data['end_user_id'];
-        $data1['exchange_money']=-$data['exchange_money'];
+        $data1['exchange_money']='-'.$data['exchange_money'];
         $data1['description']=$data['description'];
         $data1['create_time']=$time;
         $data1['type']=2;
