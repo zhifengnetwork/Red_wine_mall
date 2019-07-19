@@ -111,7 +111,7 @@ class User extends MobileBase
                 $this->error("已经有上级不能在被推荐");
             }
             $time=time();
-            $firstUpdate=Db::name('users')->update(['user_id'=>$user_id,'first_leader'=>$recommend_id]);
+            // $firstUpdate=Db::name('users')->update(['user_id'=>$user_id,'first_leader'=>$recommend_id]);
     
             //推荐成功 统计上级的直属下级数量 更新上级的身份  经理还是总监
             $upPopCount=Db::name('users')->where('first_leader','=',$recommend_id)->count(); 
