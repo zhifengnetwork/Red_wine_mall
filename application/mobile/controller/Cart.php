@@ -280,9 +280,9 @@ class Cart extends MobileBase {
             $this->ajaxReturn(['status' => -1, 'msg' => '用户是代理身份不能重复购买']);
 
         }
-        if($order['agent_good']==1){ 
+        if($order['agent_good']){  //是代理
             $time=time();
-            Db::name('users')->update(['user_id'=>$order['user_id'],'agent_level'=>1,'default_period'=>1,'add_agent_time'=>$time]);
+            Db::name('users')->update(['user_id'=>$order['user_id'],'agent_level'=>$order['agent_good'],'default_period'=>1,'add_agent_time'=>$time]);
             $pop_person_num=Db::name('config')->where('name','=','pop_person_num')->value('value');
             $period_count=ceil($pop_person_num/12);
             static $current_num='';
@@ -302,18 +302,21 @@ class Cart extends MobileBase {
            }
 
             //升级奖励上级和上上级
-            $this->pay_leader($order['user_id']);
+            $this->pay_leader($order['user_id'],$order['agent_good']);
         }
     }
 
     //晋升为县代奖励上级
-public function pay_leader($userid)
+public function pay_leader($userid,$agent_level)
 {
     $userModel=Db::name('users');
     $accountLogModel=Db::name('account_log');
     $achievement=Db::name('order')->where('user_id','=',$userid)->sum('total_amount');
-    $county_bonus=Db::name('config')->where('name','=','county_bonus')->value('value');
-    $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus')->value('value');
+
+    //判断当前用户的生份    切换对应的代理级别  百分比
+    $county_bonus=$this->first_agent_persent($agent_level);   //下级升级县级奖励百分比   市级一样
+    $sec_county_bonus=$this->sec_agent_persent($agent_level);  //二级下级升级县级奖励百分比
+
     $user=$userModel->where('user_id','=',$userid)->find();
     $firstLeader=Db::name('users')->where('user_id','=',$user['first_leader'])->find();
     $time=time();
@@ -385,6 +388,33 @@ public function pay_leader($userid)
          }
      }
     }
+}
+
+
+public function first_agent_persent($agent_level){
+    if($agent_level==1){
+        $county_bonus=Db::name('config')->where('name','=','county_bonus')->value('value');   
+    }
+    if($agent_level==2)}{
+        $county_bonus=Db::name('config')->where('name','=','county_bonus_city')->value('value');  
+    }
+    if($agent_level==3)}{
+        $county_bonus=Db::name('config')->where('name','=','county_bonus_province')->value('value');   
+    }
+    return $county_bonus;
+}
+
+public function sec_agent_persent($agent_level){
+    if($agent_level==1){
+        $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus')->value('value');
+    }
+    if($agent_level==2)}{
+        $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus_city')->value('value');
+    }
+    if($agent_level==3)}{
+        $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus_province')->value('value');
+    }
+    return $sec_county_bonus;
 }
 
 

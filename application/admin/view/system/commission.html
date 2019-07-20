@@ -60,6 +60,42 @@
             </dl>
             <dl class="row">
                 <dt class="tit">
+                    <label>下级晋升为市级代理奖励业绩比例</label>
+                </dt>
+                <dd class="opt">
+                    <input name="county_bonus_city" value="{$county_bonus_city.value}" class="input-txt" type="text">
+                    <p class="notic">上级返佣占本身业绩的比例  单位 %</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>二级用户晋升为市级代理奖励业绩比例</label>
+                </dt>
+                <dd class="opt">
+                    <input name="sec_county_bonus_city" id="distribut_first_rate" value="{$sec_county_city.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">二级返佣占本身业绩的比例  单位：%</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>下级晋升为省级代理奖励业绩比例</label>
+                </dt>
+                <dd class="opt">
+                    <input name="county_bonus_province" value="{$county_bonus_province.value}" class="input-txt" type="text">
+                    <p class="notic">上级返佣占本身业绩的比例  单位 %</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>二级用户晋升为省级代理奖励业绩比例</label>
+                </dt>
+                <dd class="opt">
+                    <input name="sec_county_bonus_province" id="distribut_first_rate" value="{$sec_county_province.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">二级返佣占本身业绩的比例  单位：%</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
                     <label>奖金币互转比例</label>
                 </dt>
                 <dd class="opt">
