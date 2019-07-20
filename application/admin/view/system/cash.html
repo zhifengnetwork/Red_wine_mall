@@ -42,35 +42,35 @@
                     <p class="notic">是否开启提现功能</p>
                 </dd>
             </dl>
-            <dl class="row">
-                <dt class="tit">
-                    <label>购买商品</label>
-                </dt>
-                <dd class="opt">
-                    <input type="hidden" id="goods_id" name="goods_id" value="{$config.goods_id|intval}">
-                    <input type="text" id="goods_name" readonly name="goods_name" value="{$goods.goods_name}" class="input-txt">
-                    <div style="overflow: hidden" id="selected_group_goods">
-                        <if condition="$goods">
-                            <div style="float: left;margin-right: 10px" class="selected-group-goods">
-                                <div class="goods-thumb"><img style="width: 162px;height: 162px"  <notempty name="info['specGoodsPrice']">src="{$goods['original_img']}"<else/>src="{$config['goods_id']|goods_thum_images=162,162}"</notempty>/></div>
-                                <div class="goods-name">
-                                    <a target="_blank" href="{:U('Home/Goods/goodsInfo',array('id'=>$info['goods_id']))}">{$info.goods_name}</a>
-                                </div>
-                                <div class="goods-price">
-                                        商城价：￥{$goods['shop_price']}库存:{$goods['store_count']}
-                                </div>
-                            </div>
-                        </if>
-                    </div>
-                    <span class="err" id="err_goods_name"></span>
-                    <p class="notic">
-                        <a onclick="selectGoods()" class="ncap-btn" id="select_goods_button"><i class="fa fa-search"></i>选择商品</a>
-                        <a onclick="dleGoods()" style="margin-left:20px;" class="ncap-btn" id="select_goods_button">清除商品</a>
-                    </p>
-                    <p class="notic">注：设置商品后，用户必须购买或推广购买此商品后才能解锁提现，商品更改后已解锁的用户不作改变</p>
-                </dd>
-            </dl>
-            <dl class="row">
+            <!--<dl class="row">-->
+                <!--<dt class="tit">-->
+                    <!--<label>购买商品</label>-->
+                <!--</dt>-->
+                <!--<dd class="opt">-->
+                    <!--<input type="hidden" id="goods_id" name="goods_id" value="{$config.goods_id|intval}">-->
+                    <!--<input type="text" id="goods_name" readonly name="goods_name" value="{$goods.goods_name}" class="input-txt">-->
+                    <!--<div style="overflow: hidden" id="selected_group_goods">-->
+                        <!--<if condition="$goods">-->
+                            <!--<div style="float: left;margin-right: 10px" class="selected-group-goods">-->
+                                <!--<div class="goods-thumb"><img style="width: 162px;height: 162px"  <notempty name="info['specGoodsPrice']">src="{$goods['original_img']}"<else/>src="{$config['goods_id']|goods_thum_images=162,162}"</notempty>/></div>-->
+                                <!--<div class="goods-name">-->
+                                    <!--<a target="_blank" href="{:U('Home/Goods/goodsInfo',array('id'=>$info['goods_id']))}">{$info.goods_name}</a>-->
+                                <!--</div>-->
+                                <!--<div class="goods-price">-->
+                                        <!--商城价：￥{$goods['shop_price']}库存:{$goods['store_count']}-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</if>-->
+                    <!--</div>-->
+                    <!--<span class="err" id="err_goods_name"></span>-->
+                    <!--<p class="notic">-->
+                        <!--<a onclick="selectGoods()" class="ncap-btn" id="select_goods_button"><i class="fa fa-search"></i>选择商品</a>-->
+                        <!--<a onclick="dleGoods()" style="margin-left:20px;" class="ncap-btn" id="select_goods_button">清除商品</a>-->
+                    <!--</p>-->
+                    <!--<p class="notic">注：设置商品后，用户必须购买或推广购买此商品后才能解锁提现，商品更改后已解锁的用户不作改变</p>-->
+                <!--</dd>-->
+            <!--</dl>-->
+            <!--<dl class="row">-->
                 <dt class="tit">
                     <label for="reg_integral">手续费比例</label>
                 </dt>

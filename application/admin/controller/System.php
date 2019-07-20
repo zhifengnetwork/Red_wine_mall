@@ -255,10 +255,10 @@ class System extends Base
     public function cash()
     {
         $config = tpCache('cash');
-        if($config['goods_id'] > 0){
-            $goods_info = Db::name('goods')->field('`goods_name`,`shop_price`,`store_count`,`original_img`')->where('goods_id',$config['goods_id'])->find();
-            $this->assign('goods',$goods_info);
-        }
+//        if($config['goods_id'] > 0){
+//            $goods_info = Db::name('goods')->field('`goods_name`,`shop_price`,`store_count`,`original_img`')->where('goods_id',$config['goods_id'])->find();
+//            $this->assign('goods',$goods_info);
+//        }
         $this->assign('config',$config);//当前配置项
         return $this->fetch();
     }
