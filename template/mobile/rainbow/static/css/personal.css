@@ -94,9 +94,7 @@
 	height: 2.8rem;
 	position: relative;
 	background: #fff;
-	margin: 40px;
-	padding: 0 0.4266666666666667rem;
-	border-radius: 12px;
+	margin: .8rem;
 }
 .user_down_bg {
 	background-color: #000000;
@@ -113,18 +111,19 @@
 	position: absolute;
 	left: 0;
 	top: 0;
-	width: 100%;
+	/* width: 100%; */
 	height: 100%;
 	overflow: hidden;
 	z-index: 9;
 }
 .z_user_down ul li{
 	text-align: center;
-	width: 100%;
+	/* width: 100%; */
 	height: 100%;
 	color: #ffffff;
 	display: flex;
 	justify-content: space-around;
+	border-radius: 20%;
 }
 .z_user_down ul li a{
 	width: 100%;
