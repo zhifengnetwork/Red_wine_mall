@@ -124,6 +124,29 @@ body{
 .list_item li p{
     margin-bottom: 0.2rem;
 }
+
+
+
+.box4{
+    height: 4rem;
+    width: 100%;
+    padding-top: 1rem;
+    color:gray;
+}
+.box4_l{
+    font-size: .56rem;
+    line-height: 1rem;
+    float: left;
+}
+.box4_r{
+    float: right;
+    width: 4rem;
+    text-align: center;
+    border-left: 1px solid gray;
+    font-size: .64rem;
+    line-height: 2rem;
+}
+
 </style>
 <!-- <div class="allaccounted">
     <div class="maleri30"> -->
@@ -173,18 +196,30 @@ body{
         <div class="box1" style="display:block;">
             <!-- 默认选中哪个，就让哪个block -->
           
+            <div class="box4">
+                <div class="box4_l">
+                    <div class="box4_lt">金额：+666666</div>
+                    <div class="box4_lf">2019-07-20 16：10</div>
+                </div>
+                <div class="box4_r">成功</div>
+            </div>
+
             <div id="tab2" class="wrap wrap2">
                 <!-- 第二层导航 -->
-                <ul id="tab22">
-                    <li class="active" onclick="all_record('income',0)">全部</li> <!-- 默认选中哪个，就让哪个active -->
-                    <li onclick="all_record('income',1)">级差奖</li>
+                <!-- <ul id="tab22"> -->
+                    <!-- 默认选中哪个，就让哪个active -->
+                    <!-- <li class="active" onclick="all_record('income',0)">全部</li>  -->
+                    <!-- <li onclick="all_record('income',1)">级差奖</li>
                     <li onclick="all_record('income',2)">直推奖</li>
                     <li onclick="all_record('income',3)">同级奖励</li>
                     <li onclick="all_record('income',4)">分红</li>
                     <li onclick="all_record('income',5)">自购优惠</li>
                     <li onclick="all_record('income',6)">全球分红</li>
                     <li onclick="all_record('income',7)">VIP奖励</li>
-                </ul>
+                </ul> -->
+
+
+
                 <div class="box_box"> 
                     <div class="box2" style="display:block;">
                       
