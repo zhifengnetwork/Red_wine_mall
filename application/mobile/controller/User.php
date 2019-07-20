@@ -967,9 +967,12 @@ class User extends MobileBase
     // 余额转账详情
     public function remainingsum(){
         $user_id=input('user_id');
+        $my_user_id=$this->user_id;
         $endUser=Db::name('users')->field('user_id,head_pic,mobile,nickname')->where('user_id','=',$user_id)->find();
+        $myInfo=Db::name('users')->where("user_id",'=',$my_user_id)->field('user_money')->find();
         $this->assign([
             'endUser'=>$endUser,
+            'myInfo'=>$myInfo,
         ]);
         return $this->fetch();
     }
@@ -988,7 +991,7 @@ class User extends MobileBase
         $data1['user_id']=$this->user_id;
         $data1['out_user_id']=$this->user_id;
         $data1['in_user_id']=$data['end_user_id'];
-        $data1['exchange_money']=$data['exchange_money'];
+        $data1['exchange_money']='-'.$data['exchange_money'];
         $data1['description']=$data['description'];
         $data1['create_time']=$time;
         $data1['type']=2;
@@ -1003,8 +1006,16 @@ class User extends MobileBase
 
         Db::startTrans();
         try{
-            $res1 = Db::name('tp_exchange_money')->insert($data1);
-            $res2 = Db::name('tp_exchange_money')->insert($data2);
+            $myUser=Db::name('users')->where('user_id','=',$data1['user_id'])->find();
+            $minusMoney=$myUser['user_money']-$data['exchange_money'];
+            Db::name('users')->where('user_id','=',$data1['user_id'])->update(['user_money'=>$minusMoney]);
+
+            $otherUser=Db::name('users')->where('user_id','=',$data['end_user_id'])->find();
+            $addMoney=$otherUser['user_money']+$data['exchange_money'];
+            Db::name('users')->where('user_id','=',$data['end_user_id'])->update(['user_money'=>$addMoney]);
+
+            $res1 = Db::name('exchange_money')->insert($data1);
+            $res2 = Db::name('exchange_money')->insert($data2);
             Db::commit();    
             if($res1&&$res2){
                 $this->ajaxReturn(['status' => 1, 'msg' => '转账成功']);

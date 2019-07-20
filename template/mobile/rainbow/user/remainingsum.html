@@ -145,7 +145,7 @@ body{
 
 <div class="remainingsum_top">
     <p class="remainingsum_p">我的余额</p>
-    <span>214.52</span>
+    <span>{$myInfo['user_money']}</span>
 </div>
 
 <form id="frm" action="javascript:return false;">
@@ -160,7 +160,7 @@ body{
         <span>DI:{$endUser['user_id']}</span>
     </div>
 </div>
-<input type="text" value="{$endUser['user_id']}" name="end_user_id">
+<input type="hidden" value="{$endUser['user_id']}" name="end_user_id">
 <!-- 金额 -->
 <div class="money">
     <span>金额</span><input type="number" name="exchange_money" placeholder="请输入金额" >
