@@ -278,22 +278,13 @@ class System extends Base
         $pop_person=$confModel->where('name','=','pop_person_num')->find();
         $county_bonus= $confModel->where('name','=','county_bonus')->find();
         $sec_county= $confModel->where('name','=','sec_county_bonus')->find();
-
         $county_bonus_city= $confModel->where('name','=','county_bonus_city')->find();
         $sec_county_city= $confModel->where('name','=','sec_county_bonus_city')->find();
-
         $county_bonus_province= $confModel->where('name','=','county_bonus_province')->find();
         $sec_county_province= $confModel->where('name','=','sec_county_bonus_province')->find();
-
-
-
-
         $bonus_cash= $confModel->where('name','=','bonus_cash_exchange')->find();
         $pop_commission= $confModel->where('name','=','pop_commission')->find();
         $pop_money= $confModel->where('name','=','pop_money')->find();
-
-
-
         $this->assign([
             'pop_person'=>$pop_person,
             'county_bonus'=>$county_bonus,
@@ -385,10 +376,6 @@ class System extends Base
             }else{
                 $confModel->insert(['name'=>'pop_person_num','value'=>$data['pop_person_num'],'inc_type'=>'commison_conf']);
             }
-
-
-
-
             $count_bonus= $confModel->where('name','=','county_bonus')->find();
             if($count_bonus){
                 $confModel->update(['id'=>$count_bonus['id'],'name'=>'county_bonus','value'=>$data['county_bonus'],'inc_type'=>'commison_conf']);
@@ -459,18 +446,12 @@ class System extends Base
       //佣金限制
       public function bonus_require()
       {
-          // $bonusList=Db::name('bonus_require')->select();
-          //  $this->assign([
-          //     'bonusList'=>$bonusList
-          // ]);
-  
+ 
           $five_week=Db::name('config')->where('name','=','five_week_require')->find();
           $six_week=Db::name('config')->where('name','=','six_week_require')->find();
           $district_bonus=Db::name('config')->where('name','=','district_bonus')->find();
           $city_bonus=Db::name('config')->where('name','=','city_bonus')->find();
           $province_bonus=Db::name('config')->where('name','=','province_bonus')->find();
-
-
               $this->assign([
                   'five_week'=>$five_week,
                   'six_week'=>$six_week,
