@@ -1544,6 +1544,32 @@ function get_goods_category_tree(){
 }
 
 /**
+ * 获取商品一级分类和分类下的商品
+ * @return type
+ */
+function get_goods_category_product(){
+    $tree = $arr = $result = array();
+    $cat_list = M('goods_category')->where(['is_show' => 1])->order('sort_order')->select();//所有分类
+    if($cat_list){
+        foreach ($cat_list as $val){
+            if($val['level'] == 1){
+                $tree[] = $val;
+            }
+        }
+        foreach ($tree as $val){
+            // $val['tmenu'] = empty($arr[$val['id']]) ? array() : $arr[$val['id']];
+            $val['tmenu'] =Db::name('goods')->where('cat_id','=',$val['id'])->select();
+            $result[$val['id']] = $val;
+        }
+    }
+    return $result;
+}
+
+
+
+
+
+/**
  * 写入静态页面缓存
  */
 function write_html_cache($html){

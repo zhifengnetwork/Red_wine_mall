@@ -28,6 +28,7 @@ class MobileBase extends Controller {
     public $tpshop_config = array();
     public $user_id;
     public $user;
+    public $get_goods_category_product=array();
 
 
     /*
@@ -275,6 +276,12 @@ class MobileBase extends Controller {
        $goods_category_tree = get_goods_category_tree();
        $this->cateTrre = $goods_category_tree;
        $this->assign('goods_category_tree', $goods_category_tree);
+
+       $get_goods_category_product = get_goods_category_product();
+    //    print_r($get_goods_category_product);die;
+       $this->get_goods_category_product = $get_goods_category_product;
+       $this->assign('get_goods_category_product', $get_goods_category_product);
+
        $brand_list = M('brand')->cache(true,TPSHOP_CACHE_TIME)->field('id,cat_id,logo,is_hot')->where("cat_id>0")->select();
        $this->assign('brand_list', $brand_list);
        $this->assign('tpshop_config', $this->tpshop_config);
