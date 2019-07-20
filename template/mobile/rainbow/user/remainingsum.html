@@ -2,6 +2,9 @@
 <include file="public/header_nav" title="余额转账" href="javascript:history.back(-1)"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
+
+
+
 <style>
 body{
     background: #f2f2f2;
@@ -178,6 +181,7 @@ body{
 
 </form>
 
+
 <script>
 var $input = $(".fake-box input");
 			$("#pwd-input").on("input", function() {
@@ -213,7 +217,15 @@ $("#go_exchange").on('click',function(){
         data:fdata,
         method:"post",
         success:function(res){
-            console.log(res);
+            var res=JSON.parse(res);
+            if(res.status!=1){
+                alert(res.msg);
+            }else{
+                alert(res.msg);
+                setTimeout(function(){
+                   location.href="{:url('Mobile/User/account')}";
+                },1000);
+            }
         }
     })
 });
