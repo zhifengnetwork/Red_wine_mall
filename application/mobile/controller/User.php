@@ -955,12 +955,45 @@ class User extends MobileBase
 
     // 转账记录
     public function transfer(){
+        $user_id=input('user_id');
+        $my_user_id=$this->user_id;
+        $count = M('exchange_money')->where($my_user_id)->count();
+
+        $page = new Page($count, 15);
+
+
+
+//        $list = M('exchange_money')->where($my_user_id)->order("id desc")->limit("{$page->firstRow},{$page->listRows}")->select();
+
+        $list = Db::name('exchange_money')
+            ->field('a.*,b.nickname')
+            ->alias('a')
+            ->join('users b', 'a.user_id = b.user_id')
+            ->where($my_user_id)->order("id desc")->limit("{$page->firstRow},{$page->listRows}")
+            ->select();
+
+        $this->assign('page', $page->show());// 赋值分页输出
+        $this->assign('list', $list); // 下线
+//        print_r($list);die;
+//        $tradata['create_time'] = date_format($tradata['create_time'],"Y/m/d H:i:s");
+//        print_r($tradata[0]);die;
+//        $this->assign([
+//            'endUser'=>$tradata,
+//        ]);
         return $this->fetch();
     }
 
+
+
+
+//        if (I('is_ajax')) {
+//            return $this->fetch('ajax_withdrawals_list');
+//        }
+//        return $this->fetch();
+
     // 余额转账
     public function balance(){
-
+        
         return $this->fetch();
     }
 
@@ -1013,11 +1046,10 @@ class User extends MobileBase
             $otherUser=Db::name('users')->where('user_id','=',$data['end_user_id'])->find();
             $addMoney=$otherUser['user_money']+$data['exchange_money'];
             Db::name('users')->where('user_id','=',$data['end_user_id'])->update(['user_money'=>$addMoney]);
-
-            $res1 = Db::name('exchange_money')->insert($data1);
-            $res2 = Db::name('exchange_money')->insert($data2);
-            Db::commit();    
-            if($res1&&$res2){
+//                $res1 = Db::name('exchange_money')->insert($data1);
+                $res2 = Db::name('exchange_money')->insert($data2);
+            Db::commit();
+            if($res2){
                 $this->ajaxReturn(['status' => 1, 'msg' => '转账成功']);
             }
         } catch (\Exception $e) {
