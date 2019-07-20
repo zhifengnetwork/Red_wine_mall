@@ -278,7 +278,6 @@ class MobileBase extends Controller {
        $this->assign('goods_category_tree', $goods_category_tree);
 
        $get_goods_category_product = get_goods_category_product();
-    //    print_r($get_goods_category_product);die;
        $this->get_goods_category_product = $get_goods_category_product;
        $this->assign('get_goods_category_product', $get_goods_category_product);
 

@@ -252,6 +252,11 @@ class Cart extends MobileBase {
                 $order = $placeOrder->getOrder();
                 //设置推广用户名额
                 $this->set_pop_person($order['order_sn']);
+
+
+                //购买后增加自己的业绩和团队的业绩
+                $this->add_agent_performance($order['order_sn']);
+
                  Db::commit();
                 $this->ajaxReturn(['status' => 1, 'msg' => '提交订单成功', 'result' => $order['order_sn']]);
             }
@@ -264,6 +269,41 @@ class Cart extends MobileBase {
         }
     }
 
+
+    public function add_agent_performance($order_sn)
+    {
+        // $order_sn = '201907201227041083';
+        //添加自己本身的业绩
+        $order=Db::name('order')
+        ->alias('or')
+        ->join('order_goods og','or.order_id=og.order_id',LEFT)
+        ->join('goods g',"g.goods_id=og.goods_id",LEFT)
+        ->field('g.agent_good,or.total_amount,or.user_id')
+        ->where('or.order_sn','=',$order_sn)->find();
+        // var_dump($order);die;
+
+        $upArr=get_uper_user($order['user_id']);
+        foreach($upArr['recUser'] as $k=>$v){
+                $user_agent=Db::name('agent_performance')->where('user_id','=', $v['user_id'])->find();
+                $time=time(); 
+                $ind_per=$user_agent['ind_per']+$order['total_amount'];
+                $agent_per=$user_agent['agent_per']+$order['total_amount'];
+            if($order['user_id']==$v['user_id']){
+                if($user_agent){    
+                    Db::name('agent_performance')->where('performance_id','=',$user_agent['performance_id'])->update(['user_id'=>$v['user_id'],'ind_per'=>$ind_per,'agent_per'=>$agent_per,'update_time'=>$time]);
+                }else{
+                    Db::name('agent_performance')->insert(['user_id'=>$v['user_id'],'ind_per'=>$ind_per,'agent_per'=>$agent_per,'create_time'=>$time]);
+                }
+            }else{
+                if($user_agent){    
+                    Db::name('agent_performance')->where('performance_id','=',$user_agent['performance_id'])->update(['user_id'=>$v['user_id'],'agent_per'=>$agent_per,'update_time'=>$time]);
+                }else{
+                    Db::name('agent_performance')->insert(['user_id'=>$v['user_id'],'agent_per'=>$agent_per,'create_time'=>$time]);
+                }
+            }
+        }
+    }
+
     public function set_pop_person($order_sn)
     {   
             // $order_sn='201907161126392756';
@@ -273,14 +313,13 @@ class Cart extends MobileBase {
             ->join('goods g',"g.goods_id=og.goods_id",LEFT)
             ->field('g.agent_good,or.user_id')
             ->where('or.order_sn','=',$order_sn)->find();
-        //  var_dump($order);die;
-        //判断购买代理商品的用户本身是不是代理，如果是代理就不能再买
-        $user_agent_info=Db::name('users')->where('user_id','=',$order['user_id'])->field('agent_level')->find();
-        if($user_agent_info['agent_level']){
-            $this->ajaxReturn(['status' => -1, 'msg' => '用户是代理身份不能重复购买']);
-
-        }
+   
         if($order['agent_good']){  //是代理
+            //判断购买代理商品的用户本身是不是代理，如果是代理就不能再买
+             $user_agent_info=Db::name('users')->where('user_id','=',$order['user_id'])->field('agent_level')->find();
+                if($user_agent_info['agent_level']){
+                    $this->ajaxReturn(['status' => -1, 'msg' => '用户是代理身份不能重复购买']);
+             }
             $time=time();
             Db::name('users')->update(['user_id'=>$order['user_id'],'agent_level'=>$order['agent_good'],'default_period'=>1,'add_agent_time'=>$time]);
             $pop_person_num=Db::name('config')->where('name','=','pop_person_num')->value('value');

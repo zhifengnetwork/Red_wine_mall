@@ -897,7 +897,7 @@ class User extends MobileBase
      */
     public function mixi(){
         $user_id = $this->user_id;
-        $account_log = M('account_log')->where(['user_id'=>$user_id,'type'=>2])->select();
+        $account_log = M('account_log')->where(['user_id'=>$user_id,'type'=>['in','2,3,4,5']])->select();
         $this->assign('account_log',$account_log);
         return $this->fetch();
     }
@@ -1021,12 +1021,17 @@ class User extends MobileBase
         if(!$data['exchange_money']){
             $this->ajaxReturn(['status' => -1, 'msg' => '转出金额不能为空']);
         }
+        if(!$data['out_user_in']==$data['in_user_id']){
+            $this->ajaxReturn(['status' => -1, 'msg' => '不能给自己转账']);
+        }
+
         $data1['user_id']=$this->user_id;
         $data1['out_user_id']=$this->user_id;
         $data1['in_user_id']=$data['end_user_id'];
-        $data1['exchange_money']='-'.$data['exchange_money'];
+        $data1['exchange_money']=$data['exchange_money'];
         $data1['description']=$data['description'];
         $data1['create_time']=$time;
+        $data1['detail']="-{$data['exchange_money']}";
         $data1['type']=2;
 
         $data2['user_id']=$data['end_user_id'];
@@ -1035,12 +1040,13 @@ class User extends MobileBase
         $data2['exchange_money']=$data['exchange_money'];
         $data2['description']=$data['description'];
         $data2['create_time']=$time;
+        $data2['detail']="+{$data['exchange_money']}";
         $data2['type']=1;
 
         Db::startTrans();
         try{
             $myUser=Db::name('users')->where('user_id','=',$data1['user_id'])->find();
-            $minusMoney=$myUser['user_money']-$data['exchange_money'];
+            $minusMoney=$myUser['user_money']*1-$data['exchange_money']*1;
             Db::name('users')->where('user_id','=',$data1['user_id'])->update(['user_money'=>$minusMoney]);
 
             $otherUser=Db::name('users')->where('user_id','=',$data['end_user_id'])->find();

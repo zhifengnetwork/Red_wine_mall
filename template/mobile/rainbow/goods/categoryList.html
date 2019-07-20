@@ -55,7 +55,7 @@
 	                        <foreach name="vo.tmenu" item="v2" key="k2">
 	                                <ul class="tp-category">
                                             <li>
-                                                <a href="{:U('Mobile/Goods/goodsList',array('id'=>$v2[goods_id]))}">
+                                                <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v2[goods_id]))}">
                                                     <img src="{$v2['original_img']|default='__STATIC__/images/zy.png'}"/>
                                                     <!-- <img src="{$v3['id']|goods_thum_images=100,100}"/> -->
                                                     <p>{$v2['goods_name']}</p>
