@@ -303,7 +303,7 @@ class System extends Base
             'sec_county_city'=>$sec_county_city,
 
             'county_bonus_province'=>$county_bonus_province,
-            'sec_county_pronvince'=>$sec_county_pronvince,
+            'sec_county_province'=>$sec_county_province,
 
             'bonus_cash'=>$bonus_cash,
             'pop_commission'=>$pop_commission,
@@ -425,7 +425,7 @@ class System extends Base
 
             $sec_county_province= $confModel->where('name','=','sec_county_bonus_province')->find();
             if($sec_county_province){
-                $confModel->update(['id'=>$sec_county_province['id'],'name'=>'sec_county_bonus_province','value'=>$data['sec_county_bonus_city'],'inc_type'=>'commison_conf']);
+                $confModel->update(['id'=>$sec_county_province['id'],'name'=>'sec_county_bonus_province','value'=>$data['sec_county_bonus_province'],'inc_type'=>'commison_conf']);
             }else{
                 $confModel->insert(['name'=>'sec_county_bonus_province','value'=>$data['sec_county_bonus_province'],'inc_type'=>'commison_conf']);
             }
