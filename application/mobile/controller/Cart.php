@@ -395,10 +395,10 @@ public function first_agent_persent($agent_level){
     if($agent_level==1){
         $county_bonus=Db::name('config')->where('name','=','county_bonus')->value('value');   
     }
-    if($agent_level==2)}{
+    if($agent_level==2){
         $county_bonus=Db::name('config')->where('name','=','county_bonus_city')->value('value');  
     }
-    if($agent_level==3)}{
+    if($agent_level==3){
         $county_bonus=Db::name('config')->where('name','=','county_bonus_province')->value('value');   
     }
     return $county_bonus;
@@ -408,10 +408,10 @@ public function sec_agent_persent($agent_level){
     if($agent_level==1){
         $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus')->value('value');
     }
-    if($agent_level==2)}{
+    if($agent_level==2){
         $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus_city')->value('value');
     }
-    if($agent_level==3)}{
+    if($agent_level==3){
         $sec_county_bonus=Db::name('config')->where('name','=','sec_county_bonus_province')->value('value');
     }
     return $sec_county_bonus;
