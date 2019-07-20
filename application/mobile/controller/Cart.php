@@ -252,6 +252,11 @@ class Cart extends MobileBase {
                 $order = $placeOrder->getOrder();
                 //设置推广用户名额
                 $this->set_pop_person($order['order_sn']);
+
+
+                //购买后增加自己的业绩和团队的业绩
+                $this->add_agent_performance($order['order_sn']);
+
                  Db::commit();
                 $this->ajaxReturn(['status' => 1, 'msg' => '提交订单成功', 'result' => $order['order_sn']]);
             }
@@ -261,6 +266,41 @@ class Cart extends MobileBase {
             $error = $t->getErrorArr();
             $this->ajaxReturn($error);
             Db::rollback();
+        }
+    }
+
+
+    public function add_agent_performance($order_sn)
+    {
+        // $order_sn = '201907201227041083';
+        //添加自己本身的业绩
+        $order=Db::name('order')
+        ->alias('or')
+        ->join('order_goods og','or.order_id=og.order_id',LEFT)
+        ->join('goods g',"g.goods_id=og.goods_id",LEFT)
+        ->field('g.agent_good,or.total_amount,or.user_id')
+        ->where('or.order_sn','=',$order_sn)->find();
+        // var_dump($order);die;
+
+        $upArr=get_uper_user($order['user_id']);
+        foreach($upArr['recUser'] as $k=>$v){
+                $user_agent=Db::name('agent_performance')->where('user_id','=', $v['user_id'])->find();
+                $time=time(); 
+                $ind_per=$user_agent['ind_per']+$order['total_amount'];
+                $agent_per=$user_agent['agent_per']+$order['total_amount'];
+            if($order['user_id']==$v['user_id']){
+                if($user_agent){    
+                    Db::name('agent_performance')->where('performance_id','=',$user_agent['performance_id'])->update(['user_id'=>$v['user_id'],'ind_per'=>$ind_per,'agent_per'=>$agent_per,'update_time'=>$time]);
+                }else{
+                    Db::name('agent_performance')->insert(['user_id'=>$v['user_id'],'ind_per'=>$ind_per,'agent_per'=>$agent_per,'create_time'=>$time]);
+                }
+            }else{
+                if($user_agent){    
+                    Db::name('agent_performance')->where('performance_id','=',$user_agent['performance_id'])->update(['user_id'=>$v['user_id'],'agent_per'=>$agent_per,'update_time'=>$time]);
+                }else{
+                    Db::name('agent_performance')->insert(['user_id'=>$v['user_id'],'agent_per'=>$agent_per,'create_time'=>$time]);
+                }
+            }
         }
     }
 
