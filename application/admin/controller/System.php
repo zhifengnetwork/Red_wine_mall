@@ -264,7 +264,6 @@ class System extends Base
     }
     public function distribut()
     {
-     
         $config = tpCache('distribut');
         $this->assign('config',$config);//当前配置项
         return $this->fetch();
