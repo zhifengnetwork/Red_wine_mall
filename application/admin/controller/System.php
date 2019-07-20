@@ -278,6 +278,10 @@ class System extends Base
         $pop_person=$confModel->where('name','=','pop_person_num')->find();
         $county_bonus= $confModel->where('name','=','county_bonus')->find();
         $sec_county= $confModel->where('name','=','sec_county_bonus')->find();
+        $county_bonus_city= $confModel->where('name','=','county_bonus_city')->find();
+        $sec_county_city= $confModel->where('name','=','sec_county_bonus_city')->find();
+        $county_bonus_province= $confModel->where('name','=','county_bonus_province')->find();
+        $sec_county_province= $confModel->where('name','=','sec_county_bonus_province')->find();
         $bonus_cash= $confModel->where('name','=','bonus_cash_exchange')->find();
         $pop_commission= $confModel->where('name','=','pop_commission')->find();
         $pop_money= $confModel->where('name','=','pop_money')->find();
@@ -285,6 +289,13 @@ class System extends Base
             'pop_person'=>$pop_person,
             'county_bonus'=>$county_bonus,
             'sec_county'=>$sec_county,
+
+            'county_bonus_city'=>$county_bonus_city,
+            'sec_county_city'=>$sec_county_city,
+
+            'county_bonus_province'=>$county_bonus_province,
+            'sec_county_province'=>$sec_county_province,
+
             'bonus_cash'=>$bonus_cash,
             'pop_commission'=>$pop_commission,
             'pop_money'=>$pop_money
@@ -365,7 +376,6 @@ class System extends Base
             }else{
                 $confModel->insert(['name'=>'pop_person_num','value'=>$data['pop_person_num'],'inc_type'=>'commison_conf']);
             }
-
             $count_bonus= $confModel->where('name','=','county_bonus')->find();
             if($count_bonus){
                 $confModel->update(['id'=>$count_bonus['id'],'name'=>'county_bonus','value'=>$data['county_bonus'],'inc_type'=>'commison_conf']);
@@ -379,6 +389,34 @@ class System extends Base
             }else{
                 $confModel->insert(['name'=>'sec_county_bonus','value'=>$data['sec_county_bonus'],'inc_type'=>'commison_conf']);
             }
+            $count_bonus_city= $confModel->where('name','=','county_bonus_city')->find();
+            if($count_bonus_city){
+                $confModel->update(['id'=>$count_bonus_city['id'],'name'=>'county_bonus_city','value'=>$data['county_bonus_city'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'county_bonus_city','value'=>$data['county_bonus_city'],'inc_type'=>'commison_conf']);
+            }
+
+            $sec_county_city= $confModel->where('name','=','sec_county_bonus_city')->find();
+            if($sec_county_city){
+                $confModel->update(['id'=>$sec_county_city['id'],'name'=>'sec_county_bonus_city','value'=>$data['sec_county_bonus_city'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'sec_county_bonus_city','value'=>$data['sec_county_bonus_city'],'inc_type'=>'commison_conf']);
+            }
+
+            $count_bonus_province= $confModel->where('name','=','county_bonus_province')->find();
+            if($count_bonus_province){
+                $confModel->update(['id'=>$count_bonus_province['id'],'name'=>'county_bonus_province','value'=>$data['county_bonus_province'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'county_bonus_province','value'=>$data['county_bonus_province'],'inc_type'=>'commison_conf']);
+            }
+
+            $sec_county_province= $confModel->where('name','=','sec_county_bonus_province')->find();
+            if($sec_county_province){
+                $confModel->update(['id'=>$sec_county_province['id'],'name'=>'sec_county_bonus_province','value'=>$data['sec_county_bonus_province'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'sec_county_bonus_province','value'=>$data['sec_county_bonus_province'],'inc_type'=>'commison_conf']);
+            }
+
 
             $bonus_cash= $confModel->where('name','=','bonus_cash_exchange')->find();
             if($bonus_cash){
@@ -408,18 +446,12 @@ class System extends Base
       //佣金限制
       public function bonus_require()
       {
-          // $bonusList=Db::name('bonus_require')->select();
-          //  $this->assign([
-          //     'bonusList'=>$bonusList
-          // ]);
-  
+ 
           $five_week=Db::name('config')->where('name','=','five_week_require')->find();
           $six_week=Db::name('config')->where('name','=','six_week_require')->find();
           $district_bonus=Db::name('config')->where('name','=','district_bonus')->find();
           $city_bonus=Db::name('config')->where('name','=','city_bonus')->find();
           $province_bonus=Db::name('config')->where('name','=','province_bonus')->find();
-
-
               $this->assign([
                   'five_week'=>$five_week,
                   'six_week'=>$six_week,
