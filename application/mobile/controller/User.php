@@ -2650,9 +2650,14 @@ class User extends MobileBase
             $info['cash_alipay']=$data['card'];
             $info['realname']=$data['cash_name'];
             $info['user_id']=$user_id;
-            $res=DB::name('user_extend')->where('user_id='.$user_id)->count();
+            $res=DB::name('user_extend')->where('user_id='.$user_id)->find();
+
             if($res){
-                $res2=Db::name('user_extend')->where('user_id='.$user_id)->save($info);
+                if (!$res['cash_alipay']){
+                    $res2=Db::name('user_extend')->where('user_id',$user_id)->update($info);
+                }else{
+                    $res2 = 1;
+                }
             }else{
                 $res2=Db::name('user_extend')->add($info);
             }
@@ -2668,9 +2673,14 @@ class User extends MobileBase
             $info['cash_unionpay']=$data['card'];
             $info['realname']=$data['cash_name'];
             $info['user_id']=$user_id;
-            $res=DB::name('user_extend')->where('user_id='.$user_id)->count();
+            $res=DB::name('user_extend')->where('user_id='.$user_id)->find();
             if($res){
-                $res2=Db::name('user_extend')->where('user_id='.$user_id)->save($info);
+                if (!$res['cash_alipay']){
+                    $res2=Db::name('user_extend')->where('user_id='.$user_id)->update($info);
+                }else{
+                    $res2 = 1;
+                }
+
             }else{
                 $res2=Db::name('user_extend')->add($info);
             }
