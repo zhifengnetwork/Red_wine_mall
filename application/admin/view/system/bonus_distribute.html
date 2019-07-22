@@ -47,15 +47,26 @@
 </div>
 <div id="goTop"> <a href="JavaScript:void(0);" id="btntop"><i class="fa fa-angle-up"></i></a><a href="JavaScript:void(0);" id="btnbottom"><i class="fa fa-angle-down"></i></a></div>
 <script>
-    // $('#distribut_pattern').change(function(){
-    //     if($(this).val() == 1)
-    //         $('#distribut_order_rate').show();
-    //     else
-    //         $('#distribut_order_rate').hide();
-    // });
-
+   
+    var isClick=true;
     function doDistribute(){
-      alert(111);
+     if(isClick){
+        isClick=false;
+        $.ajax({
+                url:"{:url('mobile/user/team_bonus')}",
+                method:"get",
+                success:function(res){
+                    var res=JSON.parse(res);
+                    if(res.status==1){
+                        isClick=true;
+                        alert(res.msg);
+                        setTimeout(() => {
+                            location.replace(location.href);
+                        }, 1000);
+                    }
+                }
+            })
+     }
     }
     
     function qr_back_call_back(fileurl_tmp)
