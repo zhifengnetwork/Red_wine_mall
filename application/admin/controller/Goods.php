@@ -687,7 +687,7 @@ class Goods extends Base {
         
         empty($ids) &&  $this->ajaxReturn(['status' => -1,'msg' =>"非法操作！",'data'  =>'']);
         $goods_ids = rtrim($ids,",");
-        $$commission_ids = array();
+        $commission_ids = array();
         $goods_commission = M('goods')->whereIn('goods_id',$goods_ids)->column('goods_prize');
 
         if ($goods_commission) {
