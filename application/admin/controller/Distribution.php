@@ -334,7 +334,7 @@ class Distribution extends Base
                 $list[$key]['typename']=$typeList[$value['type']];
             }
         }
-
+        
         $is_type = 6;
         
         $this->assign('is_type',$is_type);
