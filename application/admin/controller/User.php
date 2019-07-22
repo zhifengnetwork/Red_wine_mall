@@ -55,7 +55,11 @@ class User extends Base
         $count = $usersModel->where($condition)->count();
         $Page = new AjaxPage($count, 10);
         $userList = $usersModel->where($condition)->order($sort_order)->limit($Page->firstRow . ',' . $Page->listRows)->select();
-		
+        
+        foreach($userList as $uk=>$uv){
+            $userList[$uk]['totalAmount']=Db::name("order")->where("user_id",$uv['user_id'])->sum('total_amount');
+        }
+        
         $user_id_arr = get_arr_column($userList, 'user_id');
         if (!empty($user_id_arr)) {
 			// dump($user_id_arr);exit;
