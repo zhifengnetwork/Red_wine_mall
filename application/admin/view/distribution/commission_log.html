@@ -16,12 +16,12 @@
 						<span>全部</span>
 					</a>
 				</li>
-				<li>
+				<!-- <li>
 					<a href="{:U('distribution/commission_log',array('type'=>1))}" data-state="0">
 						<span>级差奖</span>
 					</a>
-				</li>
-				<li>
+				</li> -->
+				<!-- <li>
 					<a href="{:U('distribution/commission_log',array('type'=>2))}" data-state="0">
 						<span>直推奖</span>
 					</a>
@@ -45,7 +45,7 @@
 					<a href="{:U('distribution/commission_log',array('type'=>6))}" data-state="0">
 						<span>全球分红</span>
 					</a>
-				</li>      
+				</li>       -->
 			</ul>
 		</div>
 	</div>
@@ -126,7 +126,7 @@
 							<div style="text-align: center; width: 150px;" class="">获得返利用户</div>
 						</th>
 						<th align="center" axis="col4" class="">
-							<div style="text-align: center; width: 100px;" class="">获得返利用户头像</div>
+							<div style="text-align: center; width: 100px;" class="">返利类型</div>
 						</th>
 						<th align="center" abbr="article_time" axis="col5" class="">
 							<div style="text-align: center; width: 100px;" class="">所得金额</div>
@@ -136,7 +136,7 @@
 								<div style="text-align: center; width: 150px;" class="">订单编号{$is_type}</div>
 							</th>
 							<th align="center" abbr="article_time" axis="col6" class="">
-								<div style="text-align: center; width: 100px;" class="">数量</div>
+								<div style="text-align: center; width: 100px;" class="">订单id</div>
 							</th>
 						</neq>
 						<th align="center" abbr="article_time" axis="col6" class="">
@@ -187,11 +187,7 @@
 							</td>
 							<td align="left" class="">
 			                    <div style="text-align: center; width: 100px;">
-			                        <if condition="!empty($vo.to_user_name) and !empty($vo.to_user_head_pic)">
-			                        	<img src="{$vo.to_user_head_pic}" style="width:30px;height:30px;" alt="">
-			                        <elseif condition="!empty($vo.to_user_name)"/>
-			                            <img src="/public/images/user_default_icon.jpg" style="width:30px;height:30px;" alt="">
-			                        </if>
+										{$vo.typename}
 			                    </div>
 			                </td>
 							<td align="center" class="">
@@ -202,11 +198,11 @@
 									<div style="text-align: center; width: 150px;">{$vo.order_sn}</div>
 								</td>
 								<td align="center" class="">
-									<div style="text-align: center; width: 100px;">{$vo.num}</div>
+									<div style="text-align: center; width: 100px;">{$vo.order_id}</div>
 								</td>
 							</neq>
 							<td align="center" class="">
-								<div style="text-align: center; width: 150px;">{$vo.create_time|date="Y-m-d H:i:s",###}</div>
+								<div style="text-align: center; width: 150px;">{$vo.change_time|date="Y-m-d H:i:s",###}</div>
 							</td>
 							<td align="center" class="">
 								<div style="text-align: center; width: 200px;">{$vo.desc}</div>
