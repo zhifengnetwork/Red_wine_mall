@@ -276,6 +276,7 @@ class Distribution extends Base
     public function commission_log()
     {
         $Ad = M('account_log');
+        
         $p = input('p/d');
         
         $type = input('type',0);
