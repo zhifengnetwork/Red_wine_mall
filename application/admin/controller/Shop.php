@@ -195,7 +195,6 @@ class Shop extends Base
 
     public function shop_img(){
         $img      = I('img');
-        dump($img);exit;
         if(empty($img)){
             $this->ajaxReturn(['code'=>0,'msg'=>'上传图片不能为空','data'=>'']);
         }
