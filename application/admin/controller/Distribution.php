@@ -275,7 +275,8 @@ class Distribution extends Base
     //返佣日志
     public function commission_log()
     {
-        $Ad = M('distrbut_commission_log');
+        $Ad = M('account_log');
+        
         $p = input('p/d');
         
         $type = input('type',0);
