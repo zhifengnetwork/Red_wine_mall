@@ -871,17 +871,21 @@ class User extends MobileBase
 
 
 
-        $list = M('exchange_money')->where($my_user_id)->order("id desc")->limit("{$page->firstRow},{$page->listRows}")->select();
+        $list = M('exchange_money')->where('user_id',$my_user_id)->order("id desc")->limit("{$page->firstRow},{$page->listRows}")->select();
 
-        $list = Db::name('exchange_money')
-            ->field('a.*,b.nickname')
-            ->alias('a')
-            ->join('users b', 'a.user_id = b.user_id')
-            ->where('out_user_id',$my_user_id)->order("id desc")->limit("{$page->firstRow},{$page->listRows}")
-            ->select();
+        foreach ($list as $k=>$v){
+            if($list[$k]['user_id'] == $list[$k]['in_user_id']){
+                $outid = M('exchange_money')->field('out_user_id')->where('user_id',$my_user_id)->where('in_user_id',$my_user_id)->find();
+                $nickname = M('users')->field('nickname')->where('user_id',$outid['out_user_id'])->find();
+//                print_r($nickname);die;
+                $list[$k]['nickname'] = $nickname['nickname'];
+                $list[$k]['user_id'] = $outid['out_user_id'];
+            }
+        }
 
         $this->assign('page', $page->show());// 赋值分页输出
         $this->assign('list', $list); // 下线
+
 //        print_r($list);die;
 //        $tradata['create_time'] = date_format($tradata['create_time'],"Y/m/d H:i:s");
 //        print_r($tradata[0]);die;
@@ -940,7 +944,11 @@ class User extends MobileBase
         if(encrypt($data['paypwd']) != $this->user['paypwd']){
             $this->ajaxReturn(['status'=>0, 'msg'=>'支付密码错误']);
         }
-        $data1['user_id']=$this->user_id;
+
+
+        $name=Db::name('users')->where("user_id",'=',$data['end_user_id'])->field('nickname')->find();
+        $data1['nickname']=$name['nickname'];
+        $data1['user_id']=$data['end_user_id'];
         $data1['out_user_id']=$this->user_id;
         $data1['in_user_id']=$data['end_user_id'];
         $data1['exchange_money']=$data['exchange_money'];
@@ -949,7 +957,9 @@ class User extends MobileBase
         $data1['detail']="-{$data['exchange_money']}";
         $data1['type']=1;
 
-        $data2['user_id']=$data['end_user_id'];
+        $names=Db::name('users')->where("user_id",'=',$this->user_id)->field('nickname')->find();
+        $data2['nickname']=$names['nickname'];
+        $data2['user_id']=$this->user_id;
         $data2['out_user_id']=$this->user_id;
         $data2['in_user_id']=$data['end_user_id'];
         $data2['exchange_money']=$data['exchange_money'];
@@ -978,7 +988,7 @@ class User extends MobileBase
             $otherUser=Db::name('users')->where('user_id','=',$data['end_user_id'])->find();
             $addMoney=$otherUser['user_money']+$data['exchange_money'];
             Db::name('users')->where('user_id','=',$data['end_user_id'])->update(['user_money'=>$addMoney]);
-//                $res1 = Db::name('exchange_money')->insert($data1);
+                $res1 = Db::name('exchange_money')->insert($data1);
                 $res2 = Db::name('exchange_money')->insert($data2);
                 $res3 = Db::name('account_log')->insert($data3);
                 $res4 = Db::name('account_log')->insert($data4);
