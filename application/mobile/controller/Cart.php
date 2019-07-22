@@ -283,29 +283,25 @@ class Cart extends MobileBase {
         // var_dump($order);die;
 
         $upArr=get_uper_user($order['user_id']);
-        if($upArr){
-            $agent_performance_model=Db::name('agent_performance');
-            foreach($upArr['recUser'] as $k=>$v){
-                    $user_agent=$agent_performance_model->where('user_id','=', $v['user_id'])->find();
-                    $time=time(); 
-                    $ind_per=$user_agent['ind_per']+$order['total_amount'];
-                    $agent_per=$user_agent['agent_per']+$order['total_amount'];
-                if($order['user_id']==$v['user_id']){
-                    if($user_agent){    
-                        $agent_performance_model->where('performance_id','=',$user_agent['performance_id'])->update(['user_id'=>$v['user_id'],'ind_per'=>$ind_per,'agent_per'=>$agent_per,'update_time'=>$time]);
-                    }else{
-                        $agent_performance_model->insert(['user_id'=>$v['user_id'],'ind_per'=>$ind_per,'agent_per'=>$agent_per,'create_time'=>$time]);
-                    }
+        foreach($upArr['recUser'] as $k=>$v){
+                $user_agent=Db::name('agent_performance')->where('user_id','=', $v['user_id'])->find();
+                $time=time(); 
+                $ind_per=$user_agent['ind_per']+$order['total_amount'];
+                $agent_per=$user_agent['agent_per']+$order['total_amount'];
+            if($order['user_id']==$v['user_id']){
+                if($user_agent){    
+                    Db::name('agent_performance')->where('performance_id','=',$user_agent['performance_id'])->update(['user_id'=>$v['user_id'],'ind_per'=>$ind_per,'agent_per'=>$agent_per,'update_time'=>$time]);
                 }else{
-                    if($user_agent){    
-                        $agent_performance_model->where('performance_id','=',$user_agent['performance_id'])->update(['user_id'=>$v['user_id'],'agent_per'=>$agent_per,'update_time'=>$time]);
-                    }else{
-                        $agent_performance_model->insert(['user_id'=>$v['user_id'],'agent_per'=>$agent_per,'create_time'=>$time]);
-                    }
+                    Db::name('agent_performance')->insert(['user_id'=>$v['user_id'],'ind_per'=>$ind_per,'agent_per'=>$agent_per,'create_time'=>$time]);
+                }
+            }else{
+                if($user_agent){    
+                    Db::name('agent_performance')->where('performance_id','=',$user_agent['performance_id'])->update(['user_id'=>$v['user_id'],'agent_per'=>$agent_per,'update_time'=>$time]);
+                }else{
+                    Db::name('agent_performance')->insert(['user_id'=>$v['user_id'],'agent_per'=>$agent_per,'create_time'=>$time]);
                 }
             }
         }
-       
     }
 
     public function set_pop_person($order_sn)

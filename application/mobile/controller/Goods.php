@@ -235,13 +235,6 @@ class Goods extends MobileBase
             $collect = db('goods_collect')->where(array("goods_id" => $goods_id, "user_id" => $user_id))->count(); //当前用户收藏
             $this->assign('collect', $collect);
         }
-        $isAgentGoods=Db::name('goods')->where('goods_id','=',$goods_id)->find();
-        if($isAgentGoods['agent_good']){
-            $agentStatus=1;
-            $this->assign([
-                'isAgentGoods'=>$agentStatus
-            ]);
-        }
 
         # 用户通过二维码进来，且自身没有上级推荐人时，自动成为分享者的下级，发送微信消息推送通知分享者
         if($share_user && $user_id){
@@ -504,7 +497,6 @@ class Goods extends MobileBase
      */
     public function search()
     {
-        
         $filter_param = array(); // 帅选数组
         $id = I('get.id/d', 0); // 当前分类id
         $brand_id = I('brand_id/d', 0);

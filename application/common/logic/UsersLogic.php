@@ -692,7 +692,6 @@ class UsersLogic extends Model
             ->field('c.collect_id,c.add_time,g.goods_id,g.goods_name,g.shop_price,g.is_on_sale,g.store_count,g.cat_id,g.is_virtual')
             ->join('goods g','g.goods_id = c.goods_id','INNER')
             ->where("c.user_id = $user_id")
-            ->order('add_time desc')
             ->limit($page->firstRow,$page->listRows)
             ->select();
         $return['status'] = 1;

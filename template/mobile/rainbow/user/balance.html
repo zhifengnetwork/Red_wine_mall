@@ -125,7 +125,7 @@ body{
             type: 'POST',
             dataType: 'json',
             success: function (data) {
-                if(data.code==1){
+                if(data.code == 1){
                     $.each(data.data,function(no,items){
                         //这一步是显示数据的关键，each方法可以遍历二维数组数据
                         //data.data：php返回的数据；
@@ -146,6 +146,10 @@ body{
                             '            </div>' +
                             '          </div>' 
                     });
+                        $('.search_box').html(html)//显示数据，同时覆盖上一次搜索的数据
+
+                }
+                if(data.code == 0){
                     $('.search_box').html(html)//显示数据，同时覆盖上一次搜索的数据
                 }
             },
