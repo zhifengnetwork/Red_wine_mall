@@ -1497,23 +1497,12 @@ class User extends MobileBase
 
     public function account_list()
     {
-<<<<<<< HEAD
-          $usersLogic = new UsersLogic;
-          $result = $usersLogic->account($this->user_id);
-        unset($result['page']);
-//        print_r($result);die;
-        $this->assign('result', $result);
-         if ($_GET['is_ajax']) {
-         	return $this->fetch('ajax_account_list');
-         }
-=======
         // // $usersLogic = new UsersLogic;
         // // $result = $usersLogic->account($this->user_id, $type);
 
         // if ($_GET['is_ajax']) {
         // 	return $this->fetch('ajax_account_list');
         // }
->>>>>>> e50c514a5c88df231a904064a002aef9a6597684
         return $this->fetch();
     }
 
