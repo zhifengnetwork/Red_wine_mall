@@ -150,14 +150,16 @@ class User extends MobileBase
     {
         $user_id = $this->user_id;
         $agent_level = M('agent_level')->field('level,level_name')->select();
-        // dump($agent_level);
-        if($agent_level){
-            foreach($agent_level as $v){
-                $agnet_name[$v['level']] = $v['level_name'];
+      
+        $myuser=Db::name("users")->where("user_id",$user_id)->field("leader_level")->find();
+        foreach($agent_level as $v){
+            if($v['level']==$myuser['leader_level']){
+                $agnet_name = $v['level_name'];
             }
-            // dump($agnet_name);
-            $this->assign('agnet_name', $agnet_name);
         }
+        $this->assign([
+            'agnet_name'=>$agnet_name
+        ]);
 
         $MenuCfg = new MenuCfg();
         $menu_list = $MenuCfg->where('is_show', 1)->order('menu_id asc')->select();
@@ -908,12 +910,9 @@ class User extends MobileBase
     // 余额转账详情
     public function remainingsum(){
         $user_id=input('user_id');
-
         $my_user_id=$this->user_id;
         $endUser=Db::name('users')->field('user_id,head_pic,mobile,nickname')->where('user_id','=',$user_id)->find();
         $myInfo=Db::name('users')->where("user_id",'=',$my_user_id)->field('user_money')->find();
-
-
         $this->assign([
             'endUser'=>$endUser,
             'myInfo'=>$myInfo,
@@ -924,7 +923,6 @@ class User extends MobileBase
     //处理转账
     public function exchange_money_handle()
     {
-
         $time=time();
         $data=input('post.');
         if(!$data['end_user_id']){
@@ -936,9 +934,7 @@ class User extends MobileBase
         if(!$data['out_user_in']==$data['in_user_id']){
             $this->ajaxReturn(['status' => -1, 'msg' => '不能给自己转账']);
         }
-        if(encrypt($data['paypwd']) != $this->user['paypwd']){
-            $this->ajaxReturn(['status'=>0, 'msg'=>'支付密码错误']);
-        }
+
         $data1['user_id']=$this->user_id;
         $data1['out_user_id']=$this->user_id;
         $data1['in_user_id']=$data['end_user_id'];
@@ -1501,12 +1497,12 @@ class User extends MobileBase
 
     public function account_list()
     {
-          $usersLogic = new UsersLogic;
-          $result = $usersLogic->account($this->user_id, $type);
+        // // $usersLogic = new UsersLogic;
+        // // $result = $usersLogic->account($this->user_id, $type);
 
-         if ($_GET['is_ajax']) {
-         	return $this->fetch('ajax_account_list');
-         }
+        // if ($_GET['is_ajax']) {
+        // 	return $this->fetch('ajax_account_list');
+        // }
         return $this->fetch();
     }
 
@@ -2656,9 +2652,7 @@ class User extends MobileBase
         $config = tpCache('cash');
         // dump($config);
         C('TOKEN_ON', true);
-
         $cash_open=tpCache('cash.cash_open');
-
         if($cash_open!=1){
             $this->error('提现功能已关闭,请联系商家');
         }
@@ -2678,39 +2672,6 @@ class User extends MobileBase
             $data['create_time'] = time();
             $cash = tpCache('cash');
 
-            $manage1=tpCache('cash.manage1');
-            $manage2=tpCache('cash.manage2');
-            $manage3=tpCache('cash.manage3');
-            $manage4=tpCache('cash.manage4');
-            $manage5=tpCache('cash.manage5');
-            $manage6=tpCache('cash.manage6');
-            $manage7=tpCache('cash.manage7');
-            $manage[0] = $manage7;
-            $manage[1] = $manage1;
-            $manage[2] = $manage2;
-            $manage[3] = $manage3;
-            $manage[4] = $manage4;
-            $manage[5] = $manage5;
-            $manage[6] = $manage6;
-            for ($i=0;$i<count($manage);$i++){
-                if($manage[$i] != 7){
-                    $manages[$i] = $manage[$i];
-                }
-            }
-
-            $time = time();
-            if($manages){
-                if(!in_array(date('w',$time), $manages)){
-                    $this->ajaxReturn(['status'=>0,'msg'=>"今天不能提现"]);
-                    exit;
-                }
-            }else{
-                $this->ajaxReturn(['status'=>0,'msg'=>"不能提现"]);
-                exit;
-            }
-
-
-
             if(encrypt($data['paypwd']) != $this->user['paypwd']){
                 $this->ajaxReturn(['status'=>0, 'msg'=>'支付密码错误']);
             }
@@ -2725,7 +2686,6 @@ class User extends MobileBase
                 $this->ajaxReturn(['status'=>0,'msg'=>"提现金额必须为100的倍数"]);
                 exit;
             }
-
 
             // 统计所有0，1的金额
             $status = ['in','0,1'];
@@ -2797,8 +2757,6 @@ class User extends MobileBase
 
         $user_extend=Db::name('user_extend')->where('user_id='.$this->user_id)->find();
 
-
-
         //获取用户绑定openId
 //        $oauthUsers = M("OauthUsers")->where(['user_id'=>$this->user_id, 'oauth'=>'wx'])->find();
 //        $openid = $oauthUsers['openid'];
@@ -2806,55 +2764,8 @@ class User extends MobileBase
 //            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->value('openid');
 //        }
 
-        $manage1=tpCache('cash.manage1');
-        $manage2=tpCache('cash.manage2');
-        $manage3=tpCache('cash.manage3');
-        $manage4=tpCache('cash.manage4');
-        $manage5=tpCache('cash.manage5');
-        $manage6=tpCache('cash.manage6');
-        $manage7=tpCache('cash.manage7');
-        $manage[0] = $manage7;
-        $manage[1] = $manage1;
-        $manage[2] = $manage2;
-        $manage[3] = $manage3;
-        $manage[4] = $manage4;
-        $manage[5] = $manage5;
-        $manage[6] = $manage6;
-        for ($i=0;$i<count($manage);$i++){
-            if($manage[$i] != 7){
-                $manages[$i] = $manage[$i];
-            }
-        }
-
-        if ($manages){
-            if (in_array(0,$manages)){
-                $manages[0]='周日';
-            }
-            if (in_array(1,$manages)){
-                $manages[1]='周一';
-            }
-            if (in_array(2,$manages)){
-                $manages[2]='周二';
-            }
-            if (in_array(3,$manages)){
-                $manages[3]='周三';
-            }
-            if (in_array(4,$manages)){
-                $manages[4]='周四';
-            }
-            if (in_array(5,$manages)){
-                $manages[5]='周五';
-            }
-            if (in_array(6,$manages)){
-                $manages[6]='周六';
-            }
-            $manages = implode('、',$manages).'；';
-        }
-
-
 
         $this->assign('user_extend',$user_extend);
-        $this->assign('manages',$manages);
         $this->assign('cash_config', tpCache('cash'));//提现配置项
         $this->assign('user_money', $this->user['user_money']);    //用户余额
 //        $this->assign('openid',$openid);    //用户绑定的微信openid
