@@ -171,12 +171,12 @@ body{
 
 <!-- 备注 -->
 <div class="money">
-    <span>备&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp注</span><input name="description" type="text">
+    <span>备&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp注</span><input name="description" type="text"  readonly onfocus="this.removeAttribute('readonly');">
 </div>
 
     <!-- 备注 -->
 <div class="money">
-    <span>支付密码</span><input name="paypwd" id="paypwd" type="password" placeholder="请填写支付密码" />
+    <span>支付密码</span><input name="paypwd" id="paypwd" type="password" placeholder="请填写支付密码"  autocomplete='off'/>
 </div>
 
 <!-- 确认转账 -->
