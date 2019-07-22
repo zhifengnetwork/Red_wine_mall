@@ -274,7 +274,11 @@ class System extends Base
     public function commission(){
         $config=tpCache('commission');
         $confModel=Db::name('config');
+
         $pop_person=$confModel->where('name','=','pop_person_num')->find();
+        $pop_person_city=$confModel->where('name','=','pop_person_num_city')->find();
+        $pop_person_province=$confModel->where('name','=','pop_person_num_province')->find();
+
         $county_bonus= $confModel->where('name','=','county_bonus')->find();
         $sec_county= $confModel->where('name','=','sec_county_bonus')->find();
         $county_bonus_city= $confModel->where('name','=','county_bonus_city')->find();
@@ -286,6 +290,10 @@ class System extends Base
         $pop_money= $confModel->where('name','=','pop_money')->find();
         $this->assign([
             'pop_person'=>$pop_person,
+
+            'pop_person_city'=>$pop_person_city,
+            'pop_person_province'=>$pop_person_province,
+
             'county_bonus'=>$county_bonus,
             'sec_county'=>$sec_county,
 
@@ -409,6 +417,24 @@ class System extends Base
             }else{
                 $confModel->insert(['name'=>'pop_person_num','value'=>$data['pop_person_num'],'inc_type'=>'commison_conf']);
             }
+            
+
+            $pop_person_city= $confModel->where('name','=','pop_person_num_city')->find();
+            if($pop_person_city){
+                $confModel->update(['id'=>$pop_person_city['id'],'name'=>'pop_person_num_city','value'=>$data['pop_person_num_city'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'pop_person_num_city','value'=>$data['pop_person_num_city'],'inc_type'=>'commison_conf']);
+            }
+
+            $pop_person_province= $confModel->where('name','=','pop_person_num_province')->find();
+            if($pop_person_province){
+                $confModel->update(['id'=>$pop_person_province['id'],'name'=>'pop_person_num_province','value'=>$data['pop_person_num_province'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'pop_person_num_province','value'=>$data['pop_person_num_province'],'inc_type'=>'commison_conf']);
+            }
+
+
+
             $count_bonus= $confModel->where('name','=','county_bonus')->find();
             if($count_bonus){
                 $confModel->update(['id'=>$count_bonus['id'],'name'=>'county_bonus','value'=>$data['county_bonus'],'inc_type'=>'commison_conf']);
