@@ -134,16 +134,17 @@
 				<div <if condition="$cash_config['cash_open'] neq '1'">style="display: none;"</if>>
 					<p class="withdraw-foot-p">温馨提示：</p>
 					<dl class="withdraw-foot-dl">
-						<dd>1.提现金额须大于 {$cash_config.min_cash}元，小于 {$cash_config.max_cash} 元</dd>
+						<dd>1.提现日为周{$cash_config['manage1']}</dd>
+						<dd>2.提现金额须大于 {$cash_config.min_cash}元，小于 {$cash_config.max_cash} 元</dd>
 						<if condition="$cash_config['max_service_money'] eq '0'">
-							<dd>2.提现收取{$cash_config.service_ratio}%的手续费</dd>
+							<dd>3.提现收取{$cash_config.service_ratio}%的手续费</dd>
 							<else />
-							<dd>2.提现收取{$cash_config.service_ratio}%的手续费</dd>
+							<dd>3.提现收取{$cash_config.service_ratio}%的手续费</dd>
 							<!--<dd>2.提现收取{$cash_config.service_ratio}%的手续费，每笔最低{$cash_config.min_service_money}元手续费</dd>-->
 						</if>
 
-						<dd>3.手续费在到账金额中扣除；</dd>
-						<dd>4.提现审核一般3 - 5个工作日到账。</dd>
+						<dd>4.手续费在到账金额中扣除；</dd>
+						<dd>5.提现审核一般3 - 5个工作日到账，到账方式为T+7（工作日）。</dd>
 					</dl>
 				</div>
 			</div>
