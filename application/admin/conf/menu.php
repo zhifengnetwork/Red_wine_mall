@@ -147,6 +147,7 @@ return	array(
 					// array('name' => '分销设置', 'act'=>'distribut', 'op'=>'System'),
 					array('name' => '佣金设置', 'act'=>'commission', 'op'=>'System'),
 					array('name' => '佣金限制', 'act'=>'bonus_require', 'op'=>'System'),
+					array('name' => '发放奖励', 'act'=>'bonus_distribute', 'op'=>'System'),
 					// array('name' => '销售日志', 'act'=>'sales_log', 'op'=>'Distribut'),
 			)),
 

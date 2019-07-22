@@ -461,7 +461,8 @@ class System extends Base
   
           return $this->fetch();
       } 
-      
+
+
       //佣金插入表
       public function bonus_require_handle()
       {
@@ -527,6 +528,12 @@ class System extends Base
 
           return $this->success("操作成功");
       }
+
+
+     public function bonus_distribute()
+     {
+         return $this->fetch();
+     }
 
        /**
         * 自定义导航
