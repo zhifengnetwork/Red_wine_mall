@@ -326,7 +326,17 @@ class Cart extends MobileBase {
              }
             $time=time();
             Db::name('users')->update(['user_id'=>$order['user_id'],'agent_level'=>$order['agent_good'],'default_period'=>1,'add_agent_time'=>$time]);
-            $pop_person_num=Db::name('config')->where('name','=','pop_person_num')->value('value');
+
+             if($order['agent_good']==1){
+                 $pop_name='pop_person_num';
+             }
+             if($order['agent_good']==2){
+                $pop_name='pop_person_num_city';
+             }
+             if($order['agent_good']==3){
+                $pop_name='pop_person_num_province';
+             }
+            $pop_person_num=Db::name('config')->where('name','=',$pop_name)->value('value');
             $period_count=ceil($pop_person_num/12);
             static $current_num='';
             $current_num=$pop_person_num;

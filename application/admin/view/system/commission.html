@@ -33,13 +33,34 @@
         
             <dl class="row">
                 <dt class="tit">
-                    <label>推广总人数</label>
+                    <label>县级推广总人数</label>
                 </dt>
                 <dd class="opt">
                     <input name="pop_person_num" id="distribut_third_rate" value="{$pop_person.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
                     <p class="notic">购买代理商品获得的推广总人数额度    单位：人</p>
                 </dd>
             </dl>
+
+            <dl class="row">
+                <dt class="tit">
+                    <label>市级推广总人数</label>
+                </dt>
+                <dd class="opt">
+                    <input name="pop_person_num_city" id="distribut_third_rate" value="{$pop_person_city.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">购买代理商品获得的推广总人数额度    单位：人</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>省级推广总人数</label>
+                </dt>
+                <dd class="opt">
+                    <input name="pop_person_num_province" id="distribut_third_rate" value="{$pop_person_province.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">购买代理商品获得的推广总人数额度    单位：人</p>
+                </dd>
+            </dl>
+
+
             <dl class="row">
                 <dt class="tit">
                     <label>下级晋升为县级代理奖励业绩比例</label>
@@ -49,6 +70,7 @@
                     <p class="notic">上级返佣占本身业绩的比例  单位 %</p>
                 </dd>
             </dl>
+
             <dl class="row">
                 <dt class="tit">
                     <label>二级用户晋升为县级代理奖励业绩比例</label>
