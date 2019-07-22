@@ -150,15 +150,13 @@ class User extends MobileBase
     {
         $user_id = $this->user_id;
         $agent_level = M('agent_level')->field('level,level_name')->select();
-        // dump($agent_level);
-        if($agent_level){
+        $myuser=Db::name("users")->where("user_id",$user_id)->field("leader_level")->find();
             foreach($agent_level as $v){
-                $agnet_name[$v['level']] = $v['level_name'];
+                if($v['level']==$myuser['leader_level']){
+                    $agnet_name = $v['level_name'];
+                }
             }
-            // dump($agnet_name);
             $this->assign('agnet_name', $agnet_name);
-        }
-
         $MenuCfg = new MenuCfg();
         $menu_list = $MenuCfg->where('is_show', 1)->order('menu_id asc')->select();
 
@@ -2650,9 +2648,7 @@ class User extends MobileBase
         $config = tpCache('cash');
         // dump($config);
         C('TOKEN_ON', true);
-
         $cash_open=tpCache('cash.cash_open');
-
         if($cash_open!=1){
             $this->error('提现功能已关闭,请联系商家');
         }
@@ -2672,32 +2668,6 @@ class User extends MobileBase
             $data['create_time'] = time();
             $cash = tpCache('cash');
 
-            $manage1=tpCache('cash.manage1');
-            $manage2=tpCache('cash.manage2');
-            $manage3=tpCache('cash.manage3');
-            $manage4=tpCache('cash.manage4');
-            $manage5=tpCache('cash.manage5');
-            $manage6=tpCache('cash.manage6');
-            $manage7=tpCache('cash.manage7');
-            $manage[0] = $manage7;
-            $manage[1] = $manage1;
-            $manage[2] = $manage2;
-            $manage[3] = $manage3;
-            $manage[4] = $manage4;
-            $manage[5] = $manage5;
-            $manage[6] = $manage6;
-            for ($i=0;$i<count($manage);$i++){
-                if($manage[$i] != 7){
-                    $manages[$i] = $manage[$i];
-                }
-            }
-//        print_r($manages);die;
-            $time = time();
-            if(!in_array(date('w',$time), $manages)){
-                $this->ajaxReturn(['status'=>0,'msg'=>"今天不能提现"]);
-                exit;
-            }
-
             if(encrypt($data['paypwd']) != $this->user['paypwd']){
                 $this->ajaxReturn(['status'=>0, 'msg'=>'支付密码错误']);
             }
@@ -2712,7 +2682,6 @@ class User extends MobileBase
                 $this->ajaxReturn(['status'=>0,'msg'=>"提现金额必须为100的倍数"]);
                 exit;
             }
-
 
             // 统计所有0，1的金额
             $status = ['in','0,1'];
@@ -2790,6 +2759,7 @@ class User extends MobileBase
 //        if(empty($oauthUsers)){
 //            $openid = Db::name('oauth_users')->where(['user_id'=>$this->user_id, 'oauth'=>'weixin'])->value('openid');
 //        }
+
 
         $this->assign('user_extend',$user_extend);
         $this->assign('cash_config', tpCache('cash'));//提现配置项
