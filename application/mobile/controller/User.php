@@ -1502,8 +1502,10 @@ class User extends MobileBase
     public function account_list()
     {
           $usersLogic = new UsersLogic;
-          $result = $usersLogic->account($this->user_id, $type);
-
+          $result = $usersLogic->account($this->user_id);
+        unset($result['page']);
+//        print_r($result);die;
+        $this->assign('result', $result);
          if ($_GET['is_ajax']) {
          	return $this->fetch('ajax_account_list');
          }
@@ -1530,8 +1532,14 @@ class User extends MobileBase
             foreach ($result as $key => $value) {
                 $result[$key]['create_time'] = date('Y-m-d H:i',$value['create_time']);
             }
+            $result = M('account_log')->where('user_money','>',0)->where('user_id',$user_id)->order('create_time','desc')->field('log_id,user_money as money,change_time as create_time,order_id ,desc')->page($page,15)->select();
+            foreach ($result as $key => $value) {
+                $result[$key]['create_time'] = date('Y-m-d H:i',$value['create_time']);
+                // $result[$key]['money'] = abs($value['money']);
+                $result[$key]['status'] = 1;
+            }
         } else {
-            $result = M('account_log')->where('user_money','<',0)->where('user_id',$user_id)->order('create_time','desc')->field('log_id,user_money as money,change_time as create_time,order_id')->page($page,15)->select();
+            $result = M('account_log')->where('user_money','<',0)->where('user_id',$user_id)->order('create_time','desc')->field('log_id,user_money as money,change_time as create_time,order_id,desc')->page($page,15)->select();
 
             foreach ($result as $key => $value) {
                 $result[$key]['create_time'] = date('Y-m-d H:i',$value['create_time']);
