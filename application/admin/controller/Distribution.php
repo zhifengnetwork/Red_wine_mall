@@ -306,13 +306,13 @@ class Distribution extends Base
         }
         if($ctime){
             $gap = explode(' - ', $ctime);
-            $where['create_time'] = [['>= time',strtotime($start_time)],['< time',strtotime($end_time." 23:59:59")],'and'];;
+            $where['change_time'] = [['>= time',strtotime($start_time)],['< time',strtotime($end_time." 23:59:59")],'and'];;
         }
         if ($order_sn) {
             $where['order_sn'] = ['like',"%$order_sn%"];
         }
         
-        $res = $Ad->where($where)->order('create_time','desc')->page($p . ',20')->select();
+        $res = $Ad->where($where)->where(["type"=>["in","2,3,4,5,6"]])->order('change_time','desc')->page($p . ',20')->select();
         
         if ($res) {
             foreach ($res as $val) {
@@ -326,14 +326,16 @@ class Distribution extends Base
             $all_user_name = M('users')->whereIn('user_id',$all_user_ids)->column('user_id,nickname,mobile');
             $avatar = get_avatar($all_user_ids);
 
+            $typeList=array('2'=>'邀请奖励','3'=>'晋升奖励上级','4'=>'晋升奖励上上级','5'=>'级差领导奖','6'=>'领导奖奖励豪车');
             foreach ($list as $key => $value) {
                 $list[$key]['user_name'] = $all_user_name[$value['user_id']]['nickname'] ?: $all_user_name[$value['user_id']]['mobile'];
                 $list[$key]['to_user_name'] = $all_user_name[$value['to_user_id']]['nickname'] ?: $all_user_name[$value['to_user_id']]['mobile'];
                 $list[$key]['user_head_pic'] = $avatar[$value['user_id']];
                 $list[$key]['to_user_head_pic'] = $avatar[$value['to_user_id']];
+                $list[$key]['typename']=$typeList[$value['type']];
             }
         }
-
+        
         $is_type = 6;
         
         $this->assign('is_type',$is_type);
@@ -346,7 +348,7 @@ class Distribution extends Base
         $this->assign('ctime',$gap[0].' - '.$gap[1]);
         $this->assign('order_sn',$order_sn);
         $this->assign('list', $list);
-        $count = $Ad->where($where)->count();
+        $count = $Ad->where($where)->where(["type"=>["in","2,3,4,5,6"]])->count();
         $Page = new Page($count, 20);
         $show = $Page->show();
         // dump($show);die;
@@ -359,10 +361,11 @@ class Distribution extends Base
     public function commission_detail()
     {
         $id = input('id/d');
-        $detail = M('distrbut_commission_log')->where('log_id',$id)->find();
-
+       
+        $detail=Db::name('account_log')->alias("al")->join("users u","u.user_id=al.user_id",LEFT)->where('log_id',$id)->field("al.user_id,al.user_money,al.change_time,al.desc,u.nickname,u.mobile,al.type")->find();
         $is_type = 4;
-        
+        $typeList=array('2'=>'邀请奖励','3'=>'晋升奖励上级','4'=>'晋升奖励上上级','5'=>'级差领导奖','6'=>'领导奖奖励豪车');
+        $detail['typename']=$typeList[$detail['type']];
         $this->assign('is_type',$is_type);
         $this->assign('detail',$detail);
         return $this->fetch();
