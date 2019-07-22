@@ -504,6 +504,7 @@ class Goods extends MobileBase
      */
     public function search()
     {
+        
         $filter_param = array(); // 帅选数组
         $id = I('get.id/d', 0); // 当前分类id
         $brand_id = I('brand_id/d', 0);
