@@ -32,7 +32,10 @@ body{
             </div>
             <div class="user_top_title">
                 <a href="javascript:void(0);">
-                        {$agnet_name}
+                    <if condition="isset($agnet_name[$user.level])">
+                        {$agnet_name[$user.level]}
+                    </if>
+
                     <if condition="$is_vip eq 1">
                       &nbsp;<span style="color:red">VIP</span> 
                     </if>
