@@ -1,3 +1,158 @@
+<<<<<<< HEAD
+<include file="public/header" title="余额转账" body=""/>
+<include file="public/header_nav" title="余额转账" href="javascript:history.back(-1)"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
+<style>
+body{
+    background: #f2f2f2;
+}
+.input_box{
+    position: relative;
+    overflow: hidden;
+}
+.phone{
+    width: 90%;
+    height: 1.8rem;
+    margin-left: 5%;
+    border-radius: 1.8rem;
+    margin-top: .5rem;
+    font-size: .64rem;
+    line-height: 1.8rem;
+    text-align: center;
+    background: #f2f2f2;
+    outline:none;  
+    border: 1px solid #7d7d7d;
+}
+.input_img{
+    position: absolute;
+    top: 50%;
+    left: 28%;
+    width: .6rem;
+    height: .6rem;
+    /* transform: translate(0,-50%); */
+}
+/* 搜索结果 */
+.searchbox{
+    padding: 0 .64rem;
+    margin-top: 1rem;
+}
+.searchbox>h4{
+    font-size: .64rem;
+    line-height: 1.5rem;
+}
+.search_box{
+    margin-top: .6rem;
+    height: 3.2rem;
+    border-bottom: 1px solid #dcdcdc;
+}
+.touxiang{
+    margin-top: .25rem;
+}
+.search_imgbox{
+    float: left;
+}
+.search_boxc{
+    float: left;
+    font-size: .64rem;
+    margin-left: .8rem;
+    padding-top: .6rem;
+}
+.transfer{
+    float: right;
+    width: 4rem;
+    height: 1.5rem;
+    background: #e91251;
+    
+    font-size: .64rem;
+    height: 1.5rem;
+    text-align: center;
+    border-radius: 1.5rem;
+    line-height: 1.5rem;
+    margin-top: .8rem;
+}
+.transfer>a{
+    text-decoration:none;
+    color: #fff;
+}
+</style>
+<!-- 搜索框 -->
+<div class="box">
+    <div class="input_box">
+        <input type="number" class="phone" placeholder="请输入手机号搜索">
+        <img src="__STATIC__/images/sousuo.png" class="input_img">
+    </div>
+</div>
+
+<!-- 搜索结果 -->
+<div class="searchbox">
+    <h4>搜索结果</h4>
+    <div class="search_box">
+        <!--<div class="search_imgbox">-->
+            <!--<img src="__STATIC__/images/touxiang.png" class="touxiang">-->
+        <!--</div>-->
+        <!--<div class="search_boxc">-->
+            <!--<p>昵称：倾城小美人</p>-->
+            <!--<span>DI：81345</span>-->
+        <!--</div>-->
+        <!--<div class="transfer">-->
+            <!--<a href="{:U('Mobile/User/remainingsum')}">转账</a>-->
+        <!--</div>-->
+    </div>
+    <!-- <div class="search_box"> -->
+            <!--<div class="search_imgbox">-->
+                <!--<img src="__STATIC__/images/touxiang.png" class="touxiang">-->
+            <!--</div>-->
+            <!--<div class="search_boxc">-->
+                <!--<p>昵称：倾城小美人</p>-->
+                <!--<span>DI：81345</span>-->
+            <!--</div>-->
+            <!--<div class="transfer">-->
+                <!--<a href="{:U('Mobile/User/remainingsum')}">转账</a>-->
+            <!--</div>-->
+    <!-- </div> -->
+</div>
+<script>
+    $("input").keyup(function(){
+        search()
+    });
+    function search(){
+        var html =''
+        var key =  $("input").val()
+        var datas = {'key': key};
+        $.ajax({
+            url: "{:U('Mobile/User/ajax_search')}",
+            data: datas,
+            type: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                if(data.code==1){
+                    $.each(data.data,function(no,items){
+                        //这一步是显示数据的关键，each方法可以遍历二维数组数据
+                        //data.data：php返回的数据；
+                        //no：键值；
+                        //items:内层数组内容
+                        // var url = "{:U('Index/question')}?user_id="+items.id+"
+                        //拼接数据
+                        html+= '<div class="search_box">' +
+                            '            <div class="search_imgbox">' +
+                            '                <img src="'+items.head_pic+'" width="40px" class="touxiang">' +
+                            '            </div>' +
+                            '            <div class="search_boxc">\n' +
+                            '                <p>昵称：'+items.nickname+'</p>\n' +
+                            '                <span>ID：'+items.user_id+'</span>\n' +
+                            '            </div>\n' +
+                            '            <div class="transfer">\n' +
+                            '                <a href="{:U(\'Mobile/User/remainingsum\')}?user_id='+items.user_id+'">转账</a>' +
+                            '            </div>' +
+                            '          </div>' 
+                    });
+                    $('.search_box').html(html)//显示数据，同时覆盖上一次搜索的数据
+                }
+            },
+        });
+    }
+=======
 <include file="public/header" title="余额转账" body=""/>
 <include file="public/header_nav" title="余额转账" href="javascript:history.back(-1)"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
@@ -155,4 +310,5 @@ body{
             },
         });
     }
+>>>>>>> 29c0b802d790e64eabbf8df7ff322e70ed92781c
 </script>
