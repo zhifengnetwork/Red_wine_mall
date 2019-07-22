@@ -133,7 +133,8 @@ body{
                         //items:内层数组内容
                         // var url = "{:U('Index/question')}?user_id="+items.id+"
                         //拼接数据
-                        html+= ' <div class="search_imgbox">' +
+                        html+= '<div class="search_box">' +
+                            '            <div class="search_imgbox">' +
                             '                <img src="'+items.head_pic+'" width="40px" class="touxiang">' +
                             '            </div>' +
                             '            <div class="search_boxc">\n' +
@@ -142,7 +143,8 @@ body{
                             '            </div>\n' +
                             '            <div class="transfer">\n' +
                             '                <a href="{:U(\'Mobile/User/remainingsum\')}?user_id='+items.user_id+'">转账</a>' +
-                            '            </div>'
+                            '            </div>' +
+                            '          </div>' 
                     });
                     $('.search_box').html(html)//显示数据，同时覆盖上一次搜索的数据
                 }
