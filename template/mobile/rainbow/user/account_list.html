@@ -195,20 +195,20 @@ body{
         </ul>
         <div class="box1" style="display:block;">
             <!-- 默认选中哪个，就让哪个block -->
-          
-            <div class="box4">
-                <div class="box4_l">
-                    <div class="box4_lt">金额：+666666</div>
-                    <div class="box4_lf">2019-07-20 16：10</div>
-                </div>
-                <div class="box4_r">成功</div>
-            </div>
-
+            <!--<foreach name="result" item="v" key="k">-->
+                <!--<div class="box4">-->
+                    <!--<div class="box4_l">-->
+                        <!--&lt;!&ndash;<div class="box4_lt">金额：{$v[user_money]}</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="box4_lf">{:date('Y-m-d H:i:s',$v[change_time])}</div>&ndash;&gt;-->
+                    <!--</div>-->
+                    <!--<div class="box4_r">{$v[desc]}</div>-->
+                <!--</div>-->
+            <!--</foreach>-->
             <div id="tab2" class="wrap wrap2">
                 <!-- 第二层导航 -->
                 <!-- <ul id="tab22"> -->
                     <!-- 默认选中哪个，就让哪个active -->
-                    <!-- <li class="active" onclick="all_record('income',0)">全部</li>  -->
+                     <!--<li class="active" onclick="all_record('income',0)">全部</li>-->
                     <!-- <li onclick="all_record('income',1)">级差奖</li>
                     <li onclick="all_record('income',2)">直推奖</li>
                     <li onclick="all_record('income',3)">同级奖励</li>
@@ -297,9 +297,9 @@ body{
             $(".box_box .box2").eq(distribut_type).empty();
             $(".box1 .tit").empty();
         }
-        bool = false;
-        type_1 = type;
-        distribut_type_1 = distribut_type;
+        // bool = false;
+        // type_1 = type;
+        // distribut_type_1 = distribut_type;
         
         $.ajax({
             type: "POST",
@@ -315,11 +315,11 @@ body{
                     var html = '<ul class="tit_ul">';
                     var str = '';
                     for (let i = 0; i < data.length; i++) {
-                        str = (data[i].status == 1) ? "成功" : "成功";
+                        str = (data[i].status == 1) ? data[i].desc : "成功";
                         html += '<li class="list_item"><span><p style="margin-bottom: 0.2rem;">金额：' + data[i].money +
                         '</p><p>' + data[i].create_time +
                         '</p></span><span>' + str +
-                        '</span>';     
+                        '</span>';
                     }
                     html += '</ul>';
                    
