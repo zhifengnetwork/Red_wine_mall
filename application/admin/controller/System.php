@@ -366,7 +366,7 @@ class System extends Base
             $param['manage6']=7;
         }
         if($param['manage7']){
-            $param['manage7']=7;
+            $param['manage7']=0;
         }else{
             $param['manage7']=7;
         }
