@@ -636,13 +636,21 @@
                 <div class="shulges p">
                     <p>数量</p>
                     <!--选择数量-->
-                    <div class="plus">
+                    <if condition="$isAgentGoods==1">
+                            <div class="plus">
+                                            <span class="mp_mp">
+                                    <input type="tel" class="num buyNum" id="number" residuenum="{$goods.store_count}" name="goods_num" value="1" readonly="readonly" min="1" max="{$goods.store_count}" onblur="altergoodsnum(0)">
+                                            </span>
+                                </div>
+                    <else />
+                     <div class="plus">
                         <span class="mp_minous" onclick="altergoodsnum(-1);">-</span>
                                 <span class="mp_mp">
                         <input type="tel" class="num buyNum" id="number" residuenum="{$goods.store_count}" name="goods_num" value="1" min="1" max="{$goods.store_count}" onblur="altergoodsnum(0)">
                                 </span>
                         <span class="mp_plus" onclick="altergoodsnum(1);">+</span>
                     </div>
+                </if>
                 </div>
                 <volist name="goods['spec']" id="spec">
                     <div class="shulges p choicsel" >

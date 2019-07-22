@@ -67,39 +67,46 @@
     <div class="transfer_top">
         <div class="top_box">时间</div>
         <div class="top_box">名称</div>
-        <div class="top_box">余额</div>
+        <div class="top_box">金额</div>
         <div class="top_box">备注</div>
     </div>
 </div>
-
-<div class="transferbox">
-    <div class="transfer_top">
-        <div class="transfer_box">
-            <p>20190705</p>
-            <span>13:44</span>
+<foreach name="list" item="v">
+    <div class="transferbox">
+        <div class="transfer_top">
+            <div class="transfer_box">
+                <p>{:date('Y-m-d', $v[create_time])}</p>
+                <span>{:date('H:i', $v[create_time])}</span>
+            </div>
+            <div class="transfer_box">
+                <p>{$v[nickname]}</p>
+                <span>ID{$v[user_id]}</span>
+            </div>
+            <div class="top_box">{$v[exchange_money]}</div>
+            <div class="top_box">
+                <switch $v['type']>
+                <case 1>转出</case>
+                <case 2>转入</case>
+                </switch>
+            </div>
         </div>
-        <div class="transfer_box">
-            <p>用户名</p>
-            <span>ID1552</span>
-        </div>
-        <div class="top_box">-50</div>
-        <div class="top_box">转出</div>
     </div>
+</foreach>
+<div id="getmore"  style="font-size:.32rem;text-align: center;color:#888;padding:.25rem .24rem .4rem; clear:both;display: none">
+    <a >已显示完所有记录</a>
 </div>
-
-
-<div class="transferbox">
-    <div class="transfer_top">
-        <div class="transfer_box">
-            <p>20190705</p>
-            <span>13:44</span>
-        </div>
-        <div class="transfer_box">
-            <p>用户名</p>
-            <span>ID1552</span>
-        </div>
-        <div class="top_box">-50</div>
-        <div class="top_box">转出</div>
-    </div>
-</div>
+<!--<div class="transferbox">-->
+    <!--<div class="transfer_top">-->
+        <!--<div class="transfer_box">-->
+            <!--<p>20190705</p>-->
+            <!--<span>13:44</span>-->
+        <!--</div>-->
+        <!--<div class="transfer_box">-->
+            <!--<p>用户名</p>-->
+            <!--<span>ID1552</span>-->
+        <!--</div>-->
+        <!--<div class="top_box">-50</div>-->
+        <!--<div class="top_box">转出</div>-->
+    <!--</div>-->
+<!--</div>-->
 

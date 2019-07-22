@@ -335,8 +335,42 @@ class System extends Base
 		//unset($param['__hash__']);
         unset($param['inc_type']);
         unset($param['goods_name']);
-		tpCache($inc_type,$param);                
-                
+        if($param['manage1']){
+            $param['manage1']=1;
+        }else{
+            $param['manage1']=7;
+        }
+        if($param['manage2']){
+            $param['manage2']=2;
+        }else{
+            $param['manage2']=7;
+        }
+        if($param['manage3']){
+            $param['manage3']=3;
+        }else{
+            $param['manage3']=7;
+        }
+        if($param['manage4']){
+            $param['manage4']=4;
+        }else{
+            $param['manage4']=7;
+        }
+        if($param['manage5']){
+            $param['manage5']=5;
+        }else{
+            $param['manage5']=7;
+        }
+        if($param['manage6']){
+            $param['manage6']=6;
+        }else{
+            $param['manage6']=7;
+        }
+        if($param['manage7']){
+            $param['manage7']=0;
+        }else{
+            $param['manage7']=7;
+        }
+		tpCache($inc_type,$param);
         // 设置短信商接口
         if($param['sms_platform'] == 2 &&  !empty($param['sms_appkey'])  && !empty($param['sms_secretKey']))
         {                     
@@ -461,7 +495,8 @@ class System extends Base
   
           return $this->fetch();
       } 
-      
+
+
       //佣金插入表
       public function bonus_require_handle()
       {
@@ -527,6 +562,12 @@ class System extends Base
 
           return $this->success("操作成功");
       }
+
+
+     public function bonus_distribute()
+     {
+         return $this->fetch();
+     }
 
        /**
         * 自定义导航

@@ -72,6 +72,22 @@
             <!--</dl>-->
             <!--<dl class="row">-->
                 <dt class="tit">
+                    <label for="reg_integral">设置提现日</label>
+                </dt>
+                <dd class="opt">
+                    周一<input type="checkbox" name="manage1" value="1" <if condition="$config['manage1'] eq 1">checked</if> title="周一">
+                    周二<input type="checkbox" name="manage2" value="2" <if condition="$config['manage2'] eq 2">checked</if> title="周二">
+                    周三<input type="checkbox" name="manage3" value="3" <if condition="$config['manage3'] eq 3">checked</if> title="周三">
+                    周四<input type="checkbox" name="manage4" value="4" <if condition="$config['manage4'] eq 4">checked</if> title="周四">
+                    周五<input type="checkbox" name="manage5" value="5" <if condition="$config['manage5'] eq 5">checked</if> title="周五">
+                    周六<input type="checkbox" name="manage6" value="6" <if condition="$config['manage6'] eq 6">checked</if> title="周六">
+                    周日<input type="checkbox" name="manage7" value="7" <if condition="$config['manage7'] eq 0">checked</if> title="周日">
+
+                    <p class="notic">（注：周一至周日单选或多选）</p>
+                </dd>
+
+
+                <dt class="tit">
                     <label for="reg_integral">手续费比例</label>
                 </dt>
                 <dd class="opt">
@@ -165,6 +181,7 @@
     }
 
     function fromsubmit(){
+
         var min_cash    =   parseInt($('#min_cash').val());   //每次最低提现额
         var max_cash    =   parseInt($('#max_cash').val());   //每次最高提现额
         var cash_times  =   parseInt($('#cash_times').val()); //提现次数

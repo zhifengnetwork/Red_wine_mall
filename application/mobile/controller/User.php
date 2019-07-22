@@ -91,102 +91,9 @@ class User extends MobileBase
                 $wait_earnings->save();
             }
         }
-
         $this->assign('order_status_coment', $order_status_coment);
     }
 
-
-    //     //推荐
-    //     public function recommend($share_user)
-    //     {
-    //         //获取上级id
-           
-    //       //   $recommend_id=19945;
-    //         $recommend_id=$share_user;
-    
-    //         $user_id=$this->user_id;
-    //         //判断自己是否已经有直属上级
-    //         $myInfo=Db::name('users')->where('user_id','=',$user_id)->find();
-    //         if($myInfo['first_leader']){
-    //             $this->error("已经有上级不能在被推荐");
-    //         }
-    //         $time=time();
-    //         // $firstUpdate=Db::name('users')->update(['user_id'=>$user_id,'first_leader'=>$recommend_id]);
-    
-    //         //推荐成功 统计上级的直属下级数量 更新上级的身份  经理还是总监
-    //         $upPopCount=Db::name('users')->where('first_leader','=',$recommend_id)->count(); 
-        
-    //       $manager_ind_sum=$this->popUpdateCondition(1);  //升级经理的条件
-    //       $chief_ind_sum=$this->popUpdateCondition(2);    //升级总监的条件
-    //       $ceo_ind_sum=$this->popUpdateCondition(3);
-    //       $partner_ind_sum=$this->popUpdateCondition(4);
-  
-    //         if($upPopCount>=$manager_ind_sum&&$upPopCount<$chief_ind_sum){
-    //             Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>1]);
-    //         }
-    //         if($upPopCount>=$chief_ind_sum&&$upPopCount<$ceo_ind_sum){
-    //             Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>2]);
-    //         }
-    //         if($upPopCount>=$ceo_ind_sum&&$upPopCount<$partner_ind_sum){
-    //             Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>3]);
-    //         }
-    //         if($upPopCount>=$partner_ind_sum){
-    //             Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>4]);
-    //         }
-    
-    
-    //         // if($firstUpdate){
-    //                               // return $this->success("直属上级推荐成功");
-    //             $recommendInfo=Db::name('users')->where('user_id',$recommend_id)->find();
-    //                 if($recommendInfo['agent_level']){
-    //                     //如果上级是代理身份,就给上级奖励   //并减少对应的推广额度
-    
-    //                     //这里有个条件前提   周数和业绩   不同要求不一样
-    //                         $pop_commission=Db::name('config')->where('name','=','pop_commission')->value('value');
-    //                         $pop_money=Db::name('config')->where('name','=','pop_money')->value('value');
-    //                         $addmoney=$pop_money*$pop_commission/100;
-    //                         $user_money=$recommendInfo['user_money']+$addmoney;
-    //                         Db::name('users')->update(['user_id'=>$recommend_id,'user_money'=>$user_money]);
-    //                         Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$addmoney,'pay_points'=>0,'change_time'=>$time,'desc'=>'邀请1个新会员奖励50','type'=>2]);
-                        
-    //                         $whereStr['user_id']=['=',$recommendInfo['user_id']];
-    //                         $whereStr['period']=['=',$recommendInfo['default_period']];
-    //                         $periodInfo=Db::name('pop_period')->where($whereStr)->find();
-    //                         if($periodInfo['begin_time']){  //如果时间已经开始再操作下面
-    //                             if($periodInfo['poped_per_num']<$periodInfo['person_num']){ //还有位置就操作
-    //                                 Db::name('pop_period')->where($whereStr)->setInc('poped_per_num');
-    //                             }else{ //没有位置就跳到上一级    如果没有上一级就修改用户表    
-    //                                 $upPeriod=$recommendInfo['default_period']+1; 
-    //                                 $upPeriodInfo=Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->find();
-    //                                 if($upPeriodInfo){ //如果有上级
-    //                                     //还有下一期的话 分情况   一周内 和一周外
-    //                                     if(($periodInfo['begin_time']+3600*24*7)>$time){
-    //                                             Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['day_release'=>1]);
-    //                                     }else{
-    //                                             Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['week_release'=>1]);
-    //                                     }
-    //                                     // Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['poped_per_num'=>1,'begin_time'=>$time]);
-    //                                     // Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['default_period'=>$upPeriod]);
-    //                                 }else{
-    //                                     Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0,'add_agent_time'=>0]);
-    //                                 }
-    
-    //                             }
-                               
-    //                         }
-                           
-    //                 }                
-    
-    //         // }
-    //     }
-  
-    //     //会员升级条件     //符合推广人数   就升级 如：经理
-    //     public function popUpdateCondition($levelNum)
-    //     {
-    //       $ind_goods_sum=Db::name('agent_level')->where('level','=',$levelNum)->value("ind_goods_sum");
-    //       return $ind_goods_sum;
-    //     }
-  
       //每日定时释放推广名额
       public function day_release_handle()
       {
@@ -232,6 +139,7 @@ class User extends MobileBase
                         }
                     }
                 }
+                $this->ajaxReturn(['status' => 1, 'msg' => '发放成功']);
             }
        }
 
@@ -242,14 +150,16 @@ class User extends MobileBase
     {
         $user_id = $this->user_id;
         $agent_level = M('agent_level')->field('level,level_name')->select();
-        // dump($agent_level);
-        if($agent_level){
-            foreach($agent_level as $v){
-                $agnet_name[$v['level']] = $v['level_name'];
+      
+        $myuser=Db::name("users")->where("user_id",$user_id)->field("leader_level")->find();
+        foreach($agent_level as $v){
+            if($v['level']==$myuser['leader_level']){
+                $agnet_name = $v['level_name'];
             }
-            // dump($agnet_name);
-            $this->assign('agnet_name', $agnet_name);
         }
+        $this->assign([
+            'agnet_name'=>$agnet_name
+        ]);
 
         $MenuCfg = new MenuCfg();
         $menu_list = $MenuCfg->where('is_show', 1)->order('menu_id asc')->select();
@@ -897,7 +807,7 @@ class User extends MobileBase
      */
     public function mixi(){
         $user_id = $this->user_id;
-        $account_log = M('account_log')->where(['user_id'=>$user_id,'type'=>2])->select();
+        $account_log = M('account_log')->where(['user_id'=>$user_id,'type'=>['in','2,3,4,5']])->select();
         $this->assign('account_log',$account_log);
         return $this->fetch();
     }
@@ -955,12 +865,45 @@ class User extends MobileBase
 
     // 转账记录
     public function transfer(){
+        $user_id=input('user_id');
+        $my_user_id=$this->user_id;
+        $count = M('exchange_money')->where($my_user_id)->count();
+
+        $page = new Page($count, 15);
+
+
+
+//        $list = M('exchange_money')->where($my_user_id)->order("id desc")->limit("{$page->firstRow},{$page->listRows}")->select();
+
+        $list = Db::name('exchange_money')
+            ->field('a.*,b.nickname')
+            ->alias('a')
+            ->join('users b', 'a.user_id = b.user_id')
+            ->where($my_user_id)->order("id desc")->limit("{$page->firstRow},{$page->listRows}")
+            ->select();
+
+        $this->assign('page', $page->show());// 赋值分页输出
+        $this->assign('list', $list); // 下线
+//        print_r($list);die;
+//        $tradata['create_time'] = date_format($tradata['create_time'],"Y/m/d H:i:s");
+//        print_r($tradata[0]);die;
+//        $this->assign([
+//            'endUser'=>$tradata,
+//        ]);
         return $this->fetch();
     }
 
+
+
+
+//        if (I('is_ajax')) {
+//            return $this->fetch('ajax_withdrawals_list');
+//        }
+//        return $this->fetch();
+
     // 余额转账
     public function balance(){
-
+        
         return $this->fetch();
     }
 
@@ -1019,11 +962,10 @@ class User extends MobileBase
             $otherUser=Db::name('users')->where('user_id','=',$data['end_user_id'])->find();
             $addMoney=$otherUser['user_money']+$data['exchange_money'];
             Db::name('users')->where('user_id','=',$data['end_user_id'])->update(['user_money'=>$addMoney]);
-
-            $res1 = Db::name('exchange_money')->insert($data1);
-            $res2 = Db::name('exchange_money')->insert($data2);
-            Db::commit();    
-            if($res1&&$res2){
+//                $res1 = Db::name('exchange_money')->insert($data1);
+                $res2 = Db::name('exchange_money')->insert($data2);
+            Db::commit();
+            if($res2){
                 $this->ajaxReturn(['status' => 1, 'msg' => '转账成功']);
             }
         } catch (\Exception $e) {
@@ -1584,8 +1526,14 @@ class User extends MobileBase
             foreach ($result as $key => $value) {
                 $result[$key]['create_time'] = date('Y-m-d H:i',$value['create_time']);
             }
+            $result = M('account_log')->where('user_money','>',0)->where('user_id',$user_id)->order('create_time','desc')->field('log_id,user_money as money,change_time as create_time,order_id ,desc')->page($page,15)->select();
+            foreach ($result as $key => $value) {
+                $result[$key]['create_time'] = date('Y-m-d H:i',$value['create_time']);
+                // $result[$key]['money'] = abs($value['money']);
+                $result[$key]['status'] = 1;
+            }
         } else {
-            $result = M('account_log')->where('user_money','<',0)->where('user_id',$user_id)->order('create_time','desc')->field('log_id,user_money as money,change_time as create_time,order_id')->page($page,15)->select();
+            $result = M('account_log')->where('user_money','<',0)->where('user_id',$user_id)->order('create_time','desc')->field('log_id,user_money as money,change_time as create_time,order_id,desc')->page($page,15)->select();
 
             foreach ($result as $key => $value) {
                 $result[$key]['create_time'] = date('Y-m-d H:i',$value['create_time']);

@@ -2,6 +2,9 @@
 <include file="public/header_nav" title="余额转账" href="javascript:history.back(-1)"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-colorpicker.css"/>
+
+
+
 <style>
 body{
     background: #f2f2f2;
@@ -168,7 +171,12 @@ body{
 
 <!-- 备注 -->
 <div class="money">
-    <span>备注</span><input name="description" type="text">
+    <span>备&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp注</span><input name="description" type="text">
+</div>
+
+    <!-- 备注 -->
+<div class="money">
+    <span>支付密码</span><input name="paypwd" id="paypwd" type="password" placeholder="请填写支付密码" />
 </div>
 
 <!-- 确认转账 -->
@@ -177,6 +185,7 @@ body{
 </div>
 
 </form>
+
 
 <script>
 var $input = $(".fake-box input");
@@ -208,12 +217,21 @@ $(".zhuanzhang").click(function(){
 
 $("#go_exchange").on('click',function(){
     var fdata=$("#frm").serialize();
+    var paypwd = $.trim($('#paypwd').val());
     $.ajax({
         url:"{:url('mobile/user/exchange_money_handle')}",
         data:fdata,
         method:"post",
         success:function(res){
-            console.log(res);
+            var res=JSON.parse(res);
+            if(res.status!=1){
+                alert(res.msg);
+            }else{
+                alert(res.msg);
+                setTimeout(function(){
+                   location.href="{:url('Mobile/User/account')}";
+                },1000);
+            }
         }
     })
 });
