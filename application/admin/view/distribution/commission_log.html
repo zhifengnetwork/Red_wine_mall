@@ -21,11 +21,15 @@
 						<span>级差奖</span>
 					</a>
 <<<<<<< HEAD
+<<<<<<< HEAD
 				</li> -->
 =======
 				</li>
 >>>>>>> 29c0b802d790e64eabbf8df7ff322e70ed92781c
 				<!-- <li>
+=======
+			 <li>
+>>>>>>> b7e5b2adcb98d403969c931a50b49258d9441b5c
 					<a href="{:U('distribution/commission_log',array('type'=>2))}" data-state="0">
 						<span>直推奖</span>
 					</a>
@@ -118,36 +122,43 @@
 						<th align="center" abbr="ac_id" axis="col3" class="">
 							<div style="text-align: center; width: 80px;" class="">ID</div>
 						</th>
-						<neq name="$type" value="$is_type">
+					
+							<th align="center" abbr="article_time" axis="col4" class="">
+								<div style="text-align: center; width: 80px;" class="">用户id</div>
+							</th>
 							<th align="center" abbr="article_time" axis="col4" class="">
 								<div style="text-align: center; width: 150px;" class="">用户名称</div>
 							</th>
 							<th align="center" axis="col4" class="">
-								<div style="text-align: center; width: 50px;" class="">用户头像</div>
+								<div style="text-align: center; width: 100px;" class="">用户头像</div>
 							</th>
-						</neq>
-						<th align="center" abbr="article_time" axis="col4" class="">
+					
+						<!-- <th align="center" abbr="article_time" axis="col4" class="">
 							<div style="text-align: center; width: 150px;" class="">获得返利用户</div>
-						</th>
+						</th> -->
 						<th align="center" axis="col4" class="">
+<<<<<<< HEAD
 							<div style="text-align: center; width: 100px;" class="">返利类型</div>
+=======
+							<div style="text-align: center; width: 200px;" class="">返利类型</div>
+>>>>>>> b7e5b2adcb98d403969c931a50b49258d9441b5c
 						</th>
 						<th align="center" abbr="article_time" axis="col5" class="">
-							<div style="text-align: center; width: 100px;" class="">所得金额</div>
+							<div style="text-align: center; width: 200px;" class="">所得金额</div>
 						</th>
-						<neq name="$type" value="$is_type">
+						<!-- <neq name="$type" value="$is_type">
 							<th align="center" abbr="article_time" axis="col6" class="">
-								<div style="text-align: center; width: 150px;" class="">订单编号</div>
+								<div style="text-align: center; width: 150px;" class="">电话号码</div>
 							</th>
 							<th align="center" abbr="article_time" axis="col6" class="">
 								<div style="text-align: center; width: 100px;" class="">订单id</div>
 							</th>
-						</neq>
+						</neq> -->
 						<th align="center" abbr="article_time" axis="col6" class="">
-							<div style="text-align: center; width: 150px;" class="">时间</div>
+							<div style="text-align: center; width: 200px;" class="">时间</div>
 						</th>
 						<th align="center" abbr="article_time" axis="col6" class="">
-							<div style="text-align: center; width: 200px;" class="">描述</div>
+							<div style="text-align: center; width: 300px;" class="">描述</div>
                         </th>
                         <th align="center" abbr="article_time" axis="col6" class="">
 							<div style="text-align: center; width: 200px;" class="">操作</div>
@@ -172,12 +183,15 @@
 							<td align="center" class="">
 								<div style="text-align: center; width: 80px;">{$vo.log_id}</div>
 							</td>
+							<td align="center" class="">
+								<div style="text-align: center; width: 80px;">{$vo.user_id}</div>
+							</td>
 							<neq name="$type" value="$is_type">
 								<td align="center" class="">
 									<div style="text-align: center; width: 150px;">{$vo.user_name}</div>
 								</td>
 								<td align="left" class="">
-									<div style="text-align: center; width: 50px;">
+									<div style="text-align: center; width: 100px;">
 										<if condition="!empty($vo.user_name) and !empty($vo.user_head_pic)">
 											<img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt="">
 										<elseif condition="!empty($vo.user_name)"/>
@@ -186,15 +200,20 @@
 									</div>
 								</td>
 							</neq>
-							<td align="center" class="">
-								<div style="text-align: center; width: 150px;">{$vo.to_user_name}</div>
-							</td>
+							
 							<td align="left" class="">
+<<<<<<< HEAD
 			                    <div style="text-align: center; width: 100px;">
+=======
+
+			                    <div style="text-align: center; width: 200px;">
+
+>>>>>>> b7e5b2adcb98d403969c931a50b49258d9441b5c
 										{$vo.typename}
 			                    </div>
 			                </td>
 							<td align="center" class="">
+<<<<<<< HEAD
 								<div style="text-align: center; width: 100px;">{$vo.user_money|default='0'}</div>
 							</td>
 							<neq name="$type" value="$is_type">
@@ -207,9 +226,17 @@
 							</neq>
 							<td align="center" class="">
 								<div style="text-align: center; width: 150px;">{$vo.change_time|date="Y-m-d H:i:s",###}</div>
+=======
+								<div style="text-align: center; width: 200px;">{$vo.user_money|default='0'}</div>
+							</td>
+						
+							<td align="center" class="">
+								<div style="text-align: center; width: 200px;">{$vo.change_time|date="Y-m-d H:i:s",###}</div>
+
+>>>>>>> b7e5b2adcb98d403969c931a50b49258d9441b5c
 							</td>
 							<td align="center" class="">
-								<div style="text-align: center; width: 200px;">{$vo.desc}</div>
+								<div style="text-align: center; width: 300px;">{$vo.desc}</div>
                             </td>
                             <td align="center" class="handle">
 								<div style="text-align: center; width: 200px; max-width:200px;">
