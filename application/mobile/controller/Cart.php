@@ -480,7 +480,8 @@ public function in_five_week($begin_time){
 
 //检查是否6周后
 public function after_six_week($begin_time){
-    if($begin_time+3600*24*7*6>time()){
+    $time=time();
+    if($begin_time+3600*24*7*6<$time){
             return true;
     }else{
         return false;
