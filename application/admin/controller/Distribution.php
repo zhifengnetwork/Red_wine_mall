@@ -361,10 +361,12 @@ class Distribution extends Base
     public function commission_detail()
     {
         $id = input('id/d');
-        $detail = M('distrbut_commission_log')->where('log_id',$id)->find();
+        // $detail = M('account_log')->where('log_id',$id)->find();
+        $detail=Db::name('account_log')->alias("al")->join("users u","u.user_id=al.user_id",LEFT)->where('log_id',$id)->field("al.user_id,al.user_money,al.change_time,al.desc,u.nickname,u.mobile,al.type")->find();
 
         $is_type = 4;
-        
+        $typeList=array('2'=>'邀请奖励','3'=>'晋升奖励上级','4'=>'晋升奖励上上级','5'=>'级差领导奖','6'=>'领导奖奖励豪车');
+       $detail['typename']=$typeList[$detail['type']];
         $this->assign('is_type',$is_type);
         $this->assign('detail',$detail);
         return $this->fetch();
