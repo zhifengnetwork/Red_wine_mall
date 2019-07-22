@@ -64,20 +64,13 @@ class UserInvite extends Model{
      public function recommend($share_user,$user_id)
      {
          //获取上级id
-        
        //   $recommend_id=19945;
          $recommend_id=$share_user;
- 
-        //  $user_id=$this->user_id;
-        //  $user_id=$user_id;
-         //判断自己是否已经有直属上级
-        //  $myInfo=Db::name('users')->where('user_id','=',$user_id)->find();
-        //  if($myInfo['first_leader']){
-        //      $this->error("已经有上级不能在被推荐");
-        //  }
+        $allLower = get_all_lower($user_id);
+        if(in_array($recommend_id,$allLower)){
+            $this->error("下级不能作为上级");
+        }
          $time=time();
-         // $firstUpdate=Db::name('users')->update(['user_id'=>$user_id,'first_leader'=>$recommend_id]);
- 
          //推荐成功 统计上级的直属下级数量 更新上级的身份  经理还是总监
          $upPopCount=Db::name('users')->where('first_leader','=',$recommend_id)->count(); 
      

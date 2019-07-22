@@ -148,6 +148,7 @@ class User extends MobileBase
 
     public function index()
     {
+        
         $user_id = $this->user_id;
         $agent_level = M('agent_level')->field('level,level_name')->select();
         $myuser=Db::name("users")->where("user_id",$user_id)->field("leader_level")->find();
