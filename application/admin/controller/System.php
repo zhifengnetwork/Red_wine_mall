@@ -598,7 +598,7 @@ class System extends Base
 
       //每月定时发放极差奖领导奖  优化方法
       public function team_bonus(){
-        $allUserPerformace=Db::name('users')->alias('u')->join('agent_performance ap','u.user_id=ap.user_id',LEFT)->field('u.leader_level,u.user_id,u.mobile,u.nickname,,u.distribut_money,ap.ind_per,ap.agent_per')->where('leader_level','>','0')->select();
+        $allUserPerformace=Db::name('users')->alias('u')->join('agent_performance ap','u.user_id=ap.user_id',LEFT)->field('u.leader_level,u.user_id,u.mobile,u.nickname,u.distribut_money,ap.ind_per,ap.agent_per')->where('u.leader_level','<>','0')->select();
         $time=time();
         if($allUserPerformace){
             $accountLogModel=Db::name('account_log');
