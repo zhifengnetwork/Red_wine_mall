@@ -74,8 +74,9 @@ class Weixin
 				} else {
 					if($user['user_id'] == $share_user){
 						return false;
+					}else if($user['first_leader'] == $share_user){
+						return false;
 					}
-					$this->write_log("用户绑定ID：".$share_user);
 					Db::execute("update `tp_users` set `first_leader` = '".$share_user."' where `user_id` = '".$user['user_id']."'");
 					if($share_user_openid){
 						$wx_content = "会员ID: ".$user['user_id']." 成为了你的下级!";
