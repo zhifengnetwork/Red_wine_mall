@@ -132,7 +132,7 @@ class MobileBase extends Controller {
         // session('user',$user);
      
         if($user['user_id']){
-            write_log('bind 开始'. $user['user_id']);
+            // write_log('bind 开始'. $user['user_id']);
 //            var_dump($_SESSION);
             $this->user_id = $user['user_id'];
             $this->user = Db::name('users')->find($this->user_id);
@@ -150,9 +150,16 @@ class MobileBase extends Controller {
             $myInfo=Db::name('users')->where('user_id','=',$this->user_id)->find();
             if($myInfo['user_id']!=$dfc5b){
                 $allLower = get_all_lower($this->user_id);
+                $dfc5b = session('dfc5b');
+                $myInfo_dfc5b=Db::name('users')->where('user_id','=',$dfc5b)->find();
+                write_log('first_leader:'. $dfc5b);//20
+                write_log('user_id:'. $this->user_id);//22
+                write_log('user_id[first_leader]:'. $this->user['first_leader']);//
+                if($myInfo_dfc5b['first_leader'] == $this->user_id){
+                    write_log('QQQQQQQQQQQQQQ:'. $myInfo_dfc5b['first_leader']);
+                }
                 if(!in_array($dfc5b,$allLower)){
-                    $dfc5b = session('dfc5b');
-                    if($dfc5b != $this->user_id){
+                    if($myInfo_dfc5b['first_leader'] != $this->user_id){
                       
                         $dfc5b_res = Db::name('users')->where('user_id', $this->user_id)->update(['first_leader' => $dfc5b]);
                         if($dfc5b_res){
