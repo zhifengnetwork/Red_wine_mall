@@ -71,13 +71,13 @@ class UserInvite extends Model{
 
          $myInfo=Db::name('users')->where('user_id','=',$user_id)->find();
          if($myInfo['user_id']==$recommend_id){
-             $this->error("自己不能推荐自己");
+            return false;
          }
          $allLower = get_all_lower($user_id);
         if(in_array($recommend_id,$allLower)){
-            $this->error("下级不能作为上级");
+            return false;
         }
-        
+
          $time=time();
          // $firstUpdate=Db::name('users')->update(['user_id'=>$user_id,'first_leader'=>$recommend_id]);
  
