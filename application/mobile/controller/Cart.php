@@ -332,7 +332,7 @@ class Cart extends MobileBase {
              if($order['agent_good']==3){
                 $pop_name='pop_person_num_province';
              }
-            $pop_person_num=Db::name('config')->where('name','=',$pop_name)->value('value');
+            $pop_person_num=Db::name('config')->where(['name' => $pop_name])->value('value');
             $period_count=ceil($pop_person_num/12);
             static $current_num='';
             $current_num=$pop_person_num;
