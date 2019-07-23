@@ -232,10 +232,12 @@ class User extends Base
                 $time=time();
                 $agent_level_post=$_POST['agent_level'];
 
-
             if($u_info['agent_level']!=$agent_level_post){   //自己的身份和修改的身份不一样
                 //统计自己身份用了多少    减了  再生成表
                 $hasUsed=Db::name('pop_period')->where("user_id",'=',$u_info['user_id'])->where('level','=',$u_info['agent_level'])->sum("poped_per_num");
+                if(!$hasUsed){
+                    $hasUsed=0;
+                }
                 if($agent_level_post==1){
                     $pop_name='pop_person_num';
                 }
@@ -274,7 +276,7 @@ class User extends Base
             }
 
             $row = M('users')->where(array('user_id' => $uid))->save($post_data);
-            if ($row) {
+            if ($row!==false) {
                 exit($this->success('修改成功','User/index'));
             }
             exit($this->error('未作内容修改或修改失败'));
@@ -287,26 +289,6 @@ class User extends Base
         $this->assign('user', $user);
         return $this->fetch();
     }
-
-
-    public function  set_pop_period($user_id,$agent_level)
-    {
-        $time=time();
-        Db::name('users')->update(['user_id'=>$order['user_id'],'agent_level'=>$order['agent_good'],'default_period'=>1,'add_agent_time'=>$time]);
-
-        //  if($order['agent_good']==1){
-        //      $pop_name='pop_person_num';
-        //  }
-        //  if($order['agent_good']==2){
-        //     $pop_name='pop_person_num_city';
-        //  }
-        //  if($order['agent_good']==3){
-        //     $pop_name='pop_person_num_province';
-        //  }
-        // $pop_person_num=Db::name('config')->where('name','=',$pop_name)->value('value');
-      
-    }
-
 
 
 
