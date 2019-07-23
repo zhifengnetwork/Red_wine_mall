@@ -143,26 +143,36 @@ class MobileBase extends Controller {
 
             # 新版 - 上下级关系绑定
             if(session('dfc5b') && !$this->user['first_leader']){
-               
-                $dfc5b = session('dfc5b');
-                if($dfc5b != $this->user_id){
-                  
-                    $dfc5b_res = Db::name('users')->where('user_id', $this->user_id)->update(['first_leader' => $dfc5b]);
-                    if($dfc5b_res){
-                        $dfc5b_user = session('dfc5b_user');
+
+                //推荐id $dfc5b   自己id  
+                // $this->user_id
+  
+            $myInfo=Db::name('users')->where('user_id','=',$this->user_id)->find();
+            if($myInfo['user_id']!=$dfc5b){
+                $allLower = get_all_lower($this->user_id);
+                if(!in_array($dfc5b,$allLower)){
+                    $dfc5b = session('dfc5b');
+                    if($dfc5b != $this->user_id){
                       
-                        if($dfc5b_user){
-                         
-                            $this->Invitation_Register($dfc5b_user,'恭喜你邀请注册成功！',$user['nickname'],$user['mobile'],time(),'恭喜你又收纳一名得力爱将，你的团队越来越大！');
+                        $dfc5b_res = Db::name('users')->where('user_id', $this->user_id)->update(['first_leader' => $dfc5b]);
+                        if($dfc5b_res){
+                            $dfc5b_user = session('dfc5b_user');
+                          
+                            if($dfc5b_user){
+                             
+                                $this->Invitation_Register($dfc5b_user,'恭喜你邀请注册成功！',$user['nickname'],$user['mobile'],time(),'恭喜你又收纳一名得力爱将，你的团队越来越大！');
+                            }
+                            session('dfc5b',0);
+                            session('dfc5b_user', '');
                         }
+                    }else{
                         session('dfc5b',0);
                         session('dfc5b_user', '');
                     }
-                }else{
-                    session('dfc5b',0);
-                    session('dfc5b_user', '');
                 }
             }
+          
+        }
 
         
             // if( !$user['mobile'] && (CONTROLLER_NAME != 'User' || ACTION_NAME != 'setMobile') ){
@@ -172,6 +182,7 @@ class MobileBase extends Controller {
             // }
             
             
+
             // 邀请注册送佣金
             $UserInvite = new UserInvite();
             $UserInvite->user_invite($user['user_id']);
