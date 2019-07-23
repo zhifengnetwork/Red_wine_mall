@@ -116,12 +116,12 @@
 					<li class="p">
 						<span class="withdraw-cont-ul-name fl">支付密码：</span>
 						<div class="withdraw-cont-input fl">
-							<input name="paypwd" id="paypwd" type="password" placeholder="请填写支付密码" />
+							<input name="paypwd" id="paypwd" type="password" placeholder="请填写支付密码"  readonly onfocus="this.removeAttribute('readonly');"/>
 							<label></label>
 						</div>
 					</li>
 					<div class="withdraw-cont-pwd p">
-						<div class="fr withdraw-pwd-btn"><a href="{:U('User/paypwd')}"><input type="button" value="前往设置或修改交易密码" /></a></div>
+						<div class="fr withdraw-pwd-btn" id="xiugaimima"><a href="{:U('User/paypwd')}"><input type="button" value="前往设置或修改交易密码" /></a></div>
 						<span class="withdraw-pwd-span fr"></span>
 					</div>
 					<div class="withdraw-cont-btn cont-btn-two" style="margin-bottom: 0;">
@@ -315,6 +315,23 @@
 		console.log(cash_type)
 	})
 
+
+
+
+
+    $("#paypwd").keyup(function(){
+        remo()
+    });
+	function remo() {
+        var key =  $("#paypwd").val()
+		if (key.length > 0) {
+            $("#xiugaimima").remove();
+		}
+		if (key.length = 0) {
+		    txt = '<a href="{:U(\'User/paypwd\')}"><input type="button" value="前往设置或修改交易密码" /></a>'
+            $("#xiugaimima").append(txt)
+		}
+	}
 	function isPone(str) {
 		var myreg = /^[1][2,3,4,5,6,7,8,9][0-9]{9}$/;
 		//var myreg = /^[0-9]{16,19}$/;

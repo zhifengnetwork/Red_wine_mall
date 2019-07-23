@@ -892,7 +892,7 @@ class User extends MobileBase
 //        $this->assign([
 //            'endUser'=>$tradata,
 //        ]);
-        return $this->fetch();
+        return $this->fetch('transfer1');
     }
 
 

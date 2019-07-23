@@ -341,12 +341,12 @@ class Cart extends MobileBase {
                 if($current_num>12){
                     $current_num-=12;
                     if($i==1){
-                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>$time,'end_time'=>'']);
+                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>$order['agent_good'],'begin_time'=>$time,'end_time'=>'']);
                     }else{
-                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>'','end_time'=>'']);
+                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>$order['agent_good'],'begin_time'=>'','end_time'=>'']);
                     }
                 }else{
-                    $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>$current_num,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>'','end_time'=>'']);
+                    $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>$current_num,'poped_per_num'=>0,'period'=>$i,'level'=>$order['agent_good'],'begin_time'=>'','end_time'=>'']);
                 }
            }
 
@@ -376,6 +376,10 @@ public function pay_leader($userid,$agent_level)
         $bonus_position_firs=$this->get_bonus_position($firstLeader['agent_level']);
         $five_times=$this->week_times(5);
         $six_times=$this->week_times(6);
+
+        $agentLevelList=array('0'=>'县级','1'=>'市级','2'=>'省级');
+        $agentLevel=$agentLevelList[$agent_level];
+
            //4周内
         if($this->in_four_week($firstLeader['add_agent_time'])){
                 //插入上级
@@ -383,7 +387,7 @@ public function pay_leader($userid,$agent_level)
                 $distribut_money=$firstLeader['distribut_money']+$firstBonus;
                 $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
                 
-                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>3]);
+                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为".$agentLevel."奖励",'type'=>3]);
         }
         //5周
         if($this->in_five_week($firstLeader['add_agent_time'])){
@@ -392,7 +396,7 @@ public function pay_leader($userid,$agent_level)
                 $distribut_money=$firstLeader['distribut_money']+$firstBonus;
                 $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
                 
-                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>3]);
+                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为".$agentLevel."奖励",'type'=>3]);
             }
         }
         //6周后
@@ -401,7 +405,7 @@ public function pay_leader($userid,$agent_level)
                 $firstBonus=$achievement*$county_bonus/100;
                 $distribut_money=$firstLeader['distribut_money']+$firstBonus;
                 $userModel->update(['user_id'=>$firstLeader['user_id'],'distribut_money'=>$distribut_money]);
-                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>3]);
+                $accountLogModel->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$firstBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为".$agentLevel."奖励",'type'=>3]);
             }
         }
 
@@ -415,7 +419,7 @@ public function pay_leader($userid,$agent_level)
                     $secondBonus=$achievement*$sec_county_bonus/100;
                     $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
                     $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
-                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"二级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>4]);
+                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为".$agentLevel."奖励",'type'=>4]);
             }
             //五周内
             if($this->in_five_week($secondLeader['add_agent_time'])){
@@ -423,7 +427,7 @@ public function pay_leader($userid,$agent_level)
                     $secondBonus=$achievement*$sec_county_bonus/100;
                     $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
                     $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
-                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"二级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>4]);
+                    $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为".$agentLevel."奖励",'type'=>4]);
                 }
             }
               //6周后
@@ -432,7 +436,7 @@ public function pay_leader($userid,$agent_level)
                 $secondBonus=$achievement*$sec_county_bonus/100;
                 $sec_distribut_money=$secondLeader['distribut_money']+$secondBonus;
                 $userModel->update(['user_id'=>$secondLeader['user_id'],'distribut_money'=>$sec_distribut_money]);
-                $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"二级用户【'".$user['user_id']."'】晋升为县级奖励",'type'=>4]);
+                $accountLogModel->insert(['user_id'=>$secondLeader['user_id'],'user_money'=>$secondBonus,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【'".$user['user_id']."'】晋升为".$agentLevel."奖励",'type'=>4]);
             }
          }
      }
