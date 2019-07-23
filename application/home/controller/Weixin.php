@@ -75,7 +75,7 @@ class Weixin
 					if($user['user_id'] == $share_user){
 						return false;
 					}
-					write_log("用户绑定ID：".$share_user);
+					$this->write_log("用户绑定ID：".$share_user);
 					Db::execute("update `tp_users` set `first_leader` = '".$share_user."' where `user_id` = '".$user['user_id']."'");
 					if($share_user_openid){
 						$wx_content = "会员ID: ".$user['user_id']." 成为了你的下级!";
@@ -105,7 +105,7 @@ class Weixin
 		return $arr;
     }
 
-    function write_log($content)
+    public function write_log($content)
 	{
 		$content = "[" . date('Y-m-d H:i:s') . "]" . $content . "\r\n";
 		$dir = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/') . '/logs';
