@@ -115,12 +115,9 @@ class User extends MobileBase
               Db::name('pop_period')->where('user_id','=',$dv['user_id'])->where('period','=',$dv['period'])->update(['begin_time'=>$time,'week_release'=>0]);
           }
       }
-  
-    
 
 
       
-
     public function index()
     {
         $user_id = $this->user_id;
