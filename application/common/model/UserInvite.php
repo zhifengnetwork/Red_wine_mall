@@ -71,11 +71,11 @@ class UserInvite extends Model{
 
          $myInfo=Db::name('users')->where('user_id','=',$user_id)->find();
          if($myInfo['user_id']==$recommend_id){
-            return false;
+            return false;die;
          }
          $allLower = get_all_lower($user_id);
         if(in_array($recommend_id,$allLower)){
-            return false;
+            return false;die;
         }
 
          $time=time();

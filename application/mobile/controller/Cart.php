@@ -377,7 +377,7 @@ public function pay_leader($userid,$agent_level)
         $five_times=$this->week_times(5);
         $six_times=$this->week_times(6);
 
-        $agentLevelList=array('0'=>'县级','1'=>'市级','2'=>'省级');
+        $agentLevelList=array('1'=>'县级','2'=>'市级','3'=>'省级');
         $agentLevel=$agentLevelList[$agent_level];
 
            //4周内
