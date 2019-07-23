@@ -117,7 +117,7 @@ class User extends MobileBase
       }
 
 
-      
+
     public function index()
     {
         $user_id = $this->user_id;

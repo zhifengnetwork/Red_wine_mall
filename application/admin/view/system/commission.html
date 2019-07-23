@@ -143,6 +143,35 @@
                     <p class="notic">推广奖励比例 用户实际到账金额为应得金额*奖励比例  单位：%</p>
                 </dd>
             </dl>
+
+
+            <dl class="row">
+                <dt class="tit">
+                    <label>县级代理每期开放人数</label>
+                </dt>
+                <dd class="opt">
+                    <input name="pop_num_area" id="distribut_first_rate" value="{$pop_num_area.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic"> 单位：人数</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>市级代理每期开放人数</label>
+                </dt>
+                <dd class="opt">
+                    <input name="pop_num_city" id="distribut_first_rate" value="{$pop_num_city.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">  单位：人数</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>省级代理每期开放人数</label>
+                </dt>
+                <dd class="opt">
+                    <input name="pop_num_province" id="distribut_first_rate" value="{$pop_num_province.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">  单位：人数</p>
+                </dd>
+            </dl>
             </div>
             <div class="bot">
                 <a href="JavaScript:void(0);" class="ncap-btn-big ncap-btn-green" onclick="adsubmit()">确认提交</a>

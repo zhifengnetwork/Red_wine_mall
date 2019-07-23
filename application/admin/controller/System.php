@@ -288,6 +288,12 @@ class System extends Base
         $bonus_cash= $confModel->where('name','=','bonus_cash_exchange')->find();
         $pop_commission= $confModel->where('name','=','pop_commission')->find();
         $pop_money= $confModel->where('name','=','pop_money')->find();
+
+        $pop_num_area= $confModel->where('name','=','pop_num_area')->find();
+        $pop_num_city= $confModel->where('name','=','pop_num_city')->find();
+        $pop_num_province= $confModel->where('name','=','pop_num_province')->find();
+       
+      
         $this->assign([
             'pop_person'=>$pop_person,
 
@@ -305,7 +311,11 @@ class System extends Base
 
             'bonus_cash'=>$bonus_cash,
             'pop_commission'=>$pop_commission,
-            'pop_money'=>$pop_money
+            'pop_money'=>$pop_money,
+
+            'pop_num_area'=>$pop_num_area,
+            'pop_num_city'=>$pop_num_city,
+            'pop_num_province'=>$pop_num_province
         ]);
          return $this->fetch();
     }
@@ -496,6 +506,26 @@ class System extends Base
                    $confModel->update(['id'=>$pop_money['id'],'name'=>'pop_money','value'=>$data['pop_money'],'inc_type'=>'commison_conf']);
             }else{
                 $confModel->insert(['name'=>'pop_money','value'=>$data['pop_money'],'inc_type'=>'commison_conf']);
+            }
+
+
+            $pop_num_area= $confModel->where('name','=','pop_num_area')->find();
+            if($pop_num_area){
+                   $confModel->update(['id'=>$pop_num_area['id'],'name'=>'pop_num_area','value'=>$data['pop_num_area'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'pop_num_area','value'=>$data['pop_num_area'],'inc_type'=>'commison_conf']);
+            }
+            $pop_num_city= $confModel->where('name','=','pop_num_city')->find();
+            if($pop_num_city){
+                   $confModel->update(['id'=>$pop_num_city['id'],'name'=>'pop_num_city','value'=>$data['pop_num_city'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'pop_num_city','value'=>$data['pop_num_city'],'inc_type'=>'commison_conf']);
+            }
+            $pop_num_province= $confModel->where('name','=','pop_num_province')->find();
+            if($pop_num_province){
+                   $confModel->update(['id'=>$pop_num_province['id'],'name'=>'pop_num_province','value'=>$data['pop_num_province'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'pop_num_province','value'=>$data['pop_num_province'],'inc_type'=>'commison_conf']);
             }
             
             $this->success("操作成功!!!",U('Admin/System/commission'));
