@@ -38,7 +38,8 @@
 <div class="mixi">
     <div class="mixi_top">
         <div class="top_box">日期</div>
-        <div class="top_box">佣金</div>
+        <!-- <div class="top_box">佣金</div> -->
+        <div class="top_box">实收佣金</div>
         <div class="top_box">描述</div>
     </div>
 </div>
@@ -47,7 +48,11 @@
 <div class="mixibox">
     <div class="mixi_top">
         <div class="top_box">{:date('Y-m-d H:i:s',$vo[change_time])}</div>
-        <div class="top_box">{$vo[user_money]}</div>
+        <if condition="$vo[pay_points]">
+            <div class="top_box">{$vo[pay_points]}</div>
+            <else />
+            <div class="top_box">{$vo[user_money]}</div>
+            </if>
         <div class="top_box">{$vo[desc]}</div>
     </div>
 </div>
