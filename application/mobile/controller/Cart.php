@@ -341,12 +341,12 @@ class Cart extends MobileBase {
                 if($current_num>12){
                     $current_num-=12;
                     if($i==1){
-                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>$time,'end_time'=>'']);
+                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>$order['agent_good'],'begin_time'=>$time,'end_time'=>'']);
                     }else{
-                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>'','end_time'=>'']);
+                        $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>$order['agent_good'],'begin_time'=>'','end_time'=>'']);
                     }
                 }else{
-                    $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>$current_num,'poped_per_num'=>0,'period'=>$i,'level'=>1,'begin_time'=>'','end_time'=>'']);
+                    $popPeriodModel->insert(['user_id'=>$order['user_id'],'person_num'=>$current_num,'poped_per_num'=>0,'period'=>$i,'level'=>$order['agent_good'],'begin_time'=>'','end_time'=>'']);
                 }
            }
 
