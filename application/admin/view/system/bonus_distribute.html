@@ -51,7 +51,7 @@
      if(isClick){
         isClick=false;
         $.ajax({
-                url:"{:url('mobile/user/team_bonus')}",
+                url:"{:url('admin/system/team_bonus')}",
                 method:"get",
                 success:function(res){
                     var res=JSON.parse(res);
