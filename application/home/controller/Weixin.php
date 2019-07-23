@@ -69,6 +69,8 @@ class Weixin
 				return false;
 			}else{
 				// 用户没有上级且用户不是公司人员绑定上下级
+				dump($user['is_employees']);
+				dump($share_user);die;
 				if ($user['is_employees'] == 1) {
 					return false;
 				} else {
