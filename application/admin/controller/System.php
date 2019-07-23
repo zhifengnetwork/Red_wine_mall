@@ -604,16 +604,15 @@ class System extends Base
             $accountLogModel=Db::name('account_log');
             foreach($allUserPerformace as $ak=>$av){
                 $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();
+                
                 if($av['agent_per']>=$one_agent_level['describe']){
-                    $bonus=$av['agent_per']*$one_agent_level['retio']/100;
+                    $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
                     $addDistribut=$av['distribut_money']+$bonus;
                     if($av['leader_level']==4){
-                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$addDistribut,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>6]);
+                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>6]);
                     }else{
-                        $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
-                        $addDistribut=$av['distribut_money']+$bonus;
                         Db::name('users')->where('user_id','=',$av['user_id'])->update(['distribut_money'=>$addDistribut]);
-                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$addDistribut,'pay_points'=>0,'change_time'=>$time,'desc'=>'级差奖领导奖','type'=>5]);
+                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'级差奖领导奖','type'=>5]);
                     }
                 }
             }
