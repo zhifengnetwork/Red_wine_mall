@@ -23,8 +23,14 @@
                 </td>
                 <td align="left" class="">
                     <div style="text-align: center; width: 80px;">
-                        <if condition="isset($agnet_name[$list.distribut_level])">
-                        {$agnet_name[$list.distribut_level]}
+                        <if condition="$list.agent_level eq 0">
+                            普通会员
+                            <elseif condition="$list.agent_level eq 1">
+                            县级代理
+                            <elseif condition="$list.agent_level eq 2">
+                            市级代理
+                            <elseif condition="$list.agent_level eq 3">
+                            升级代理
                         </if>
                         </div>
                 </td>
@@ -46,14 +52,14 @@
                 <td align="left" class="">
                     <div style="text-align: center; width: 50px;">{$list.totalAmount}</div>
                 </td>
-                <td align="left" class="">
+                <!-- <td align="left" class="">
                     <div style="text-align: center; width: 100px;">{$list.email}
                         <if condition="($list['email_validated'] eq 0) AND ($list['email'])">
                             (未验证)
                         </if>
                     </div>
-                </td>
-                <td align="left" class="">
+                </td>-->
+                <td align="left" class=""> 
                     <div style="text-align: center; width: 60px;"><eq name="$list.is_employees" value="1"> 是 <else/> 否 </eq></div>
                 </td>
                 <td align="left" class="">
@@ -63,7 +69,7 @@
                     <div style="text-align: center; width: 80px;"><a onclick="team_list('{$list.user_id}');">{$last_cout[$list.user_id]['team']|default="0"}</a></div>
                 </td>
                 <td align="left" class="">
-                    <div style="text-align: center; width: 80px;">{$list.mobile}
+                    <div style="text-align: center; width: 120px;">{$list.mobile}
                         <if condition="($list['mobile_validated'] eq 0) AND ($list['mobile'])">
                             (未验证)
                         </if>
