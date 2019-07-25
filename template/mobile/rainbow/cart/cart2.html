@@ -1092,8 +1092,10 @@
         }
         if (user_money.is(':checked') || pay_points.is(':checked')) {
             $('#paypwd_view').show();
+            $('#mix').hide();
         } else {
             $('#paypwd_view').hide();
+            $('#mix').show();
         }
     }
     //兑换优惠券
