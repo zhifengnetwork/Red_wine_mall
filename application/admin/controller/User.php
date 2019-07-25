@@ -238,29 +238,38 @@ class User extends Base
                 if(!$hasUsed){
                     $hasUsed=0;
                 }
+
+
+                $pop_num_area= $confModel->where('name','=','pop_num_area')->value('value');
+                $pop_num_city= $confModel->where('name','=','pop_num_city')->value('value');
+                $pop_num_province= $confModel->where('name','=','pop_num_province')->value('value');
                 if($agent_level_post==1){
                     $pop_name='pop_person_num';
+                    $pop_num=$pop_num_area;
                 }
                 if($agent_level_post==2){
                    $pop_name='pop_person_num_city';
+                   $pop_num=$pop_num_city;
                 }
                 if($agent_level_post==3){
                    $pop_name='pop_person_num_province';
+                   $pop_num=$pop_num_province;
                 }
                 $pop_person_num=Db::name('config')->where('name','=',$pop_name)->value('value');
                 $pop_person_num=$pop_person_num-$hasUsed;
 
-                $period_count=ceil($pop_person_num/12);
+                // $period_count=ceil($pop_person_num/12);
+                $period_count=ceil($pop_person_num/$pop_num);
                 static $current_num='';
                 $current_num=$pop_person_num;
                 $popPeriodModel=Db::name('pop_period');
                 for($i=1;$i<=$period_count;$i++){
-                    if($current_num>12){
-                        $current_num-=12;
+                    if($current_num>$pop_num){
+                        $current_num-=$pop_num;
                         if($i==1){
-                            $popPeriodModel->insert(['user_id'=>$u_info['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>$agent_level_post,'begin_time'=>$time,'end_time'=>'']);
+                            $popPeriodModel->insert(['user_id'=>$u_info['user_id'],'person_num'=>$pop_num,'poped_per_num'=>0,'period'=>$i,'level'=>$agent_level_post,'begin_time'=>$time,'end_time'=>'']);
                         }else{
-                            $popPeriodModel->insert(['user_id'=>$u_info['user_id'],'person_num'=>12,'poped_per_num'=>0,'period'=>$i,'level'=>$agent_level_post,'begin_time'=>'','end_time'=>'']);
+                            $popPeriodModel->insert(['user_id'=>$u_info['user_id'],'person_num'=>$pop_num,'poped_per_num'=>0,'period'=>$i,'level'=>$agent_level_post,'begin_time'=>'','end_time'=>'']);
                         }
                     }else{
                         $popPeriodModel->insert(['user_id'=>$u_info['user_id'],'person_num'=>$current_num,'poped_per_num'=>0,'period'=>$i,'level'=>$agent_level_post,'begin_time'=>'','end_time'=>'']);
