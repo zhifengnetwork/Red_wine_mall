@@ -21,11 +21,11 @@ class User extends Base
 {
     public function index()
     {
-        $UserInvite = new UserInvite;
-        $share_user = 11;
-        $user_id = 12;
-        $data = $UserInvite->recommend($share_user, $user_id);
-        die;
+        // $UserInvite = new UserInvite;
+        // $share_user = 11;
+        // $user_id = 12;
+        // $data = $UserInvite->recommend($share_user, $user_id);
+        // die;
         return $this->fetch();
     }
 
