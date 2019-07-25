@@ -1,30 +1,34 @@
-<include file="public/header" title="个人中心" body=""/>
-<link rel="stylesheet" type="text/css" href="__STATIC__/css/personal.css"/>
+<include file="public/header" title="个人中心" body="" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/css/personal.css" />
 <style>
-body{
-    background: #f2f2f2;
-}
-.user_down_span{
-    position: relative;
-   padding-right: .5rem;
-}
-.user_down_span i{
-    position: absolute;
-    top: 0;
-    right: 0;
-    transform: scale(0.6);
-}
-.user_down_yue p{
-    color: #d90830;
-    font-weight: bold;
-}
+    body {
+        background: #f2f2f2;
+    }
+
+    .user_down_span {
+        position: relative;
+        padding-right: .5rem;
+    }
+
+    .user_down_span i {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: scale(0.6);
+    }
+
+    .user_down_yue p {
+        color: #d90830;
+        font-weight: bold;
+    }
 </style>
 <div class="z_user_vs">
     <div class="z_user_head" style="height:8.74rem;">
         <div class="z_user_top">
             <div class="user_top_tx">
                 <a href="/Mobile/User/userinfo.html">
-                    <notempty name="$user.head_pic"><img src="{$user.head_pic}"/><else/><img src="/public/images/user_default_icon.jpg"/></notempty>
+                    <notempty name="$user.head_pic"><img src="{$user.head_pic}" />
+                        <else /><img src="/public/images/user_default_icon.jpg" /></notempty>
                 </a>
             </div>
             <div class="user_top_name">
@@ -32,11 +36,11 @@ body{
             </div>
             <div class="user_top_title">
                 <a href="javascript:void(0);">
-                        {$agnet_name}
-                    <if condition="$is_vip eq 1">
-                      &nbsp;<span style="color:red">VIP</span> 
+                    {$agnet_name}
+                    <if condition="$agent_level">
+                        【<span>{$agent_level}</span>】
                     </if>
-                    
+
                 </a>
             </div>
             <div class="user_top_name">
@@ -48,17 +52,30 @@ body{
             <ul>
                 <li style="width:100%;background: white;">
                     <a href="{:U('Mobile/User/account')}">
-                        <div class="user_down_yue" style="color:#151515;font-size:0.64rem;margin-top: 0.4266666666666667rem"><p>{$user_money['user_money']}</p><span class="user_down_span">余额<i class="zMright"></i></span></div>
+                        <div class="user_down_yue"
+                            style="color:#151515;font-size:0.64rem;margin-top: 0.4266666666666667rem">
+                            <p>{$user_money['user_money']}</p><span class="user_down_span">余额<i
+                                    class="zMright"></i></span>
+                        </div>
                         <!-- <div class="user_down_name">余额</div> -->
                     </a>
                     <a href="{:U('Mobile/User/mixi')}">
-                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem"><p>{$distribut_money}</p><span class="user_down_span">总佣金</span></div>
+                        <div class="user_down_yue"
+                            style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem">
+                            <p>{$distribut_money}</p><span class="user_down_span">总佣金</span>
+                        </div>
                     </a>
                     <a href="#">
-                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem"><p>{$comm}</p><span class="user_down_span">今日佣金</span></div>
+                        <div class="user_down_yue"
+                            style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem">
+                            <p>{$comm}</p><span class="user_down_span">今日佣金</span>
+                        </div>
                     </a>
                     <a href="{:U('Mobile/User/tuiguang')}">
-                        <div class="user_down_yue" style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem"><p>{$person_num}</p><span class="user_down_span">推广名额<i class="zMright"></i></span></div>
+                        <div class="user_down_yue"
+                            style="color: black;font-size:0.64rem;margin-top: 0.4266666666666667rem">
+                            <p>{$person_num}</p><span class="user_down_span">推广名额<i class="zMright"></i></span>
+                        </div>
                     </a>
                 </li>
                 <!-- <li>
@@ -69,8 +86,8 @@ body{
                 </li> -->
             </ul>
         </div>
-        
-       <!-- <div class="z_user_icon">
+
+        <!-- <div class="z_user_icon">
        	<a href="/Mobile/User/userinfo.html">
        		<i></i>
        	</a>
@@ -80,49 +97,49 @@ body{
         <volist name="menu_list" id="menu">
             <switch name="$menu['menu_id']">
                 <case value="1">
-                        <div class="z_user_list zuser_list">
+                    <div class="z_user_list zuser_list">
 
-                               
-                            <a href="{$menu.menu_url}">
-                                <div class="user_list_cont padd10">
-                                    <div class="cont_fl">
-                                        <!-- <img src="__PUBLIC__/static/images/mlist.png"/> -->
-                                        <span>我的订单</span>
-                                    </div>
-                                    <div class="cont_fr">
-                                                <span>
-                                                    查看全部订单
-                                                </span>
-                                        <i class="zMright"></i>
-                                    </div>
+
+                        <a href="{$menu.menu_url}">
+                            <div class="user_list_cont padd10">
+                                <div class="cont_fl">
+                                    <!-- <img src="__PUBLIC__/static/images/mlist.png"/> -->
+                                    <span>我的订单</span>
                                 </div>
-                            </a>
+                                <div class="cont_fr">
+                                    <span>
+                                        查看全部订单
+                                    </span>
+                                    <i class="zMright"></i>
+                                </div>
+                            </div>
+                        </a>
                         <div class="z_user_nav">
                             <ul>
                                 <li>
                                     <a href="{:U('/Mobile/Order/order_list',array('type'=>'WAITPAY'))}">
-                                        <img src="__PUBLIC__/static/images/hong1.png"/>
+                                        <img src="__PUBLIC__/static/images/hong1.png" />
 
                                         <p>待付款</p>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{:U('/Mobile/Order/order_list',array('type'=>'WAITSEND'))}">
-                                        <img src="__PUBLIC__/static/images/hong2.png"/>
+                                        <img src="__PUBLIC__/static/images/hong2.png" />
 
                                         <p>待发货</p>
                                     </a>
-                                    </li>
+                                </li>
                                 <li>
                                     <a href="{:U('/Mobile/Order/wait_receive',array('type'=>'WAITRECEIVE'))}">
-                                        <img src="__PUBLIC__/static/images/hong3.png"/>
+                                        <img src="__PUBLIC__/static/images/hong3.png" />
 
                                         <p>待收货</p>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{:U('Mobile/Order/comment',array('status'=>0))}">
-                                        <img src="__PUBLIC__/static/images/hong4.png"/>
+                                        <img src="__PUBLIC__/static/images/hong4.png" />
 
                                         <p>待评价</p>
                                     </a>
@@ -141,28 +158,13 @@ body{
                 <default />
 
                 <if condition="$is_vip eq 0">
-                        <if condition="$menu.menu_name == '我的VIP'">
-                                  <else/>
-                                  <a href="{$menu.menu_url}">
-                                        <div class="z_user_list <if condition='$menu.is_tab eq 1'></if>">
-                                            <div class="user_list_cont padd10">
-                                                <div class="cont_fl">
-                                                    <img src="__PUBLIC__/static/images/ww{$menu.menu_id}.png"/>
-                                                    <span>{$menu.menu_name}</span>
-                                                </div>
-                                                <div class="cont_fr">
-                                                    <i class="zMright"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                  </a>
-                         </if>  
-                    <else/>
-                    <a href="{$menu.menu_url}">
-                            <div class="z_user_list <if condition='$menu.is_tab eq 1'>border10</if>">
+                    <if condition="$menu.menu_name == '我的VIP'">
+                        <else />
+                        <a href="{$menu.menu_url}">
+                            <div class="z_user_list <if condition='$menu.is_tab eq 1'></if>">
                                 <div class="user_list_cont padd10">
                                     <div class="cont_fl">
-                                        <img src="__PUBLIC__/static/images/ww{$menu.menu_id}.png"/>
+                                        <img src="__PUBLIC__/static/images/ww{$menu.menu_id}.png" />
                                         <span>{$menu.menu_name}</span>
                                     </div>
                                     <div class="cont_fr">
@@ -170,11 +172,26 @@ body{
                                     </div>
                                 </div>
                             </div>
-                      </a>
-                    
+                        </a>
+                    </if>
+                    <else />
+                    <a href="{$menu.menu_url}">
+                        <div class="z_user_list <if condition='$menu.is_tab eq 1'>border10</if>">
+                            <div class="user_list_cont padd10">
+                                <div class="cont_fl">
+                                    <img src="__PUBLIC__/static/images/ww{$menu.menu_id}.png" />
+                                    <span>{$menu.menu_name}</span>
+                                </div>
+                                <div class="cont_fr">
+                                    <i class="zMright"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
                 </if>
 
-             
+
             </switch>
         </volist>
         <!-- <if condition="isset($app)">
@@ -195,51 +212,51 @@ body{
     </div>
 </div>
 <!--底部导航-start-->
-<include file="public/footer_nav"/>
+<include file="public/footer_nav" />
 <script type="text/javascript" src="/public/static/js/layui/layui.js"></script>
 <!--底部导航-end-->
 <script>
-    
-    layui.use('layer', function(){
-        var layer = layui.layer;
-    }); 
 
-    function app_download(){
+    layui.use('layer', function () {
+        var layer = layui.layer;
+    });
+
+    function app_download() {
         let android = '{$app.android_app_url}';
         let ios = '{$app.ios_app_url}';
         let mobile_validated = '{$mobile_validated}';
         let _tpl = ``;
 
-        if(mobile_validated == 1){
+        if (mobile_validated == 1) {
             layer.open({
-                title:'请先绑定手机号！',
-                content:'<p style="text-align:center;color:red;">请先绑定手机号！</p>',
-                btn:['绑定手机号', '取消'],
-                btnAlign:'c',
-                area:['80%','25%'],
-                shade:0.2,
-                yes:function(){
-                    window.location.href="/Mobile/User/setMobile";
+                title: '请先绑定手机号！',
+                content: '<p style="text-align:center;color:red;">请先绑定手机号！</p>',
+                btn: ['绑定手机号', '取消'],
+                btnAlign: 'c',
+                area: ['80%', '25%'],
+                shade: 0.2,
+                yes: function () {
+                    window.location.href = "/Mobile/User/setMobile";
                 }
             });
             return false;
         }
-        
-        if(android){
+
+        if (android) {
             _tpl += `
-                <img src="/public/images/android_ico.png" style="height:30%;margin:10% 0 0 37%;" onclick="javascript:location.href='`+android+`'"/>
-                <h3 style="text-align:center;"margin-top:5%" onclick="javascript:location.href='`+android+`'">安卓APP下载</h3>
+                <img src="/public/images/android_ico.png" style="height:30%;margin:10% 0 0 37%;" onclick="javascript:location.href='`+ android + `'"/>
+                <h3 style="text-align:center;"margin-top:5%" onclick="javascript:location.href='`+ android + `'">安卓APP下载</h3>
                 `;
         }
-        if(ios){
+        if (ios) {
             _tpl += `
-                <img src="/public/images/ios_ico.png" style="height:30%;margin:10% 0 0 35%;" onclick="javascript:location.href='`+ios+`'"/>
-                <h3 style="text-align:center;"margin-top:5%"onclick="javascript:location.href='`+ios+`'">苹果APP下载</h3>
+                <img src="/public/images/ios_ico.png" style="height:30%;margin:10% 0 0 35%;" onclick="javascript:location.href='`+ ios + `'"/>
+                <h3 style="text-align:center;"margin-top:5%"onclick="javascript:location.href='`+ ios + `'">苹果APP下载</h3>
                 `;
         }
         layer.open({
             title: 'APP下载',
-            btn:false,
+            btn: false,
             shadeClose: true,
             shade: 0.2,
             area: ['75%', '50%'],
@@ -248,17 +265,18 @@ body{
     }
 
     // $('.z_user_head').css("background-color", "{$tpshop_config['basic_header_background']}");
-    $('.z_user_head').css("background", "url(__STATIC__/images/user_bg.png) no-repeat");	
+    $('.z_user_head').css("background", "url(__STATIC__/images/user_bg.png) no-repeat");
     $('.z_user_head').css("background-size", "cover");
-    $(function(){		
+    $(function () {
         var ua = window.navigator.userAgent.toLowerCase();
-        if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
             $('#logout').hide();
         }
     });
-	$('.border10').css('border-color','#f8f8f8');
+    $('.border10').css('border-color', '#f8f8f8');
 
-    
+
 </script>
 </body>
+
 </html>

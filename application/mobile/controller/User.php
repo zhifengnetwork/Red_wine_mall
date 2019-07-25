@@ -122,16 +122,19 @@ class User extends MobileBase
 
     public function index()
     {
+        $agent_level_arr = ['1' => '县级代理', '2' => '市级代理', '3' => '省级代理'];
         $user_id = $this->user_id;
         $agent_level = M('agent_level')->field('level,level_name')->select();
-        $myuser = Db::name("users")->where("user_id", $user_id)->field("leader_level")->find();
+        $myuser = Db::name("users")->where("user_id", $user_id)->field("leader_level,agent_level")->find();
         foreach ($agent_level as $v) {
             if ($v['level'] == $myuser['leader_level']) {
                 $agnet_name = $v['level_name'];
+                $agent_level = $agent_level_arr[$myuser['agent_level']];
             }
         }
         $this->assign([
-            'agnet_name' => $agnet_name
+            'agnet_name' => $agnet_name,
+            'agent_level' => $agent_level
         ]);
 
         $MenuCfg = new MenuCfg();
