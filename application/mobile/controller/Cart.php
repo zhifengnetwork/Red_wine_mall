@@ -251,8 +251,8 @@ class Cart extends MobileBase {
                 $cartLogic->clear();
                 $order = $placeOrder->getOrder();
                 
-                $this_order=Db::name('order')->where('order_sn',$order['order_sn'])->find();
-                if($this_order['total_amount']==0){
+                $this_order=Db::name('order')->where('order_sn','=',$order['order_sn'])->find();
+                if($this_order['pay_status']==1){
                     //设置推广用户名额
                     $this->set_pop_person($order['order_sn']);
                     //购买后增加自己的业绩和团队的业绩
