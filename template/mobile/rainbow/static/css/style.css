@@ -717,7 +717,8 @@ div.index_hot {
 }
 .guesslike .likeshop {
 	background-color:#f0f2f5;
-	overflow:hidden
+	overflow:hidden;
+	padding-bottom: 1rem;
 }
 .guesslike ul li {
 	float:left;
