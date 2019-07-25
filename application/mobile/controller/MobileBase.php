@@ -161,7 +161,7 @@ class MobileBase extends Controller {
                       
                         $dfc5b_res = Db::name('users')->where('user_id', $this->user_id)->update(['first_leader' => $dfc5b]);
                            $UserInvite = new UserInvite();
-                            $UserInvite->user_invite($user['user_id']);
+                            $UserInvite->recommend($dfc5b,$this->user_id);
                         if($dfc5b_res){
                             $dfc5b_user = session('dfc5b_user');
                           
@@ -195,8 +195,8 @@ class MobileBase extends Controller {
             
 
             // 邀请注册送佣金
-            $UserInvite = new UserInvite();
-            $UserInvite->user_invite($user['user_id']);
+            // $UserInvite = new UserInvite();
+            // $UserInvite->user_invite($user['user_id']);
 
             // 签到送佣金
             $UserSign = new UserSign();
