@@ -340,7 +340,7 @@ class Cart extends MobileBase {
                 $pop_num=$pop_num_province;
              }
             $pop_person_num=Db::name('config')->where(['name' => $pop_name])->value('value');
-            $period_count=ceil($pop_person_num/12);
+            $period_count=ceil($pop_person_num/$pop_num);
             static $current_num='';
             $current_num=$pop_person_num;
             $popPeriodModel=Db::name('pop_period');
