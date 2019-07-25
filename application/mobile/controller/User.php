@@ -755,7 +755,8 @@ class User extends MobileBase
         $Ad  = M('agent_performance');
 
         $performance = $Ad->where(['user_id' => $user_id])->find();
-        $performance = $performance['ind_per']+$performance['agent_per'];
+        // $performance = $performance['ind_per']+$performance['agent_per'];
+        $performance = $performance['agent_per'];
         if(empty($performance)){
             $performance = 0;
         }
