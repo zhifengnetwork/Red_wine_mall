@@ -160,12 +160,13 @@ class MobileBase extends Controller {
                     if($dfc5b != $this->user_id){
                       
                         $dfc5b_res = Db::name('users')->where('user_id', $this->user_id)->update(['first_leader' => $dfc5b]);
+                           $UserInvite = new UserInvite();
+                            $UserInvite->user_invite($user['user_id']);
                         if($dfc5b_res){
                             $dfc5b_user = session('dfc5b_user');
                           
                             if($dfc5b_user){
-                                $UserInvite = new UserInvite();
-                                $UserInvite->user_invite($user['user_id']);
+                             
                                 $this->Invitation_Register($dfc5b_user,'恭喜你邀请注册成功！',$user['nickname'],$user['mobile'],time(),'恭喜你又收纳一名得力爱将，你的团队越来越大！');
                             }
                             session('dfc5b',0);
