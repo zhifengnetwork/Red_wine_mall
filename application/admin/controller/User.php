@@ -262,8 +262,16 @@ class User extends Base
 
                 // $period_count=ceil($pop_person_num/12);
                 $period_count = ceil($pop_person_num / $pop_num);
+
                 static $current_num = '';
-                $current_num = $pop_person_num;
+                //推广人数
+                $user_arr = Db::name('users')->where(['first_leader' => $u_info['user_id']])->count();
+
+                $current_num = $pop_person_num - $user_arr;
+                // dump($u_info['user_id']);
+                // dump($user_arr);
+                // dump($current_num);
+                // die;
                 $popPeriodModel = Db::name('pop_period');
                 for ($i = 1; $i <= $period_count; $i++) {
                     if ($current_num > $pop_num) {
