@@ -159,7 +159,7 @@ class User extends MobileBase
         }
         //总佣金
         $distribut_money = Db::name('account_log')->where(['user_id'=>$user_id,'type'=>['in',[2,3,4,5]]])->sum(user_money);
-        $comm2 = Db::name('commission_log')->where(['user_id' => $user_id])->order('id','desc')->sum('money');
+        // $comm2 = Db::name('commission_log')->where(['user_id' => $user_id])->order('id','desc')->sum('money');
 
         //今日佣金
         $comm = $this->today_commission();
@@ -169,7 +169,8 @@ class User extends MobileBase
         $this->assign('person_num', $person_num-$poped_per_num);
         $this->assign('user_money', $user_money);
         $this->assign('menu_list', $menu_list);
-        $this->assign('distribut_money', $distribut_money+$comm2);
+        // $this->assign('distribut_money', $distribut_money+$comm2);
+        $this->assign('distribut_money', $distribut_money);
         $this->assign('comm', $comm);
         $this->assign('is_vip', $is_vip);
         $this->assign('mobile_validated', $this->user['mobile'] ? 0 : 1);
