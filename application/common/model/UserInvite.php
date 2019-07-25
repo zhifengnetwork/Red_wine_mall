@@ -113,9 +113,12 @@ class UserInvite extends Model{
                          $pop_commission=Db::name('config')->where('name','=','pop_commission')->value('value');
                          $pop_money=Db::name('config')->where('name','=','pop_money')->value('value');
                          $addmoney=$pop_money*$pop_commission/100;
+                         $minusmoney=$pop_money-$addmoney;
                          $user_money=$recommendInfo['user_money']+$addmoney;
                          Db::name('users')->update(['user_id'=>$recommend_id,'user_money'=>$user_money]);
                          Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$pop_money,'pay_points'=>$addmoney,'change_time'=>$time,'desc'=>'邀请1个新会员奖励50','type'=>2]);
+                        $desc = '邀请1个新会员平台扣除手续费"'.$minusmoney.'"';
+                         setAccountLog($recommend_id,7,$minusmoney,$minusmoney,$desc);
                      
                          $whereStr['user_id']=['=',$recommendInfo['user_id']];
                          $whereStr['period']=['=',$recommendInfo['default_period']];
