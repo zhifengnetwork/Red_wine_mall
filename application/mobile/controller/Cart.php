@@ -309,8 +309,41 @@ class Cart extends MobileBase
                     Db::name('agent_performance')->insert(['user_id' => $v['user_id'], 'agent_per' => $agent_per, 'create_time' => $time]);
                 }
             }
+            $this->check_user_upgrade($v['user_id']);
         }
     }
+
+    public function check_user_upgrade($recommend_id){     
+            $userModel=Db::name('users');       
+            $upPopCount=$userModel->where('first_leader','=',$recommend_id)->count(); 
+            $upPopPerformance=Db::name('agent_performance')->where('user_id','=',$recommend_id)->value("agent_per");  
+            $manager_ind_sum=$this->popUpdateCondition(1); 
+            $chief_ind_sum=$this->popUpdateCondition(2);   
+            $ceo_ind_sum=$this->popUpdateCondition(3);
+            $partner_ind_sum=$this->popUpdateCondition(4);
+            if($upPopCount>=$manager_ind_sum["ind_goods_sum"]&&$upPopCount<$chief_ind_sum["ind_goods_sum"]&&$upPopPerformance>$manager_ind_sum['describe']){
+                $userModel->where('user_id','=',$recommend_id)->update(['leader_level'=>1]);
+            }
+            if($upPopCount>=$chief_ind_sum["ind_goods_sum"]&&$upPopCount<$ceo_ind_sum["ind_goods_sum"]&&$upPopPerformance>$chief_ind_sum['describe']){
+                $userModel->where('user_id','=',$recommend_id)->update(['leader_level'=>2]);
+            }
+            if($upPopCount>=$ceo_ind_sum["ind_goods_sum"]&&$upPopCount<$partner_ind_sum["ind_goods_sum"]&&$upPopPerformance>$ceo_ind_sum['describe']){
+                $userModel->where('user_id','=',$recommend_id)->update(['leader_level'=>3]);
+            }
+            if($upPopCount>=$partner_ind_sum["ind_goods_sum"]&&$upPopPerformance>$partner_ind_sum['describe']){
+                $userModel->where('user_id','=',$recommend_id)->update(['leader_level'=>4]);
+        }
+    }
+
+        //会员升级条件  
+        public function popUpdateCondition($levelNum)
+        {
+          $ind_goods_sum=Db::name('agent_level')->where('level','=',$levelNum)->find();
+          return $ind_goods_sum;
+        }
+
+
+
 
     public function set_pop_person($order_sn)
     {
