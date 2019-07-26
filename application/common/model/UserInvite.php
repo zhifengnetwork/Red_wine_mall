@@ -97,16 +97,16 @@ class UserInvite extends Model
        $chief_ind_sum=$this->popUpdateCondition(2);    //升级总监的条件
        $ceo_ind_sum=$this->popUpdateCondition(3);
        $partner_ind_sum=$this->popUpdateCondition(4);
-         if($upPopCount>=$manager_ind_sum["ind_goods_sum"]&&$upPopCount<$chief_ind_sum["ind_goods_sum"]&&$upPopPerformance>$manager_ind_sum['describe']){
+         if($upPopCount>=$manager_ind_sum["ind_goods_sum"]&&$upPopCount<$chief_ind_sum["ind_goods_sum"]&&$upPopPerformance>=$manager_ind_sum['describe']){
              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>1]);
          }
-         if($upPopCount>=$chief_ind_sum["ind_goods_sum"]&&$upPopCount<$ceo_ind_sum["ind_goods_sum"]&&$upPopPerformance>$chief_ind_sum['describe']){
+         if($upPopCount>=$chief_ind_sum["ind_goods_sum"]&&$upPopCount<$ceo_ind_sum["ind_goods_sum"]&&$upPopPerformance>=$chief_ind_sum['describe']){
              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>2]);
          }
-         if($upPopCount>=$ceo_ind_sum["ind_goods_sum"]&&$upPopCount<$partner_ind_sum["ind_goods_sum"]&&$upPopPerformance>$ceo_ind_sum['describe']){
+         if($upPopCount>=$ceo_ind_sum["ind_goods_sum"]&&$upPopCount<$partner_ind_sum["ind_goods_sum"]&&$upPopPerformance>=$ceo_ind_sum['describe']){
              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>3]);
          }
-         if($upPopCount>=$partner_ind_sum["ind_goods_sum"]&&$upPopPerformance>$partner_ind_sum['describe']){
+         if($upPopCount>=$partner_ind_sum["ind_goods_sum"]&&$upPopPerformance>=$partner_ind_sum['describe']){
              Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>4]);
          }
  
