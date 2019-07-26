@@ -38,6 +38,9 @@
             </div>
             <!--没有内容时-e--->
         </if>
+        <!-- <volist name="order_list" id="order">
+            111
+        </volist> -->
         <volist name="order_list" id="order">
             <div class="mypackeg ma-to-20 getmore">
                 <div class="packeg p">
@@ -53,7 +56,19 @@
                 </div>
                 <div class="shop-mfive p">
                     <div class="maleri30">
-                        <volist name="order.order_goods" id="goods">
+                            <div class="sc_list se_sclist paycloseto">
+                                       <div class="shopimg fl">
+                                            <img src="{$order[order_goods][0][goods_id]|goods_thum_images=200,200}">
+                                        </div>
+
+                                        <div class="deleshow fr">
+                                                <div class="deletes">
+                                                        <span class="similar-product-text">{$order[order_goods][0][goods_name]|getSubstr=0,20}</span>
+                                                </div>
+                                        </div>
+                                </div>
+                          
+                        <!-- <volist name="order.order_goods" id="goods">
                             <div class="sc_list se_sclist paycloseto">
                                 <a href="{:U('/Mobile/Order/order_detail',array('id'=>$order['order_id']))}">
                                 <div class="shopimg fl">
@@ -76,7 +91,7 @@
                                     <div class="buttondde">
                                         <notempty name="goods['return_goods']">
                                             <a class="shop-rebuy">已申请售后</a>
-                                            <!-- <a class="shop-rebuy" href="{:U('Mobile/Order/return_goods_info',['rec_id'=>$goods['rec_id']])}">查看售后</a> -->
+                                           
                                             <else />
                                             <if condition="($order.return_btn eq 1)">
                                                 <a href="{:U('Mobile/Order/return_goods',['rec_id'=>$goods['rec_id']])}">申请售后</a>
@@ -86,15 +101,16 @@
                                 </div>
                                 </a>
                             </div>
-                        </volist>
+                        </volist> -->
                     </div>
                 </div>
                 <div class="shop-rebuy-price p">
                     <div class="maleri30">
                 <span class="price-alln">
-                    <!--<span class="red">￥{$list['order_amount']}</span><span class="threel">共{$list.goods_list|count}件</span>-->
-                    <span class="red">￥{$order['total_amount']}</span><span class="threel" id="goodsnum">共{$order.count_goods_num}件</span>
-                    <!--if condition="$list['pay_code'] eq 'cod'"><i class="tits-ions qxatten-ions">货到付款</i></if -->
+                   
+                    <span class="red">￥{$order['total_amount']}</span>
+                    <!-- <span class="threel" id="goodsnum">共{$order.count_goods_num}件</span> -->
+                 
                 </span>
                         <if condition="$order.pay_btn eq 1">
                             <a class="shop-rebuy paysoon" href="{:U('Mobile/Cart/cart4',array('order_id'=>$order['order_id']))}">立即付款</a>
@@ -103,9 +119,7 @@
                             <if condition="$order.pay_status eq 0">
                                 <a class="shop-rebuy " onClick="cancel_order({$order.order_id})">取消订单</a>
                             </if>
-                            <!-- <if condition="$order.pay_status eq 1">
-                                <a class="shop-rebuy" href="{:U('Order/refund_order', ['order_id'=>$order['order_id']])}">取消订单</a>
-                            </if> -->
+                         
                         </if>
                         <if condition="$order.receive_btn eq 1 && order.pay_status eq 1">
                             <a class="shop-rebuy paysoon" onclick="orderConfirm({$order.order_id})">确认收货</a>
