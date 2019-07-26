@@ -313,24 +313,25 @@ class Cart extends MobileBase
         }
     }
 
-    public function check_user_upgrade($recommend_id){            
-            $upPopCount=Db::name('users')->where('first_leader','=',$recommend_id)->count(); 
+    public function check_user_upgrade($recommend_id){     
+            $userModel=Db::name('users');       
+            $upPopCount=$userModel->where('first_leader','=',$recommend_id)->count(); 
             $upPopPerformance=Db::name('agent_performance')->where('user_id','=',$recommend_id)->value("agent_per");  
             $manager_ind_sum=$this->popUpdateCondition(1); 
             $chief_ind_sum=$this->popUpdateCondition(2);   
             $ceo_ind_sum=$this->popUpdateCondition(3);
             $partner_ind_sum=$this->popUpdateCondition(4);
             if($upPopCount>=$manager_ind_sum["ind_goods_sum"]&&$upPopCount<$chief_ind_sum["ind_goods_sum"]&&$upPopPerformance>$manager_ind_sum['describe']){
-                Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>1]);
+                $userModel->where('user_id','=',$recommend_id)->update(['leader_level'=>1]);
             }
             if($upPopCount>=$chief_ind_sum["ind_goods_sum"]&&$upPopCount<$ceo_ind_sum["ind_goods_sum"]&&$upPopPerformance>$chief_ind_sum['describe']){
-                Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>2]);
+                $userModel->where('user_id','=',$recommend_id)->update(['leader_level'=>2]);
             }
             if($upPopCount>=$ceo_ind_sum["ind_goods_sum"]&&$upPopCount<$partner_ind_sum["ind_goods_sum"]&&$upPopPerformance>$ceo_ind_sum['describe']){
-                Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>3]);
+                $userModel->where('user_id','=',$recommend_id)->update(['leader_level'=>3]);
             }
             if($upPopCount>=$partner_ind_sum["ind_goods_sum"]&&$upPopPerformance>$partner_ind_sum['describe']){
-                Db::name('users')->where('user_id','=',$recommend_id)->update(['leader_level'=>4]);
+                $userModel->where('user_id','=',$recommend_id)->update(['leader_level'=>4]);
         }
     }
 
