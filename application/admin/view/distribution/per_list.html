@@ -140,10 +140,14 @@
 								<div style="text-align: center; width: 100px;">{$vo.agent_goods_sum}</div>
 							</td>
 							<td align="center" class="">
-								<div style="text-align: center; width: 150px;">{$vo.create_time}</div>
+								<div style="text-align: center; width: 150px;">{$vo.create_time|date="Y-m-d h:i:s",###}</div>
 							</td>
 							<td align="center" class="">
-								<div style="text-align: center; width: 150px;">{$vo.update_time}</div>
+								<if condition="$vo.update_time neq ''">
+								<div style="text-align: center; width: 150px;">{$vo.update_time|date="Y-m-d h:i:s",###}</div>
+								<else/>
+								<div style="text-align: center; width: 150px;"></div>
+								</if>
 							</td>
 							<td align="center" class="">
 								<div style="text-align: center; width: 100px;">{$vo.note}</div>
