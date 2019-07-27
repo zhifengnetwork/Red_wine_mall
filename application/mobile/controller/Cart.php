@@ -408,7 +408,7 @@ class Cart extends MobileBase
     {
         $userModel = Db::name('users');
         $accountLogModel = Db::name('account_log');
-        $achievement = Db::name('order')->where('user_id', '=', $userid)->sum('total_amount');
+        $achievement = Db::name('order')->where('user_id', '=', $userid)->where('pay_stauts','=','1')->sum('total_amount');
 
         //判断当前用户的生份    切换对应的代理级别  百分比
         $county_bonus = $this->first_agent_persent($agent_level);   //下级升级县级奖励百分比   市级一样
@@ -418,7 +418,7 @@ class Cart extends MobileBase
         $firstLeader = Db::name('users')->where('user_id', '=', $user['first_leader'])->find();
         $time = time();
         if ($user['first_leader']) {
-            $firstAch = Db::name('order')->where('user_id', '=', $firstLeader['user_id'])->sum('total_amount');
+            $firstAch = Db::name('order')->where('user_id', '=', $firstLeader['user_id'])->where('pay_stauts','=','1')->sum('total_amount');
 
             //上一级的区域代理金额自身要求
             $bonus_position_firs = $this->get_bonus_position($firstLeader['agent_level']);
@@ -462,7 +462,7 @@ class Cart extends MobileBase
             $secondLeader = $userModel->where('user_id', '=', $firstLeader['first_leader'])->find();
             if ($secondLeader['user_id']) {
                 $bonus_position_sec = $this->get_bonus_position($secondLeader['agent_level']);
-                $secAch = Db::name('order')->where('user_id', '=', $secondLeader['user_id'])->sum('total_amount');
+                $secAch = Db::name('order')->where('user_id', '=', $secondLeader['user_id'])->where('pay_stauts','=','1')->sum('total_amount');
                 //4周内
                 if ($this->in_four_week($secondLeader['add_agent_time'])) {
                     // 插入二级上级
