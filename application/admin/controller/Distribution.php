@@ -167,7 +167,7 @@ class Distribution extends Base
             $where[$val[$per_type]] = ['between',[floatval($min),floatval($max)]];
         }
         
-        $res = $Ad->where($where)->order('performance_id','desc')->page($p . ',20')->select();
+        $res = $Ad->where($where)->order('agent_per','desc')->page($p . ',20')->select();
         if ($res) {
             foreach ($res as $val) {
                 $list[] = $val;
