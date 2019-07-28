@@ -404,11 +404,13 @@ class Cart extends MobileBase
     }
 
     //晋升为县代奖励上级
-    public function pay_leader($userid, $agent_level)
+    public function pay_leader($userid,$agent_level)
     {
+        // $userid=109;
+        // $agent_level=2;
         $userModel = Db::name('users');
         $accountLogModel = Db::name('account_log');
-        $achievement = Db::name('order')->where('user_id', '=', $userid)->where('pay_stauts','=','1')->sum('total_amount');
+        $achievement = Db::name('order')->where('user_id', '=', $userid)->where('pay_status','=','1')->sum('total_amount');
 
         $pop_commission=Db::name('config')->where('name','=','pop_commission')->value('value');
         //判断当前用户的生份    切换对应的代理级别  百分比
@@ -419,7 +421,8 @@ class Cart extends MobileBase
         $firstLeader = Db::name('users')->where('user_id', '=', $user['first_leader'])->find();
         $time = time();
         if ($user['first_leader']) {
-            $firstAch = Db::name('order')->where('user_id', '=', $firstLeader['user_id'])->where('pay_stauts','=','1')->sum('total_amount');
+           
+            $firstAch = Db::name('order')->where('user_id', '=', $firstLeader['user_id'])->where('pay_status','=','1')->sum('total_amount');
 
             //上一级的区域代理金额自身要求
             $bonus_position_firs = $this->get_bonus_position($firstLeader['agent_level']);
@@ -435,9 +438,11 @@ class Cart extends MobileBase
                 $firstBonus = $achievement * $county_bonus / 100;
                 $distribut_money = $firstLeader['distribut_money'] + $firstBonus;
                 $user_money=$firstLeader['user_money']+$firstBonus * $pop_commission / 100;
+                $pay_points=$firstBonus * $pop_commission / 100;
+               
                 $userModel->update(['user_id' => $firstLeader['user_id'], 'distribut_money' => $distribut_money,'user_money'=>$user_money]);
 
-                $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $user_money, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 3]);
+                $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 3]);
             }
             //5周
             if ($this->in_five_week($firstLeader['add_agent_time'])) {
@@ -445,8 +450,9 @@ class Cart extends MobileBase
                     $firstBonus = $achievement * $county_bonus / 100;
                     $distribut_money = $firstLeader['distribut_money'] + $firstBonus;
                     $user_money=$firstLeader['user_money']+$firstBonus * $pop_commission / 100;
+                    $pay_points=$firstBonus * $pop_commission / 100;
                     $userModel->update(['user_id' => $firstLeader['user_id'], 'distribut_money' => $distribut_money,'user_money'=>$user_money]);
-                    $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $user_money, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 3]);
+                    $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 3]);
                 }
             }
             //6周后
@@ -455,23 +461,25 @@ class Cart extends MobileBase
                     $firstBonus = $achievement * $county_bonus / 100;
                     $distribut_money = $firstLeader['distribut_money'] + $firstBonus;
                     $user_money=$firstLeader['user_money']+$firstBonus * $pop_commission / 100;
+                    $pay_points=$firstBonus * $pop_commission / 100;
                     $userModel->update(['user_id' => $firstLeader['user_id'], 'distribut_money' => $distribut_money,'user_money'=>$user_money]);
-                    $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $user_money, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 3]);
+                    $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 3]);
                 }
             }
 
             $secondLeader = $userModel->where('user_id', '=', $firstLeader['first_leader'])->find();
             if ($secondLeader['user_id']) {
                 $bonus_position_sec = $this->get_bonus_position($secondLeader['agent_level']);
-                $secAch = Db::name('order')->where('user_id', '=', $secondLeader['user_id'])->where('pay_stauts','=','1')->sum('total_amount');
+                $secAch = Db::name('order')->where('user_id', '=', $secondLeader['user_id'])->where('pay_status','=','1')->sum('total_amount');
                 //4周内
                 if ($this->in_four_week($secondLeader['add_agent_time'])) {
                     // 插入二级上级
                     $secondBonus = $achievement * $sec_county_bonus / 100;
                     $sec_distribut_money = $secondLeader['distribut_money'] + $secondBonus;
                     $sec_user_money=$secondLeader['user_money']+ $secondBonus  * $pop_commission / 100;
+                    $sec_pay_points= $secondBonus  * $pop_commission / 100;
                     $userModel->update(['user_id' => $secondLeader['user_id'], 'distribut_money' => $sec_distribut_money,'user_money'=>$sec_user_money]);
-                    $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_user_money, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 4]);
+                    $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 4]);
                 }
                 //五周内
                 if ($this->in_five_week($secondLeader['add_agent_time'])) {
@@ -479,8 +487,9 @@ class Cart extends MobileBase
                         $secondBonus = $achievement * $sec_county_bonus / 100;
                         $sec_distribut_money = $secondLeader['distribut_money'] + $secondBonus;
                         $sec_user_money=$secondLeader['user_money']+ $secondBonus * $pop_commission / 100;
+                        $sec_pay_points= $secondBonus  * $pop_commission / 100;
                         $userModel->update(['user_id' => $secondLeader['user_id'], 'distribut_money' => $sec_distribut_money,'user_money'=>$sec_user_money]);
-                        $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_user_money, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 4]);
+                        $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 4]);
                     }
                 }
                 //6周后
@@ -489,8 +498,9 @@ class Cart extends MobileBase
                         $secondBonus = $achievement * $sec_county_bonus / 100;
                         $sec_distribut_money = $secondLeader['distribut_money'] + $secondBonus;
                         $sec_user_money=$secondLeader['user_money']+ $secondBonus * $pop_commission / 100;
+                        $sec_pay_points= $secondBonus  * $pop_commission / 100;
                         $userModel->update(['user_id' => $secondLeader['user_id'], 'distribut_money' => $sec_distribut_money,'user_money'=>$sec_user_money]);
-                        $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_user_money, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 4]);
+                        $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['user_id'] . "'】晋升为" . $agentLevel . "奖励", 'type' => 4]);
                     }
                 }
             }
