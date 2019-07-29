@@ -124,13 +124,13 @@ class User extends MobileBase
     {
         $user_id = $this->user_id;
         $myuser = Db::name("users")->where("user_id", $user_id)->field("leader_level,agent_level,mobile")->find();
-        if(!$myuser['mobile']){
+        if (!$myuser['mobile']) {
             $this->redirect("Mobile/User/setMobile");
         }
 
         $agent_level_arr = ['1' => '县级代理', '2' => '市级代理', '3' => '省级代理'];
         $agent_level = M('agent_level')->field('level,level_name')->select();
-     
+
         foreach ($agent_level as $v) {
             if ($v['level'] == $myuser['leader_level']) {
                 $agnet_name = $v['level_name'];
@@ -1648,26 +1648,26 @@ class User extends MobileBase
         //        $password = trim(I('post.password'));
         $mobile_code = trim(I('post.mobile_code'));
         //验证码验证
-        //        if (isset($_POST['verify_code'])) {
-        //            $verify_code = I('post.verify_code');
-        //            $verify = new Verify();
-        //            if (!$verify->check($verify_code, 'user_login')) {
-        //                $res = array('status' => 0, 'msg' => '验证码错误');
-        //                exit(json_encode($res));
-        //            }
-        //        }
-        //        if($mobile_code!='000000'){
-        //            // 验证码
-        //            //            $code=I('mobile_code');
-        //            $sms_type=I('sms_type');
-        //            $checkData['sms_type'] = $sms_type;
-        //            $checkData['code'] = $mobile_code;
-        //            $checkData['phone'] = $username;
-        //            $res = checkPhoneCode($checkData);
-        //            if ($res['code'] == 0) {
-        //                exit(json_encode(['status' => 0, 'msg' => $res['msg']]));
-        //            }
-        //        }
+        if (isset($_POST['verify_code'])) {
+            $verify_code = I('post.verify_code');
+            $verify = new Verify();
+            if (!$verify->check($verify_code, 'user_login')) {
+                $res = array('status' => 0, 'msg' => '验证码错误');
+                exit(json_encode($res));
+            }
+        }
+        if ($mobile_code != '000000') {
+            // 验证码
+            //            $code=I('mobile_code');
+            $sms_type = I('sms_type');
+            $checkData['sms_type'] = $sms_type;
+            $checkData['code'] = $mobile_code;
+            $checkData['phone'] = $username;
+            $res = checkPhoneCode($checkData);
+            if ($res['code'] == 0) {
+                exit(json_encode(['status' => 0, 'msg' => $res['msg']]));
+            }
+        }
 
         $logic = new UsersLogic();
         $res = $logic->login($username, 1);
@@ -3410,6 +3410,4 @@ class User extends MobileBase
 
         return $this->fetch();
     }
-
-
 }
