@@ -297,9 +297,23 @@ class Order extends MobileBase
     public function order_confirm()
     {
         $id = I('id/d', 0);
+
+        $frozen_one=Db::name('frozen_money')->where(['order_id'=>$id,'user_id'=>$this->user_id])->find();
+        $first_leader=Db::name('users')->where(['user_id'=>$frozen_one['first_leader']])->field('frozen_money')->find();
+        $first_leader_frozen=$first_leader['frozen_money']-$frozen_one['first_leader_bonus'];
+        Db::name('users')->where(['user_id'=>$frozen_one['first_leader']])->update(['frozen_money'=>$first_leader_frozen]);
+        if($frozen_one['second_leader']){
+            $second_leader=Db::name('users')->where(['user_id'=>$frozen_one['second_leader']])->field('frozen_money')->find();
+            $second_leader_frozen=$second_leader['frozen_money']-$frozen_one['second_leader_bonus'];
+            Db::name('users')->where(['user_id'=>$frozen_one['second_leader']])->update(['frozen_money'=>$second_leader_frozen]);
+        }
+        Db::name('frozen_money')->where(['order_id'=>$id,'user_id'=>$this->user_id])->update(['status'=>1]);
+
         $data = confirm_order($id, $this->user_id);
         if(request()->isAjax()){
-            $this->ajaxReturn($data);
+            if($res){
+                  $this->ajaxReturn($data);
+            }
         }
         if ($data['status'] != 1) {
             $this->error($data['msg'],U('Mobile/Order/order_list'));
