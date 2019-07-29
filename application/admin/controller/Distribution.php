@@ -168,6 +168,13 @@ class Distribution extends Base
             $where[$val[$per_type]] = ['between', [floatval($min), floatval($max)]];
         }
 
+        $agent_level_arr = ['1' => '县级代理', '2' => '市级代理', '3' => '省级代理'];
+        $agent_level = M('agent_level')->field('level,level_name')->select();
+
+
+
+
+
         $res = $Ad->where($where)->order('agent_per', 'desc')->page($p . ',20')->select();
         if ($res) {
             foreach ($res as $val) {
@@ -178,6 +185,13 @@ class Distribution extends Base
 
             foreach ($list as $key => $value) {
                 $list[$key]['head_pic'] = $avatar[$value['user_id']];
+                $myuser = Db::name('users')->field('leader_level,agent_level')->where(['user_id' => $value['user_id']])->find();
+                foreach ($agent_level as $v) {
+                    if ($v['level'] == $myuser['leader_level']) {
+                        $list[$key]['agnet_name'] = $v['level_name'];
+                        $list[$key]['agent_level'] = $agent_level_arr[$myuser['agent_level']];
+                    }
+                }
             }
         }
 
