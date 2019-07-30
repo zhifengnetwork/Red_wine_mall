@@ -105,7 +105,7 @@ class User extends Base
         $level = M('agent_level')->column('level,level_name');
 
         ksort($level); //键值升序排列
-        $user = M('users')->column('user_id,distribut_level');
+        $user = M('users')->column('user_id,leader_level');
 
         $count = count($user);
         $count_level = array_count_values($user); //统计数组中值出现的次数
