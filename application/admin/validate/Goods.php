@@ -25,6 +25,7 @@ class Goods extends Validate
         'ladder_price' => 'checkLadderPrice',
         'virtual_limit' => 'checkVirtualLimit',
         'prize_ratio' => 'between:0,100',
+        'mix_persent' => 'require|between:0,100',
     ];
     //错误信息
     protected $message = [
@@ -49,6 +50,8 @@ class Goods extends Validate
         'is_free_shipping.require' => '请选择商品是否包邮',
         'virtual_limit.checkVirtualLimit' => '虚拟商品购买上限1~10之间的数字',
         'prize_ratio.between' => '团队奖励占比在0-100之间',
+        'mix_persent.require'=>'混合支付比例限制必填',
+        'mix_persent.between'=>'混合支付比例限制在0-100之间',
     ];
 
     //检查阶梯价格中的库存

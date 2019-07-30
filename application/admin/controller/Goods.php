@@ -421,6 +421,7 @@ class Goods extends Base {
             $this->ajaxReturn($return_arr);
         }
         if ($data['goods_id'] > 0) {
+          
             $goods = \app\common\model\Goods::get($data['goods_id']);
             $store_count_change_num = $data['store_count'] - $goods['store_count'];//库存变化量
             $cart_update_data = ['market_price'=>$data['market_price'],'goods_price'=>$data['shop_price'],'member_goods_price'=>$data['shop_price']];
@@ -429,10 +430,11 @@ class Goods extends Base {
             //编辑商品的时候需清楚缓存避免图片失效问题
             clearCache();
         }else{
+          
             $goods = new \app\common\model\Goods();
             $store_count_change_num = $data['store_count'];
         }
-        
+       
         $level_name = $this->get_level_name();
         $ids = array();
 
@@ -490,6 +492,7 @@ class Goods extends Base {
         $goods->last_update = time();
         $goods->price_ladder = true;
         $goods->goods_prize = json_encode($ids);
+        $goods->mix_persent=$data['mix_persent'];
         $goods->save();
         
         if(empty($spec_item)){

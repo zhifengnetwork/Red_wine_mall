@@ -275,6 +275,39 @@
                     <span class="err" id="err_market_price"></span>
                 </dd>
             </dl>
+
+            <dl class="row">
+                <dt class="tit"><em>*</em>
+                    <label>混合支付比例限制</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" value="{$goods.mix_persent}" name="mix_persent" class="t_mane"
+                           onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"/>
+                           使用余额和商品价格的比例     %      填写100   代表可以全部用余额购买
+                    <span class="err" id="err_cost_price"></span>
+                </dd>
+            </dl>
+            <!-- <dl class="row">
+                <dt class="tit">
+                    <label>可用支付方式</label>
+                </dt>
+                <dd class="opt">
+                    <lable>
+                      微信支付:
+                       <input type="checkbox" value="1" name="pay_type[]" class="t_mane"/>
+                    </label>&nbsp;&nbsp;
+                    <lable>
+                      余额支付：
+                      <input type="checkbox" value="2" name="pay_type[]" class="t_mane"/>
+                    </label>&nbsp;&nbsp;
+                    <lable>
+                     混合支付： 
+                     <input type="checkbox" value="3" name="pay_type[]" class="t_mane"/>
+                    </label>
+                    <span class="err" id="err_cost_price"></span>
+                </dd>
+            </dl> -->
+
             <dl class="row">
                 <dt class="tit">
                     <label>成本价</label>

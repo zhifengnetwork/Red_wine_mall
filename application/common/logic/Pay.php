@@ -264,10 +264,24 @@ class Pay
             if($user_money > $this->user['user_money']){
                 throw new TpshopException("计算订单价格",0,['status' => -6, 'msg' =>  "你的账户可用余额为:" . $this->user['user_money'], 'result' => '']);
             }
+            // if($this->orderAmount > 0){
+            //     if($user_money > $this->orderAmount){
+            //         $this->userMoney = $this->orderAmount;
+            //         $this->orderAmount = 0;
+            //     }else{
+            //         $this->userMoney = $user_money;
+            //         $this->orderAmount = $this->orderAmount - $this->userMoney;
+            //     }
+            // }
             if($this->orderAmount > 0){
-                if($user_money > $this->orderAmount){
-                    $this->userMoney = $this->orderAmount;
-                    $this->orderAmount = 0;
+                $goodsListCount = count($this->payList);
+                for ($payCursor = 0; $payCursor < $goodsListCount; $payCursor++) {
+                    $goods_persent+=Db::name('goods')->where('goods_id','=',$this->payList[$payCursor]['goods_id'])->value('mix_persent');
+                }
+                $persent=$goods_persent/$goodsListCount/pow(100,$goodsListCount);
+                if($user_money > $this->orderAmount*$persent){
+                    $this->userMoney=$this->orderAmount*$persent;
+                    $this->orderAmount=$this->orderAmount - $this->userMoney;
                 }else{
                     $this->userMoney = $user_money;
                     $this->orderAmount = $this->orderAmount - $this->userMoney;
