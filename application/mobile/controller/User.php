@@ -904,7 +904,7 @@ class User extends MobileBase
 
         $my_user_id = $this->user_id;
         $endUser = Db::name('users')->field('user_id,head_pic,mobile,nickname')->where('user_id', '=', $user_id)->find();
-        $myInfo = Db::name('users')->where("user_id", '=', $my_user_id)->field('user_money')->find();
+        $myInfo = Db::name('users')->where("user_id", '=', $my_user_id)->field('user_money,frozen_money')->find();
 
 
         $this->assign([

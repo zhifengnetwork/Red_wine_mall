@@ -511,7 +511,8 @@ class Cart extends MobileBase
 
             $firstLeader['user_id']?$firstLeader['user_id']:0;
             $secondLeader['user_id']?$secondLeader['user_id']:0;
-            $this->set_frozen_money($user['user_id'],$firstLeader['user_id'],$county_bonus,$secondLeader['user_id'],$sec_county_bonus,$pop_commission,$orderList);
+            $orderToComfirmList=Db::name('order')->where('user_id', '=', $userid)->where('order_status','<>','2')->where('pay_status','=','1')->select();
+            $this->set_frozen_money($user['user_id'],$firstLeader['user_id'],$county_bonus,$secondLeader['user_id'],$sec_county_bonus,$pop_commission,$orderToComfirmList);
         }
     }
 
