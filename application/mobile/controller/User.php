@@ -843,10 +843,23 @@ class User extends MobileBase
             $pop_period[$key]['nums'] = $veal['person_num'] - $veal['poped_per_num'];
             $users_period[] = Db::name('account_log')->where(['user_id' => $user_id, 'type' => 2, 'change_time' => ['>=', $pop_period['begin_time']]])->select();
             // $pop_period[$key]['users_period'] = $users_period;
+            if($veal['day_release']){
+                $tomo = strtotime("+1 day");
+                $tomo_night=date("Y-m-d",$tomo);
+                $freeday=$tomo_night;
+            }
+
+            if($veal['week_release']){
+                $last=strtotime("next Monday");
+                $last_monday=date("Y-m-d",$last);
+                // dump($last_monday);die;
+                $freeday=$last_monday;
+            }
         }
         // dump($users_period);die;
         $this->assign('pop_period', $pop_period);
         $this->assign('users_period', $users_period);
+        $this->assign('freeday',$freeday);
         return $this->fetch();
     }
 
