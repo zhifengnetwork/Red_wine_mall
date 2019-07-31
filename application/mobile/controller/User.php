@@ -946,6 +946,10 @@ class User extends MobileBase
         if (encrypt($data['paypwd']) != $this->user['paypwd']) {
             $this->ajaxReturn(['status' => 0, 'msg' => '支付密码错误']);
         }
+        $userModel=Db::name('users');
+        $end_user=$userModel->where(['user_id'=>$data['end_user_id']])->find();
+        $user=$userModel->where(['user_id'=>$this->user_id])->find();
+
         $data1['user_id'] = $this->user_id;
         $data1['out_user_id'] = $this->user_id;
         $data1['in_user_id'] = $data['end_user_id'];
@@ -966,13 +970,13 @@ class User extends MobileBase
 
         $data3['user_id'] = $this->user_id;;
         $data3['user_money'] = -$data['exchange_money'];
-        $data3['desc'] = '转给他人';
+        $data3['desc'] = '转给'.$end_user['nickname']."\n\r".$end_user['mobile'];
         $data3['change_time'] = time();
 
 
         $data4['user_id'] = $data['end_user_id'];
         $data4['user_money'] = $data['exchange_money'];
-        $data4['desc'] = '转账给我';
+        $data4['desc'] = $user['nickname']."\n\r".$user['mobile'].'转账给我';
         $data4['change_time'] = time();
 
         Db::startTrans();
