@@ -38,6 +38,12 @@
                     </div>
                     <p class="notic"></p>
                 </dd>
+                <dd class="opt"> 
+                    <div class="bot">
+                        上次级差奖发放时间   {$change_time|date="Y-m-d h:i:s",###} 
+                    </div>
+                    <p class="notic"></p>
+                </dd>
             </dl>
             </div>
         </div>
@@ -48,23 +54,26 @@
    
     var isClick=true;
     function doDistribute(){
-     if(isClick){
-        isClick=false;
-        $.ajax({
-                url:"{:url('admin/system/team_bonus')}",
-                method:"get",
-                success:function(res){
-                    var res=JSON.parse(res);
-                    if(res.status==1){
-                        isClick=true;
-                        alert(res.msg);
-                        setTimeout(() => {
-                            location.replace(location.href);
-                        }, 1000);
-                    }
-                }
-            })
-     }
+        var r=confirm("确定发放奖励吗？");
+        if(r){
+            if(isClick){
+                isClick=false;
+                $.ajax({
+                        url:"{:url('admin/system/team_bonus')}",
+                        method:"get",
+                        success:function(res){
+                            var res=JSON.parse(res);
+                            if(res.status==1){
+                                isClick=true;
+                                alert(res.msg);
+                                setTimeout(() => {
+                                    location.replace(location.href);
+                                }, 1000);
+                            }
+                        }
+                    })
+            }
+        }
     }
     
     function qr_back_call_back(fileurl_tmp)
