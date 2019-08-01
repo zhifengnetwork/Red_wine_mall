@@ -433,52 +433,53 @@ class User extends Base
         }
     }
 
-   
-    public function get_nickname($user_id){
-        $nickname=Db::name('users')->where(['user_id'=>$user_id])->value('nickname');
+
+    public function get_nickname($user_id)
+    {
+        $nickname = Db::name('users')->where(['user_id' => $user_id])->value('nickname');
         return $nickname;
     }
 
     public function exchange_money()
-    { 
-         $count=Db::name('exchange_money')->count();
-         $page = new Page($count);
-         $lists=Db::name('exchange_money')->limit($page->firstRow . ',' . $page->listRows)->select();
-            foreach($lists as $k=>$v){
-                $lists[$k]['out_user']=$this->get_nickname($v['out_user_id']);
-                $lists[$k]['in_user']=$this->get_nickname($v['in_user_id']);
-                if($v['type']==2){
-                     $lists[$k]['type_name']='转出';
-                }else if($v['type']==1){ 
-                    $lists[$k]['type_name']='转入';
-                }
+    {
+        $count = Db::name('exchange_money')->count();
+        $page = new Page($count);
+        $lists = Db::name('exchange_money')->limit($page->firstRow . ',' . $page->listRows)->select();
+        foreach ($lists as $k => $v) {
+            $lists[$k]['out_user'] = $this->get_nickname($v['out_user_id']);
+            $lists[$k]['in_user'] = $this->get_nickname($v['in_user_id']);
+            if ($v['type'] == 2) {
+                $lists[$k]['type_name'] = '转出';
+            } else if ($v['type'] == 1) {
+                $lists[$k]['type_name'] = '转入';
             }
-            $this->assign([
-                'lists'=>$lists,
-                'page'=>$page->show()
-            ]);
+        }
+        $this->assign([
+            'lists' => $lists,
+            'page' => $page->show()
+        ]);
         return $this->fetch();
     }
 
     public function recharge_money()
     {
-        $count=Db::name('recharge_log')->count();
+        $count = Db::name('recharge_log')->count();
         $page = new Page($count);
-         $lists=Db::name('recharge_log')->limit($page->firstRow . ',' . $page->listRows)->select();
-         foreach($lists as $k=>$v){
-            if($v['pay_status']==1){
-                $lists[$k]['status_name']="已充值";
-            } 
-         }
+        $lists = Db::name('recharge_log')->limit($page->firstRow . ',' . $page->listRows)->select();
+        foreach ($lists as $k => $v) {
+            if ($v['pay_status'] == 1) {
+                $lists[$k]['status_name'] = "已充值";
+            }
+        }
         $this->assign([
-            'lists'=>$lists,
-            'page'=>$page->show()
+            'lists' => $lists,
+            'page' => $page->show()
         ]);
         return $this->fetch();
     }
 
 
-     /**
+    /**
      * 账户资金记录
      */
     public function account_log()
@@ -545,7 +546,8 @@ class User extends Base
                 $user_money = $f_op_type ? 0 - $revision_frozen_money : $revision_frozen_money;    //计算用户剩余资金
                 M('users')->where('user_id', $user_id)->update(['frozen_money' => $frozen_money]);
             }
-            if (accountLog($user_id, $user_money, $pay_points, $desc, 0)) {
+            if (accountLog($user_id, $user_money, $pay_points, $desc, 88)) {
+                setBalanceLog($user_id, 6, $user_money, $pay_points, $desc);
                 $this->ajaxReturn(['status' => 1, 'msg' => "操作成功", 'url' => U("Admin/User/account_log", array('id' => $user_id))]);
             } else {
                 $this->ajaxReturn(['status' => -1, 'msg' => "操作失败"]);
