@@ -6,6 +6,29 @@ use think\Db;
 
 class Task{
 
+    //每日定时释放推广名额
+    public function day_release_handle()
+        {
+            $dayList = Db::name('pop_period')->where('day_release', '=', 1)->select();
+            $time = time();
+            foreach ($dayList as $dk => $dv) {
+                Db::name('users')->where('user_id', '=', $dv['user_id'])->setInc('default_period');
+                Db::name('pop_period')->where('user_id', '=', $dv['user_id'])->where('period', '=', $dv['period'])->update(['begin_time' => $time, 'day_release' => 0]);
+            }
+        }
+    
+    //每周定时释放推广名额
+    public function week_release_handle()
+        {
+            $dayList = Db::name('pop_period')->where('week_release', '=', 1)->select();
+            $time = time();
+            foreach ($dayList as $dk => $dv) {
+                Db::name('users')->where('user_id', '=', $dv['user_id'])->setInc('default_period');
+                Db::name('pop_period')->where('user_id', '=', $dv['user_id'])->where('period', '=', $dv['period'])->update(['begin_time' => $time, 'week_release' => 0]);
+            }
+        }
+    
+
     # 定时任务程序，组装上级列缓存
     public function index($limit = 0){
         if(!$limit){
