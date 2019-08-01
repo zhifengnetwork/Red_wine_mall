@@ -143,9 +143,9 @@ class UserInvite extends Model
                                  if($upPeriodInfo){ //如果有上级
                                      //还有下一期的话 分情况   一周内 和一周外
                                      if(($periodInfo['begin_time']+3600*24*7)>$time){
-                                             Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['day_release'=>1]);
-                                     }else{
                                              Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['week_release'=>1]);
+                                     }else{
+                                             Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['day_release'=>1]);
                                      }
                                  }else{
                                      Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0,'add_agent_time'=>0]);
