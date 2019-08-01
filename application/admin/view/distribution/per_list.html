@@ -77,7 +77,7 @@
 									<div style="text-align: center; width: 80px;" class="">ID</div>
 								</th>
 								<th align="center" abbr="article_time" axis="col4" class="">
-									<div style="text-align: center; width: 150px;" class="">用户名称</div>
+									<div style="text-align: center; width: 250px;" class="">用户名称</div>
 								</th>
 								<th align="center" axis="col4" class="">
 									<div style="text-align: center; width: 50px;" class="">用户头像</div>
@@ -124,7 +124,13 @@
 										<div style="text-align: center; width: 80px;">{$vo.performance_id}</div>
 									</td>
 									<td align="center" class="">
-										<div style="text-align: center; width: 150px;">{$vo.user_id|user_name}</div>
+										<div style="text-align: center; width: 250px;">
+											{$vo.user_id|user_name}
+											<if condition="$vo[agent_level] != null">--</if>
+											{$vo.agent_level}
+											<if condition="$vo[agnet_name] != null">--</if>
+											{$vo.agnet_name}
+										</div>
 									</td>
 									<td align="left" class="">
 										<div style="text-align: center; width: 50px;">
