@@ -96,27 +96,27 @@ class User extends MobileBase
         $this->assign('order_status_coment', $order_status_coment);
     }
 
-    //每日定时释放推广名额
-    public function day_release_handle()
-    {
-        $dayList = Db::name('pop_period')->where('day_release', '=', 1)->select();
-        $time = time();
-        foreach ($dayList as $dk => $dv) {
-            Db::name('users')->where('user_id', '=', $dv['user_id'])->setInc('default_period');
-            Db::name('pop_period')->where('user_id', '=', $dv['user_id'])->where('period', '=', $dv['period'])->update(['begin_time' => $time, 'day_release' => 0]);
-        }
-    }
+    // //每日定时释放推广名额
+    // public function day_release_handle()
+    // {
+    //     $dayList = Db::name('pop_period')->where('day_release', '=', 1)->select();
+    //     $time = time();
+    //     foreach ($dayList as $dk => $dv) {
+    //         Db::name('users')->where('user_id', '=', $dv['user_id'])->setInc('default_period');
+    //         Db::name('pop_period')->where('user_id', '=', $dv['user_id'])->where('period', '=', $dv['period'])->update(['begin_time' => $time, 'day_release' => 0]);
+    //     }
+    // }
 
-    //每周定时释放推广名额
-    public function week_release_handle()
-    {
-        $dayList = Db::name('pop_period')->where('week_release', '=', 1)->select();
-        $time = time();
-        foreach ($dayList as $dk => $dv) {
-            Db::name('users')->where('user_id', '=', $dv['user_id'])->setInc('default_period');
-            Db::name('pop_period')->where('user_id', '=', $dv['user_id'])->where('period', '=', $dv['period'])->update(['begin_time' => $time, 'week_release' => 0]);
-        }
-    }
+    // //每周定时释放推广名额
+    // public function week_release_handle()
+    // {
+    //     $dayList = Db::name('pop_period')->where('week_release', '=', 1)->select();
+    //     $time = time();
+    //     foreach ($dayList as $dk => $dv) {
+    //         Db::name('users')->where('user_id', '=', $dv['user_id'])->setInc('default_period');
+    //         Db::name('pop_period')->where('user_id', '=', $dv['user_id'])->where('period', '=', $dv['period'])->update(['begin_time' => $time, 'week_release' => 0]);
+    //     }
+    // }
 
 
 
@@ -810,6 +810,7 @@ class User extends MobileBase
         foreach ($get_all_lower as $key => $vale) {
             // dump($vale);
             $get_all_lower[$key] = M('users')->where(['user_id' => $vale])->field('user_id,nickname,mobile')->find();
+            $get_all_lower[$key]['nickname']=mb_substr(trim($get_all_lower[$key]['nickname']),0,30,'utf-8');
             // dump($user);
         }
         $this->assign('nickname', $user['nickname']);
@@ -843,10 +844,23 @@ class User extends MobileBase
             $pop_period[$key]['nums'] = $veal['person_num'] - $veal['poped_per_num'];
             $users_period[] = Db::name('account_log')->where(['user_id' => $user_id, 'type' => 2, 'change_time' => ['>=', $pop_period['begin_time']]])->select();
             // $pop_period[$key]['users_period'] = $users_period;
+            if($veal['day_release']){
+                $tomo = strtotime("+1 day");
+                $tomo_night=date("Y-m-d",$tomo);
+                $freeday=$tomo_night;
+            }
+
+            if($veal['week_release']){
+                $last=strtotime("next Monday");
+                $last_monday=date("Y-m-d",$last);
+                // dump($last_monday);die;
+                $freeday=$last_monday;
+            }
         }
         // dump($users_period);die;
         $this->assign('pop_period', $pop_period);
         $this->assign('users_period', $users_period);
+        $this->assign('freeday',$freeday);
         return $this->fetch();
     }
 
@@ -933,6 +947,10 @@ class User extends MobileBase
         if (encrypt($data['paypwd']) != $this->user['paypwd']) {
             $this->ajaxReturn(['status' => 0, 'msg' => '支付密码错误']);
         }
+        $userModel=Db::name('users');
+        $end_user=$userModel->where(['user_id'=>$data['end_user_id']])->find();
+        $user=$userModel->where(['user_id'=>$this->user_id])->find();
+
         $data1['user_id'] = $this->user_id;
         $data1['out_user_id'] = $this->user_id;
         $data1['in_user_id'] = $data['end_user_id'];
@@ -953,13 +971,13 @@ class User extends MobileBase
 
         $data3['user_id'] = $this->user_id;;
         $data3['user_money'] = -$data['exchange_money'];
-        $data3['desc'] = '转给他人';
+        $data3['desc'] = '转给'.$end_user['nickname']."\n\r".$end_user['mobile'];
         $data3['change_time'] = time();
 
 
         $data4['user_id'] = $data['end_user_id'];
         $data4['user_money'] = $data['exchange_money'];
-        $data4['desc'] = '转账给我';
+        $data4['desc'] = $user['nickname']."\n\r".$user['mobile'].'转账给我';
         $data4['change_time'] = time();
 
         Db::startTrans();
@@ -1219,8 +1237,8 @@ class User extends MobileBase
         return $this->fetch();
     }
 
-
-    public function sharePoster()
+   
+    public function sharePoster8()
     {
 
         $user_id = $this->user_id;
@@ -1275,6 +1293,54 @@ class User extends MobileBase
             }
         }
 
+        $this->assign('my_poster_src', $my_poster_src);
+        return $this->fetch('sharePoster');
+    }
+
+
+
+    public function sharePoster()
+    {
+        $user_id = $this->user_id;
+        $user_info=Db::name('users')->where(['user_id'=>$user_id])->find();
+        $share_error = 0;
+        $root=$_SERVER['DOCUMENT_ROOT'];
+        $share_poster_dir='/public/shareposter';
+        $my_poster_src=$share_poster_dir.'/'.$user_id.'-share.png';
+        if(!file_exists($root.$my_poster_src)){
+            if(strpos($user_info['head_pic'],'ttp:')){
+                $head_source=httpRequest($user_info['head_pic'],'GET');
+                file_put_contents($root.$share_poster_dir.'/head'.$user_id.'.png',$head_source);
+        }else{
+                $head_source=httpRequest($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] .$user_info['head_pic'],'GET');
+                file_put_contents($root.$share_poster_dir.'/head_tem'.$user_id.'.png',$head_source);
+                $local_head=\think\Image::open($root.$share_poster_dir.'/head_tem'.$user_id.'.png');
+                $local_head->thumb(150,150,\think\Image::THUMB_SCALING)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
+        }
+        $qrcode='/'.$user_id.'.png';
+        $qrcode_path = $root.$share_poster_dir.$qrcode;
+        vendor('phpqrcode.phpqrcode');
+        $imgUrl=$_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . '/index.php?dfc5b=' . $this->user_id;
+        \QRcode::png($imgUrl,$qrcode_path,QR_ECLEVEL_M);
+        $background_path=$root.$share_poster_dir.'/load/qr_backgroup.png';
+        if(!file_exists($background_path)){
+            $share_error=1;
+        }
+        if(!$share_error){
+                $qrcode_deal=\think\Image::open($qrcode_path);
+                $qrcode_deal->thumb(235,235,\think\Image::THUMB_SOUTHEAST)->save($root.$share_poster_dir.'/'.$user_id.'.png');
+                $qrcode_res_path=$share_poster_dir.'/'.$user_id.'.png';
+                $background_deal=\think\Image::open($background_path); 
+                $background_deal->water($root.$qrcode_res_path,[275,802]);
+                $background_deal->text("用户名称：","./vendor/topthink/think-captcha/assets/zhttfs/1.ttf",25,'#ffffff',[10,200]);
+                $background_deal->text(mb_substr($user_info['nickname'],0,55,'utf-8'),"./vendor/topthink/think-captcha/assets/zhttfs/1.ttf",25,'#ffffff',[235,200]);
+                $background_deal->text('用户头像：',"./vendor/topthink/think-captcha/assets/zhttfs/1.ttf",25,'#ffffff',[10,10]);
+                $background_deal->water($root.$share_poster_dir.'/head'.$user_id.'.png',[220,0])->save($root.$share_poster_dir.'/'.$user_id.'-share.png'); 
+                @unlink($root.$share_poster_dir.'/head'.$user_id.'.png');
+                @unlink($root.$share_poster_dir.'/'.$user_id.'.png');
+                @unlink($root.$share_poster_dir.'/head_tem'.$user_id.'.png');
+            }
+        }
         $this->assign('my_poster_src', $my_poster_src);
         return $this->fetch('sharePoster');
     }

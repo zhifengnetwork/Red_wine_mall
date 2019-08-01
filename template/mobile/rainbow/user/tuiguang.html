@@ -40,6 +40,17 @@
     .tuiguangbox .top_box{
         flex: 1;
     }
+    .countdown{
+        position: absolute;
+        bottom: 0;
+        left:50%;
+        margin-left: -50%; 
+        font-size: .54rem;
+        z-index:999;
+        color:red;
+        height:80px;
+        width:100%;
+    }
     .top_box a{
         text-decoration:none;
         color: #151515;
@@ -63,26 +74,6 @@
             <div class="top_box">{$vo['nums']}</div>
         </div>
     </div>
-    <!-- <if condition="!empty($users_period)">
-        <div class="tuiguang ">
-            <div class="tuiguang_top">
-                <div class="top_box">时间</div>
-                <div class="top_box">推荐人</div>
-                <div class="top_box">佣金</div>
-                <div class="top_box">实收佣金</div>
-            </div>
-        </div>
-        <foreach name="users_period" item="voo" key="ko">
-            <div class="tuiguangbox">
-                <div class="tuiguang_top">
-                    <div class="top_box">{:date('YmdHis',$voo[reg_time])}</div>
-                    <div class="top_box">{$voo['nickname']}</div>
-                    <div class="top_box">￥{$voo['user_money']}</div>
-                    <div class="top_box">￥{$voo['pay_points']}</div>
-                </div>
-            </div>
-        </foreach>
-    </if> -->
 </foreach>
 <else>
 <div class="comment_con p">
@@ -94,3 +85,34 @@
 </div>
 </else>
 </if>
+
+<if condition="$freeday">
+    <div class="countdown">
+        <center>下期名额赠送倒计时</center>
+        <center date-time="{$freeday}" id="clock"></center>
+    </div></if>
+<script>
+
+function flashtime(){
+    var timeval = $("#clock").attr("date-time");
+    var endtime=new Date(timeval).getTime();
+    var nowtime=new Date().getTime();
+    var lesstime=endtime-nowtime;
+    var d=Math.floor(lesstime/1000/60/60/24);
+    var h=Math.floor(lesstime/1000/60/60%24);
+    var i=Math.floor(lesstime/1000/60%60);
+    var html=d+'天'+h+'小时'+(i+1)+'分';
+    $("#clock").html(html);
+}    
+setInterval(() => {
+    flashtime();
+}, 1000);
+
+
+</script>
+
+
+
+
+
+

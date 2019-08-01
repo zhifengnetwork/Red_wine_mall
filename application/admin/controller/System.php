@@ -622,13 +622,17 @@ class System extends Base
 
      public function bonus_distribute()
      {
+         $one_account_log=Db::name('account_log')->where(['type'=>'6'])->whereOr(['type'=>'5'])->order('change_time desc')->find();
+        $this->assign([
+            'change_time'=>$one_account_log['change_time']
+         ]);
          return $this->fetch();
      }
 
 
       //每月定时发放极差奖领导奖  优化方法
       public function team_bonus(){
-        $allUserPerformace=Db::name('users')->alias('u')->join('agent_performance ap','u.user_id=ap.user_id',LEFT)->field('u.leader_level,u.user_id,u.mobile,u.nickname,u.distribut_money,ap.ind_per,ap.agent_per')->where('u.leader_level','<>','0')->select();
+        $allUserPerformace=Db::name('users')->alias('u')->join('agent_performance ap','u.user_id=ap.user_id',LEFT)->field('u.leader_level,u.user_id,u.mobile,u.nickname,u.distribut_money,ap.ind_per,ap.agent_per,u.user_money')->where('u.leader_level','<>','0')->select();
         $time=time();
         if($allUserPerformace){
             $accountLogModel=Db::name('account_log');
@@ -637,11 +641,12 @@ class System extends Base
                 
                 if($av['agent_per']>=$one_agent_level['describe']){
                     $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
-                    $addDistribut=$av['distribut_money']+$bonus;
+                    // $addDistribut=$av['distribut_money']+$bonus;
+                    $addDistribut=$av['user_money']+$bonus;
                     if($av['leader_level']==4){
                         $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>6]);
                     }else{
-                        Db::name('users')->where('user_id','=',$av['user_id'])->update(['distribut_money'=>$addDistribut]);
+                        Db::name('users')->where('user_id','=',$av['user_id'])->update(['user_money'=>$addDistribut]);
                         $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'级差奖领导奖','type'=>5]);
                     }
                 }
