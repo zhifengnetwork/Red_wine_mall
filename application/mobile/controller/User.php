@@ -810,6 +810,7 @@ class User extends MobileBase
         foreach ($get_all_lower as $key => $vale) {
             // dump($vale);
             $get_all_lower[$key] = M('users')->where(['user_id' => $vale])->field('user_id,nickname,mobile')->find();
+            $get_all_lower[$key]['nickname']=mb_substr(trim($get_all_lower[$key]['nickname']),0,54,'utf-8');
             // dump($user);
         }
         $this->assign('nickname', $user['nickname']);
