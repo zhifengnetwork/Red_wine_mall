@@ -528,6 +528,7 @@ class User extends Base
             $p_op_type = I('post.point_act_type');
             $pay_points = I('post.pay_points/d');
             $pay_points = $p_op_type ? $pay_points : 0 - $pay_points;
+
             if (($pay_points + $user['pay_points']) < 0) {
                 $this->ajaxReturn(['status' => 0, 'msg' => '用户剩余积分不足！！']);
             }
@@ -547,6 +548,18 @@ class User extends Base
                 M('users')->where('user_id', $user_id)->update(['frozen_money' => $frozen_money]);
             }
             if (accountLog($user_id, $user_money, $pay_points, $desc, 88)) {
+                // column('user_id, nickname, user_money')
+                $data = M('users')->where('user_id', $user_id)->field('user_id,nickname,user_money')->find();
+                $log_arr = [
+                    'user_id' => $user_id,
+                    'nickname' => $data['nickname'],
+                    'account' => $user_money,
+                    'ctime' => time(),
+                    'pay_status' => 1,
+                    'total' => 1,
+                    'desc' => $desc
+                ];
+                Db::name('recharge_log')->insert($log_arr);
                 setBalanceLog($user_id, 6, $user_money, $pay_points, $desc);
                 $this->ajaxReturn(['status' => 1, 'msg' => "操作成功", 'url' => U("Admin/User/account_log", array('id' => $user_id))]);
             } else {
