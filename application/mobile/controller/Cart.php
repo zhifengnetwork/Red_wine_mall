@@ -287,7 +287,7 @@ class Cart extends MobileBase
             ->alias('or')
             ->join('order_goods og', 'or.order_id=og.order_id', LEFT)
             ->join('goods g', "g.goods_id=og.goods_id", LEFT)
-            ->field('g.agent_good,or.total_amount,or.user_id')
+            ->field('g.agent_good,or.total_amount,or.user_id,or.order_id')
             ->where('or.order_sn', '=', $order_sn)->find();
 
         $upArr = get_uper_user($order['user_id']);
@@ -308,6 +308,7 @@ class Cart extends MobileBase
                 } else {
                     Db::name('agent_performance')->insert(['user_id' => $v['user_id'], 'agent_per' => $agent_per, 'create_time' => $time]);
                 }
+                Db::name('agent_performance_log')->insert(['user_id'=>$v['user_id'],'money'=>$order['total_amount'],'create_time'=>$time,'note'=>'下单消费','order_id'=>$order['order_id']]);
             }
             $this->check_user_upgrade($v['user_id']);
         }

@@ -287,6 +287,17 @@ class Distribution extends Base
         return $this->fetch();
     }
 
+    //业绩日志详情
+    public function performance_list()
+    {
+      
+        $perList = M('agent_performance_log')->alias('apl')->join('users u','u.user_id=apl.user_id',LEFT)->field('u.user_money,apl.money,apl.create_time,apl.order_id,apl.performance_id,u.nickname,u.head_pic')->select();
+        $this->assign('list', $perList);
+        return $this->fetch();
+    }
+
+
+
     //返佣日志
     public function commission_log()
     {
