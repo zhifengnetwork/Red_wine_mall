@@ -511,7 +511,7 @@ class User extends Base
         if (!$user_id > 0) {
             $this->ajaxReturn(['status' => 0, 'msg' => "参数有误"]);
         }
-        $user = M('users')->field('user_id,user_money,frozen_money,pay_points,is_lock')->where('user_id', $user_id)->find();
+        $user = M('users')->field('user_id,user_money,nickname,frozen_money,pay_points,is_lock')->where('user_id', $user_id)->find();
         if (IS_POST) {
             $desc = I('post.desc');
             if (!$desc) {
@@ -549,10 +549,9 @@ class User extends Base
             }
             if (accountLog($user_id, $user_money, $pay_points, $desc, 88)) {
                 // column('user_id, nickname, user_money')
-                $data = M('users')->where('user_id', $user_id)->field('user_id,nickname,user_money')->find();
                 $log_arr = [
                     'user_id' => $user_id,
-                    'nickname' => $data['nickname'],
+                    'nickname' => $user['nickname'],
                     'account' => $user_money,
                     'ctime' => time(),
                     'pay_status' => 1,
