@@ -142,6 +142,7 @@ return	array(
 			array('name' => '分销等级列表', 'act' => 'agent_level', 'op' => 'Distribution'),
 			// array('name' => '等级关系', 'act'=>'tree', 'op'=>'Distribution'),
 			array('name' => '分销业绩', 'act' => 'per_list', 'op' => 'Distribution'),
+			array('name' => '分销明细列表', 'act' => 'performance_list', 'op' => 'Distribution'),
 			array('name' => '平台扣除日志', 'act' => 'per_log', 'op' => 'Distribution'),
 			array('name' => '返佣日志', 'act' => 'commission_log', 'op' => 'Distribution'),
 			// array('name' => '分销设置', 'act'=>'distribut', 'op'=>'System'),
