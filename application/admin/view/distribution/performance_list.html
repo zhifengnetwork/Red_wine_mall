@@ -25,7 +25,7 @@
 			</ul>
 		</div>
 		<div class="flexigrid">
-			<div class="mDiv">
+			<!-- <div class="mDiv">
 				<div class="ftitle">
 					<h3>分销业绩列表</h3>
 					<h5>(共{$count}条记录)</h5>
@@ -64,7 +64,7 @@
 						</div>
 					</div>
 				</form>
-			</div>
+			</div> -->
 			<div class="hDiv">
 				<div class="hDivBox">
 					<table cellspacing="0" cellpadding="0">
@@ -95,7 +95,7 @@
 									<div style="text-align: center; width: 150px;" class="">创建时间</div>
 								</th>
 								<th align="center" abbr="article_time" axis="col5" class="">
-									<div style="text-align: center; width: 100px;" class="">订单id</div>
+									<div style="text-align: center; width: 170px;" class="">查看订单</div>
 								</th>
 								<!-- <th align="center" abbr="article_time" axis="col6" class="">
 									<div style="text-align: center; width: 100px;" class="">描述</div>
@@ -150,13 +150,11 @@
 										<div style="text-align: center; width: 150px;">{$vo.create_time|date="Y-m-d
 											h:i:s",###}</div>
 									</td>
-									<td align="center" class="">
-									<a href="{:url('order/detail',['order_id'=>$vo.order_id])}">
-										<div style="text-align: center; width: 150px;">{$vo.order_id}</div>
-									</a>
-											
-										
-									</td>
+									<td align="center" class="handle">
+											<div style="text-align: center; width: 200px; max-width:200px;">
+												<a class="btn blue" href="{:url('order/detail',['order_id'=>$vo.order_id])}"><i class="fa fa-search"></i>查看</a>
+											</div>
+										</td>
 									<!-- <td align="center" class="">
 										<div style="text-align: center; width: 100px;">{$vo.note}</div>
 									</td> -->
