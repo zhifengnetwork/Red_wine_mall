@@ -35,7 +35,7 @@
                         <p class="notic">单位元</p>
                     </dd>
                 </dl>
-                <!-- <dl class="row">
+                <dl class="row" style="display: none">
                 <dt class="tit">积分</dt>
                 <dd class="opt">
                     <select id="point_act_type" name="point_act_type">
@@ -45,8 +45,8 @@
                     <input id="pay_points" name="pay_points" value="0" class="input-txt" type="text">可用积分：{$user.pay_points}
                     <p class="notic">整数</p>
                 </dd>
-            </dl> -->
-                <!-- <dl class="row">
+            </dl>
+                <dl class="row" style="display: none">
                 <dt class="tit">冻结资金</dt>
                 <dd class="opt">
                     <select id="frozen_act_type" name="frozen_act_type">
@@ -56,7 +56,7 @@
                     <input id="frozen_money" name="frozen_money" onkeyup="this.value=/^\d+\.?\d{0,2}$/.test(this.value) ? this.value : ''" onfocus="clearInput('user_money')" value="0" class="input-txt" type="text">冻结资金：{$user.frozen_money}
                     <p class="notic">单位元, 当操作冻结资金时，金额那一栏不用填写数值。</p>
                 </dd>
-            </dl> -->
+            </dl>
                 <dl class="row">
                     <dt class="tit">
                         操作备注
