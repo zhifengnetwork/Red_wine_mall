@@ -19,6 +19,7 @@ use app\admin\logic\GoodsLogic;
 use app\common\logic\ModuleLogic;
 use think\db;
 use think\Cache;
+use think\Page;
 use think\Request;
 
 class System extends Base
@@ -626,6 +627,93 @@ class System extends Base
         $this->assign([
             'change_time'=>$one_account_log['change_time']
          ]);
+
+
+
+         
+        $Ad = M('account_log');
+
+        $p = input('p/d');
+
+        $type = input('type', 0);
+        $ctime = urldecode(I('ctime'));
+        $user_name = urldecode(I('user_name'));
+        $order_sn = I('order_sn');
+        $user_type = I('user_type');
+        $start_time = I('start_time');
+        $end_time = I('end_time');
+        // var_dump($type);die;
+        $where = [];
+        $log_ids = '';
+        $where = get_comm_condition($type); //获取条件
+        if ($user_name) {
+            $user['nickname'] = ['like', "%$user_name%"];
+            $id_list = M('users')->where($user)->column('user_id');
+
+            switch ($user_type) {
+                case 1:
+                    $where['user_id'] = [['in', $id_list], ['neq', 0], 'and'];
+                    break;
+                case 2:
+                    $where['to_user_id'] = [['in', $id_list], ['neq', 0], 'and'];
+                    break;
+                default:
+                    break;
+            }
+        }
+        if ($ctime) {
+            $gap = explode(' - ', $ctime);
+            $where['change_time'] = [['>= time', strtotime($start_time)], ['< time', strtotime($end_time . " 23:59:59")], 'and'];;
+        }
+        if ($order_sn) {
+            $where['order_sn'] = ['like', "%$order_sn%"];
+        }
+        $res = $Ad->where($where)->where(["type" => ["in", "5,6"]])->order('change_time', 'desc')->page($p . ',20')->select();
+        if ($res) {
+            foreach ($res as $val) {
+                $id_lists[] = $val['log_id'];
+                $list[] = $val;
+            }
+            $log_ids = implode(',', $id_lists);
+            $user_ids = array_column($list, 'user_id');
+            $to_user_ids = array_column($list, 'to_user_id');
+            $all_user_ids = array_merge($user_ids, $to_user_ids);
+            $all_user_name = M('users')->whereIn('user_id', $all_user_ids)->column('user_id,nickname,mobile');
+            $avatar = get_avatar($all_user_ids);
+
+            $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '级差领导奖', '6' => '领导奖奖励豪车');
+            foreach ($list as $key => $value) {
+                $list[$key]['user_name'] = $all_user_name[$value['user_id']]['nickname'] ?: $all_user_name[$value['user_id']]['mobile'];
+                $list[$key]['to_user_name'] = $all_user_name[$value['to_user_id']]['nickname'] ?: $all_user_name[$value['to_user_id']]['mobile'];
+                $list[$key]['user_head_pic'] = $avatar[$value['user_id']];
+                $list[$key]['to_user_head_pic'] = $avatar[$value['to_user_id']];
+                $list[$key]['typename'] = $typeList[$value['type']];
+            }
+        }
+
+        $is_type = 6;
+
+        $this->assign('is_type', $is_type);
+        $this->assign('type', $type);
+        $this->assign('user_type', $user_type);
+        $this->assign('log_ids', urldecode($log_ids));
+        $this->assign('user_name', $user_name);
+        $this->assign('start_time', $start_time);
+        $this->assign('end_time', $end_time);
+        $this->assign('ctime', $gap[0] . ' - ' . $gap[1]);
+        $this->assign('order_sn', $order_sn);
+        $this->assign('list', $list);
+        $count = $Ad->where($where)->where(["type" => ["in", "5,6"]])->count();
+        $Page = new Page($count, 20);
+        $show = $Page->show();
+        // dump($show);die;
+        $this->assign('count', $count);
+        $this->assign('page', $show);
+      
+
+
+
+
          return $this->fetch();
      }
 
@@ -670,7 +758,6 @@ class System extends Base
                     $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
                     // $addDistribut=$av['distribut_money']+$bonus;
                     $addDistribut=$av['user_money']+$bonus;
-                  
                     if($av['leader_level']==4){
                         $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>6]);
                     }else{
@@ -682,20 +769,6 @@ class System extends Base
             $this->ajaxReturn(['status' => 1, 'msg' => '发放成功']);
         }
    }
-
-
-//    public function team_bonus(){
-//        $allUserPerformace=Db::name('users')->field('leader_level,user_id,mobile,nickname,distribut_money,user_money')->where('leader_level','<>','0')->select();
-//        $time=time();
-//        foreach($allUserPerformance as $ak =>$av){
-//          $lowers=get_all_lower($av['user_id']);
-//          foreach($lowers as $lk=>$lv){
-//             Db::name('order')->where(['pay_status'=>])->sum('total_amount');
-//          }
-//        }
-
-//    }
-
 
 
 

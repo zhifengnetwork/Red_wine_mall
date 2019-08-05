@@ -47,6 +47,172 @@
             </dl>
             </div>
         </div>
+
+        <div class="flexigrid">
+            <div class="mDiv">
+                <div class="ftitle">
+                    <!-- <h3>返佣日志</h3>
+                    <h5>(共{$count}条记录)</h5> -->
+                </div>
+                <!-- <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div> -->
+                <!-- <form class="navbar-form form-inline" id="search-form" method="get" action="{:U('Distribution/commission_log')}" onsubmit="return check_form();">
+                    <input type="hidden" name="ctime" id="ctime" value="{$ctime}">
+                    <input type="hidden" name="log_ids" value="{$log_ids}" id="log_ids" />
+                    <input type="hidden" name="type" value="{$type}" id="type"/>
+                    <div class="sDiv">
+                        <div class="sDiv2" style="margin-right: 10px;">
+                            <input type="text" size="30" id="start_time" name="start_time" value="{$start_time}" placeholder="起始时间" class="qsbox">
+                        </div>
+                        <div class="sDiv2" style="margin-right: 10px;">
+                            <input type="text" size="30" id="end_time" name="end_time" value="{$end_time}" placeholder="截止时间" class="qsbox">
+                        </div>
+                        <div class="sDiv2" style="margin-right: 10px;">
+                            <input type="text" size="30" id="order_sn" name="order_sn" value="{$order_sn}" placeholder="订单编号" class="qsbox">
+                        </div>
+                        <div class="sDiv2">
+                            <select class="form-control" id="user_type" name="user_type" style="border: none;">
+                                <option value="1" <if condition="$user_type eq 1">selected</if>>用户名称</option>
+                                <option value="2" <if condition="$user_type eq 2">selected</if>>获得返利用户</option>
+                            </select>
+                            <input size="30" value="{$user_name}" name="user_name" class="qsbox" type="text">
+                            <input class="btn" value="搜索" type="submit">
+                        </div>
+                    </div>
+                </form> -->
+            </div>
+            <div class="tDiv">
+                <div class="tDiv2">
+                    <div class="fbutton">
+                        <!-- <a href="javascript:;" onclick="exportUser()">
+                            <div class="add" title="导出返佣明细">
+                                <span><i class="fa fa-share"></i>导出返佣明细</span>
+                            </div>
+                        </a> -->
+                    </div>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+            <div class="hDiv">
+                <div class="hDivBox">
+                    <table cellspacing="0" cellpadding="0">
+                        <thead>
+                        <tr>
+                            <th class="sign" axis="col8">
+                                <div style="width: 24px;"><i class="ico-check"></i></div>
+                            </th>
+                            <th align="center" abbr="ac_id" axis="col3" class="">
+                                <div style="text-align: center; width: 80px;" class="">ID</div>
+                            </th>
+                        
+                                <th align="center" abbr="article_time" axis="col4" class="">
+                                    <div style="text-align: center; width: 80px;" class="">用户id</div>
+                                </th>
+                                <th align="center" abbr="article_time" axis="col4" class="">
+                                    <div style="text-align: center; width: 150px;" class="">用户名称</div>
+                                </th>
+                                <th align="center" axis="col4" class="">
+                                    <div style="text-align: center; width: 100px;" class="">用户头像</div>
+                                </th>
+                        
+                            <!-- <th align="center" abbr="article_time" axis="col4" class="">
+                                <div style="text-align: center; width: 150px;" class="">获得返利用户</div>
+                            </th> -->
+                            <th align="center" axis="col4" class="">
+                                <div style="text-align: center; width: 100px;" class="">返利类型</div>
+                            </th>
+                            <th align="center" abbr="article_time" axis="col5" class="">
+                                <div style="text-align: center; width: 200px;" class="">所得金额</div>
+                            </th>
+                            <!-- <neq name="$type" value="$is_type">
+                                <th align="center" abbr="article_time" axis="col6" class="">
+                                    <div style="text-align: center; width: 150px;" class="">电话号码</div>
+                                </th>
+                                <th align="center" abbr="article_time" axis="col6" class="">
+                                    <div style="text-align: center; width: 100px;" class="">订单id</div>
+                                </th>
+                            </neq> -->
+                            <th align="center" abbr="article_time" axis="col6" class="">
+                                <div style="text-align: center; width: 200px;" class="">时间</div>
+                            </th>
+                            <th align="center" abbr="article_time" axis="col6" class="">
+                                <div style="text-align: center; width: 300px;" class="">描述</div>
+                            </th>
+                            <th align="center" abbr="article_time" axis="col6" class="">
+                                <div style="text-align: center; width: 200px;" class="">操作</div>
+                            </th>
+                            <th style="width:100%" axis="col7">
+                                <div></div>
+                            </th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="bDiv" style="height: auto;">
+                <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                    <table>
+                        <tbody>
+                        <foreach name="list" item="vo" key="k" >
+                            <tr>
+                                <td class="sign">
+                                    <div style="width: 24px;"><i class="ico-check"></i></div>
+                                </td>
+                                <td align="center" class="">
+                                    <div style="text-align: center; width: 80px;">{$vo.log_id}</div>
+                                </td>
+                                <td align="center" class="">
+                                    <div style="text-align: center; width: 80px;">{$vo.user_id}</div>
+                                </td>
+                                <neq name="$type" value="$is_type">
+                                    <td align="center" class="">
+                                        <div style="text-align: center; width: 150px;">{$vo.user_name}</div>
+                                    </td>
+                                    <td align="left" class="">
+                                        <div style="text-align: center; width: 100px;">
+                                            <if condition="!empty($vo.user_name) and !empty($vo.user_head_pic)">
+                                                <img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt="">
+                                            <elseif condition="!empty($vo.user_name)"/>
+                                                <img src="/public/images/user_default_icon.jpg" style="width:30px;height:30px;" alt="">
+                                            </if>
+                                        </div>
+                                    </td>
+                                </neq>
+                                
+                                <td align="left" class="">
+                                    <div style="text-align: center; width: 100px;">
+                                            {$vo.typename}
+                                    </div>
+                                </td>
+                                <td align="center" class="">
+                                    <div style="text-align: center; width: 200px;">{$vo.user_money|default='0'}</div>
+                                </td>
+                            
+                                <td align="center" class="">
+                                    <div style="text-align: center; width: 200px;">{$vo.change_time|date="Y-m-d H:i:s",###}</div>
+                                </td>
+                                <td align="center" class="">
+                                    <div style="text-align: center; width: 300px;">{$vo.desc}</div>
+                                </td>
+                                <td align="center" class="handle">
+                                    <div style="text-align: center; width: 200px; max-width:200px;">
+                                        <a class="btn blue" href="{:U('Distribution/commission_detail',array('id'=>$vo['log_id'],'type'=>$type))}"><i class="fa fa-search"></i>查看</a>
+                                    </div>
+                                </td>
+                                <td align="" class="" style="width: 100%;">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </foreach>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="iDiv" style="display: none;"></div>
+            </div>
+            <!--分页位置-->
+            {$page} </div>
+
+
+
   
 </div>
 <div id="goTop"> <a href="JavaScript:void(0);" id="btntop"><i class="fa fa-angle-up"></i></a><a href="JavaScript:void(0);" id="btnbottom"><i class="fa fa-angle-down"></i></a></div>
