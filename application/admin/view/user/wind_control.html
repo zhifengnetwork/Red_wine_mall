@@ -1,15 +1,6 @@
 <include file="public/layout" />
 <script src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
 <body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
-	<style>
-	.flexigrid .bDiv td div {
-		padding:0;
-	}
-	.flexigrid .bDiv td{
-		vertical-align:  middle!important
-	}
-
-	</style>
 <div id="append_parent"></div>
 <div id="ajaxwaitid"></div>
 <div class="page">
@@ -190,26 +181,26 @@
 							</td>
 							<td align="center" class="">
                             <if condition="$vo.status_alipay === 0">
-								<div style="text-align: center; width: 200px;padding-top: 5px">
+								<div style="text-align: center; width: 200px;">
 									<center style="width:100px;background-color: #0f0;text-align: center;margin:0 auto">
 										支付宝正常
 									</center>
 								</div>
                             <else/>
-								<div style="text-align: center; width: 200px;padding-top: 5px">
+								<div style="text-align: center; width: 200px;">
 									<center style="width:100px;background-color:#f00;margin:0 auto">
 									支付宝异常
 								</center>
 								</div>
                             </if>
                             <if condition="$vo.status_unionpay === 0">
-								<div style="text-align: center; width: 200px;padding-bottom: 5px">
+								<div style="text-align: center; width: 200px;">
 									<center style="width:100px;background-color: #0f0;margin:0 auto">
 									银联正常
 								</center>
 								</div>
                             <else/>
-								<div style="text-align: center; width: 200px;padding-bottom: 5px">
+								<div style="text-align: center; width: 200px;">
 									<center style="width:100px;background-color:#f00;margin:0 auto">
 									银联异常
 								</center>
