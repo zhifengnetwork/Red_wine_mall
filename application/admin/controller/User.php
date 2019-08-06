@@ -1822,6 +1822,13 @@ class User extends Base
         $Page = new Page($count, 15);
         $list=Db::name('user_extend')->alias('ue')->join('users u','u.user_id=ue.user_id',LEFT)->field('ue.id,ue.user_id,cash_alipay,cash_unionpay,u.reg_time,u.mobile,u.nickname,u.leader_level,ue.status_alipay,ue.status_unionpay,ue.realname')->where($map)->limit($Page->firstRow . ',' . $Page->listRows)->order('ue.id DESC')->select();
 
+        $strange_list=Db::name('user_extend')->alias('ue')->join('users u','u.user_id=ue.user_id',LEFT)->field('ue.id,ue.user_id,cash_alipay,cash_unionpay,u.reg_time,u.mobile,u.nickname,u.leader_level,ue.status_alipay,ue.status_unionpay,ue.realname,u.first_leader')->where('status_alipay|status_unionpay','=','1')->select();
+
+        foreach($strange_list as $sk=>$sv){
+            $first=Db::name('users')->where(['user_id'=>$sv['first_leader']])->value('nickname');
+            $strange_list[$sk]['first_leader_name']=$first?$first:'';
+        }
+
         $show = $Page->show();
 
         // $month_show=$this->get_strange_num();
@@ -1831,6 +1838,7 @@ class User extends Base
             'pager'=> $Page,
             'count'=>$count,
             'month_people'=>$month_show,
+            'strange_list'=>$strange_list
         ]);
         return $this->fetch();
     }

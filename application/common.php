@@ -2250,3 +2250,4 @@ function setBalanceLog($user_id, $type = 0, $change_money = 0, $balance = 0, $de
         return 0;
     }
 }
+

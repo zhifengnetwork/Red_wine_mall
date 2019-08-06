@@ -120,6 +120,15 @@ class Index extends Base
 
     public function welcome()
     {
+
+        $strange_num=Db::name('user_extend')->where('status_alipay|status_unionpay','=','1')->count();
+        $all_num=Db::name('user_extend')->count();
+        $normal_num=$all_num-$strange_num;
+        $this->assign([
+            'strange_num'=>$strange_num,
+            'normal_num'=>$normal_num,
+        ]);
+
         $this->assign('sys_info', $this->get_sys_info());
         //    	$today = strtotime("-1 day");
         $today = strtotime(date("Y-m-d"));

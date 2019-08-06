@@ -19,6 +19,18 @@
 			</ul>
 		</div>
 	</div>
+	<div style="height:100px;width:800px;">
+			<div  class="list" style="width: 800px;height: 100px;overflow-y: hidden">
+					<ul style="height:200px;width:800px;">
+					<foreach name="strange_list" item="lo" key="lk" >
+						<li style="display:flex">
+								<span style="width:150px;">用户:</span><span style="width:350px;">{$lo.realname}</span><span style="width:350px;">上级:</span><span style="width:250px">{$lo.first_leader_name}</span><span style="width:250px;">支付宝账号:</span><span style="width:350px">{$lo.cash_alipay}</span><span style="width:250px;">银联账号:</span><span style="width:350px">{$lo.cash_unionpay}</span>
+						</li>
+						</foreach>
+					</ul>
+				</div>
+	</div>
+	
 	<!-- 操作说明 -->
 	<div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
 		<div id="checkZoom" class="title" style="display:flex"><i class="fa fa-lightbulb-o"></i>
@@ -330,9 +342,7 @@
 			}
 		})
 	}
-</script>
 
-<script type="text/javascript">
 
 window.onload=function(){
 	var dom1 = document.getElementById("container1");
@@ -404,6 +414,24 @@ window.onload=function(){
 	}
 }
 
+
+var AutoScroll=function(selector){ 
+      $(selector).find("ul:first").animate({ 
+        marginTop:"-20px" 
+      },500,function(){ 
+        $(this).css({ 
+          marginTop:"0px" 
+        }).find("li:first").appendTo(this) 
+      }) 
+    } 
+    $(document).ready(function(){
+      if($(".list ul li").length>0){ 
+        setInterval('AutoScroll(".list")', 2000) 
+      } 
+      else{ 
+        $(".list").hide() 
+      } 
+    })
 
 </script>
 </body>
