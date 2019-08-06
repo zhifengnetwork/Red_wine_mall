@@ -2711,7 +2711,18 @@ class User extends MobileBase
                     $res2 = Db::name('user_extend')->where(['user_id'=>$res['user_id']])->update($info);
                 }
             }else{
-                $res2 = Db::name('user_extend')->add($info);
+                $realnames = DB::name('user_extend')->where(['realname'=>$info['realname']])->select();
+                
+                if($realnames){
+                    $data = ['status_alipay'=>1];
+                    foreach($realnames as $key =>$veal){
+                        Db::name('user_extend')->where(['realname'=>$veal['realname']])->update($data);
+                    }
+                    $info['status_alipay'] =1;
+                    $res2 = Db::name('user_extend')->add($info);
+                }else{
+                    $res2 = Db::name('user_extend')->add($info);
+                }
             }
 
             if ($res2) {
@@ -2734,7 +2745,19 @@ class User extends MobileBase
                     $res2 = Db::name('user_extend')->where('user_id=' . $user_id)->update($info);
                 }
             }else{
-                $res2 = Db::name('user_extend')->add($info);
+                $realnames = DB::name('user_extend')->where(['realname'=>$info['realname']])->select();
+                
+                if($realnames){
+                    $data = ['status_unionpay'=>1];
+                    foreach($realnames as $key =>$veal){
+                        Db::name('user_extend')->where(['realname'=>$veal['realname']])->update($data);
+                    }
+                    $info['status_unionpay'] =1;
+                    $res2 = Db::name('user_extend')->add($info);
+                }else{
+                    $res2 = Db::name('user_extend')->add($info);
+                }
+                // $res2 = Db::name('user_extend')->add($info);
             }
             if ($res2) {
                 $this->ajaxReturn(['status' => 1, 'msg' => '操作成功']);

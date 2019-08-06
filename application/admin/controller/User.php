@@ -1818,12 +1818,12 @@ class User extends Base
             'cash_account'=>$cash_account,
             'status'=>$status
         ]);
-        $count = Db::name('user_extend')->alias('ue')->join('users u','u.user_id=ue.user_id',LEFT)->where($map)->limit($Page->firstRow . ',' . $Page->listRows)->count();
+        $count = Db::name('user_extend')->alias('ue')->join('users u','u.user_id=ue.user_id',LEFT)->where($map)->count();
         $Page = new Page($count, 15);
         $list=Db::name('user_extend')->alias('ue')->join('users u','u.user_id=ue.user_id',LEFT)->field('ue.id,ue.user_id,cash_alipay,cash_unionpay,u.reg_time,u.mobile,u.nickname,u.leader_level,ue.status_alipay,ue.status_unionpay,ue.realname')->where($map)->limit($Page->firstRow . ',' . $Page->listRows)->order('ue.id DESC')->select();
 
         $strange_list=Db::name('user_extend')->alias('ue')->join('users u','u.user_id=ue.user_id',LEFT)->field('ue.id,ue.user_id,cash_alipay,cash_unionpay,u.reg_time,u.mobile,u.nickname,u.leader_level,ue.status_alipay,ue.status_unionpay,ue.realname,u.first_leader')->where('status_alipay|status_unionpay','=','1')->select();
-
+        // dump($strange_list);die;
         foreach($strange_list as $sk=>$sv){
             $first=Db::name('users')->where(['user_id'=>$sv['first_leader']])->value('nickname');
             $strange_list[$sk]['first_leader_name']=$first?$first:'';
@@ -1837,7 +1837,7 @@ class User extends Base
             'page'=> $show,
             'pager'=> $Page,
             'count'=>$count,
-            'month_people'=>$month_show,
+            // 'month_people'=>$month_show,
             'strange_list'=>$strange_list
         ]);
         return $this->fetch();
@@ -1920,9 +1920,9 @@ class User extends Base
     {
         $strange_log_model=Db::name('strange_amount_log');
         $strange_amount_sum=$strange_log_model->where('change_time','between',"{$begin_time},{$end_time}")->sum("strange_amount");
-        $strange_amount_count=$strange_log_model->where('change_time','between',"{$begin_time},{$end_time}")->count();
+        // $strange_amount_count=$strange_log_model->where('change_time','between',"{$begin_time},{$end_time}")->count();
         if($strange_amount_sum){
-            $strange_amount_show=$strange_amount_sum/$strange_amount_count;
+            $strange_amount_show=$strange_amount_sum;
         }else{
             $strange_amount_show=0;
         }
@@ -1937,14 +1937,16 @@ class User extends Base
     public function month_sum_strange($begin_time,$end_time)
     {
         $strange_log_model=Db::name('strange_log');
-        $strange_sum=$strange_log_model->where('change_time','between',"{$begin_time},{$end_time}")->sum("strange_num");
-        $strange_count=$strange_log_model->where('change_time','between',"{$begin_time},{$end_time}")->count();
-        if($strange_sum){
-            $strange_show=$strange_sum/$strange_count;
+        // $strange_sum=$strange_log_model->whereTime('change_time', 'between', [$begin_time, $end_time])->sum("strange_num");
+        $strange_count=$strange_log_model->whereTime('change_time', 'between', [$begin_time, $end_time])->count();
+      
+        // die;
+        if($strange_count){
+            $strange_show=$strange_count;
         }else{
             $strange_show=0;
         }
-      
+        // dump($strange_show);
         return $strange_show;
     }
 

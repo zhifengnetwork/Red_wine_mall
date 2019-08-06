@@ -24,7 +24,34 @@
 					<ul style="height:200px;width:800px;">
 					<foreach name="strange_list" item="lo" key="lk" >
 						<li style="display:flex">
-								<span style="width:150px;">用户:</span><span style="width:350px;">{$lo.realname}</span><span style="width:350px;">上级:</span><span style="width:250px">{$lo.first_leader_name}</span><span style="width:250px;">支付宝账号:</span><span style="width:350px">{$lo.cash_alipay}</span><span style="width:250px;">银联账号:</span><span style="width:350px">{$lo.cash_unionpay}</span>
+								<span style="width:250px;">用户:　{$lo.nickname}</span><span style="width:250px;">上级:　
+									<if condition="!empty($lo.first_leader_name)">
+										<!-- <img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt=""> -->
+										{$lo.first_leader_name}
+									<else/>
+										未绑定上级关系
+									</if>
+									</span><span style="width:250px;">支付宝账号:　
+									<if condition="!empty($lo.cash_alipay)">
+										<!-- <img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt=""> -->
+										{$lo.cash_alipay}
+									<else/>
+										未设置
+									</if></span>
+									<span style="width:250px;">银联账号:　
+										<if condition="!empty($lo.cash_unionpay)">
+											<!-- <img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt=""> -->
+											{$lo.cash_unionpay}
+										<else/>
+											未设置
+										</if></span>
+										<span style="width:250px;">手机号码:　
+												<if condition="!empty($lo.mobile)">
+													<!-- <img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt=""> -->
+													{$lo.mobile}
+												<else/>
+													未绑定手机号
+												</if></span>
 						</li>
 						</foreach>
 					</ul>
@@ -158,10 +185,23 @@
 									<div style="text-align: center; width: 150px;">{$vo.realname}</div>
 							</td>
 							<td align="center" class="">
-								<div style="text-align: center; width: 200px;">{$vo.cash_alipay}</div>
+								<if condition="!empty($lo.cash_alipay)">
+									<div style="text-align: center; width: 200px;">{$vo.cash_alipay}</div>
+								<else/>
+									
+									<div style="text-align: center; width: 200px;">未设置</div>
+
+								</if>
                             </td>
 							<td align="center" class="">
-								<div style="text-align: center; width: 200px;">{$vo.cash_unionpay}</div>
+								<if condition="!empty($lo.cash_unionpay)">
+										<!-- <img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt=""> -->
+									<div style="text-align: center; width: 200px;">{$vo.cash_unionpay}</div>
+									<!-- {$lo.cash_alipay} -->
+								<else/>
+									<div style="text-align: center; width: 200px;">未设置</div>
+									
+								</if>
                             </td>
                        
 							<neq name="$type" value="$is_type">

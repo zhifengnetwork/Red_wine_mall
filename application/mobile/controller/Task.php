@@ -16,6 +16,33 @@ class Task{
                 Db::name('pop_period')->where('user_id', '=', $dv['user_id'])->where('period', '=', $dv['period'])->update(['begin_time' => $time, 'day_release' => 0]);
             }
         }
+
+    // 统计异常账号   //每三小时执行一次
+    public function count_strange()
+    {
+        $strange_log=Db::name('strange_log')->select();
+        $strange_alipay=Db::name('user_extend')->where(['status_alipay'=>'1'])->select();
+        $strange_unionpay=Db::name('user_extend')->where(['status_unionpay'=>'1'])->select();
+        $time=time();
+        if($strange_log)
+        {
+            Db::name('strange_log')->where("id >= 1")->delete();
+            foreach($strange_alipay as $key =>$veal){
+                Db::name('strange_log')->insert(['strange_num'=>1,'type'=>1,'change_time'=>$time,'user_id'=>$veal['user_id']]);
+            }
+            foreach($strange_unionpay as $key1 =>$veal1){
+                Db::name('strange_log')->insert(['strange_num'=>1,'type'=>1,'change_time'=>$time,'user_id'=>$veal1['user_id']]);
+            }
+
+        }else{
+            foreach($strange_alipay as $key =>$veal){
+                Db::name('strange_log')->insert(['strange_num'=>1,'type'=>1,'change_time'=>$time,'user_id'=>$veal['user_id']]);
+            }
+            foreach($strange_unionpay as $key1 =>$veal1){
+                Db::name('strange_log')->insert(['strange_num'=>1,'type'=>1,'change_time'=>$time,'user_id'=>$veal1['user_id']]);
+            }
+        }
+    }
     
     //每周定时释放推广名额
     public function week_release_handle()
