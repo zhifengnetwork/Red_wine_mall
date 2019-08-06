@@ -148,6 +148,26 @@
             </dl>
             <dl class="row">
                 <dt class="tit">
+                    <label class="qq">支付宝提现解绑</label>
+                </dt>
+                <dd class="opt">
+                    <span>支付宝账号：{$user.pay_way.cash_alipay}</span>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input value="1" name="pay_way_alipay" type="radio" <if condition="$user['pay_way']['cash_alipay'] eq  ''">checked</if>>解绑
+                    <input value="2" name="pay_way_alipay"  type="radio" <if condition="$user['pay_way']['cash_alipay'] neq ''">checked</if>>不解绑
+                    <span class="err"></span> </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label class="qq">银联提现解绑</label>
+                </dt>
+                <dd class="opt">
+                    <span>银联账号：{$user.pay_way.cash_unionpay}</span>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input value="1" name="pay_way_unionpay" type="radio" <if condition="$user['pay_way']['cash_unionpay'] eq  ''">checked</if>>解绑
+                    <input value="2" name="pay_way_unionpay"  type="radio" <if condition="$user['pay_way']['cash_unionpay'] neq ''">checked</if>>不解绑
+                    <span class="err"></span> </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
                     <label>注册时间</label>
                 </dt>
                 <dd class="opt">{$user.reg_time|date='Y-m-d H:i',###}</dd>

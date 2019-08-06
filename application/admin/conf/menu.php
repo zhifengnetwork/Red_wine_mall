@@ -182,6 +182,7 @@ return	array(
 			array('name' => '批量充值', 'act' => 'recharge_user_add', 'op' => 'User'),
 			// array('name'=>'会员等级','act'=>'levelList','op'=>'User'),
 			array('name'=>'账户资金记录列表','act'=>'exchange_money','op'=>'User'),
+			array('name'=>'风控详情','act'=>'wind_control','op'=>'User'),
 		)),
 		array('name' => '充值提现', 'child' => array(
 			// array('name'=>'充值记录','act'=>'recharge','op'=>'User'),

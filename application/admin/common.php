@@ -214,3 +214,8 @@ function getMenuArr(){
 function respose($res){
 	exit(json_encode($res));
 }
+
+function get_agent_name($level_id){
+	$agent_name=M('agent_level')->where(['level'=>$level_id])->value('level_name');
+	return $agent_name;
+}

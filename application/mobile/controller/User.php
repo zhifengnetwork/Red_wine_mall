@@ -2699,15 +2699,21 @@ class User extends MobileBase
             $info['user_id'] = $user_id;
             $res = DB::name('user_extend')->where('user_id=' . $user_id)->find();
 
-            if ($res) {
-                if (!$res['cash_alipay']) {
-                    $res2 = Db::name('user_extend')->where('user_id', $user_id)->update($info);
+            if($res){
+                if ($res['cash_alipay']) {
+                            // if (!$res['cash_alipay']) {
+                            //     $res2 = Db::name('user_extend')->where('user_id', $user_id)->update($info);
+                            // } else {
+                            //     $res2 = 1;
+                            // }
+                    $this->ajaxReturn(['status'=>0,'msg'=>'修改账号请后台审核']);
                 } else {
-                    $res2 = 1;
+                    $res2 = Db::name('user_extend')->where(['user_id'=>$res['user_id']])->update($info);
                 }
-            } else {
+            }else{
                 $res2 = Db::name('user_extend')->add($info);
             }
+
             if ($res2) {
                 $this->ajaxReturn(['status' => 1, 'msg' => '操作成功']);
             } else {
@@ -2721,13 +2727,13 @@ class User extends MobileBase
             $info['realname'] = $data['cash_name'];
             $info['user_id'] = $user_id;
             $res = DB::name('user_extend')->where('user_id=' . $user_id)->find();
-            if ($res) {
-                if (!$res['cash_alipay']) {
+            if($res){
+                if($res['cash_unionpay']){
+                    $this->ajaxReturn(['status'=>0,'msg'=>'修改账号请后台审核']);
+                }else{
                     $res2 = Db::name('user_extend')->where('user_id=' . $user_id)->update($info);
-                } else {
-                    $res2 = 1;
                 }
-            } else {
+            }else{
                 $res2 = Db::name('user_extend')->add($info);
             }
             if ($res2) {
@@ -2878,6 +2884,19 @@ class User extends MobileBase
             //            dump($data);die;
             if (M('withdrawals')->add($data)) {
                 Db::name('users')->where('user_id', $data['user_id'])->setDec('user_money', $data['money']);
+
+                $time=time();
+                $user_extend_one=Db::name('user_extend')->where(['user_id'=>$data['user_id']])->find();
+                if($data['bank_name']=='支付宝'){
+                    if($user_extend_one['status_alipay']==1){
+                         Db::name('strange_amount_log')->insert(['strange_amount'=>$data['money'],'type'=>1,'change_time'=>$time]);
+                    }
+                }
+                if($data['bank_name']=='银行卡'){
+                    if($user_extend_one['status_unionpay']==1){
+                        Db::name('strange_amount_log')->insert(['strange_amount'=>$data['money'],'type'=>2,'change_time'=>$time]);
+                    }
+                }
                 $this->ajaxReturn(['status' => 1, 'msg' => "已提交申请", 'url' => U('User/account', ['type' => 2])]);
             } else {
                 $this->ajaxReturn(['status' => 0, 'msg' => '提交失败,联系客服!']);

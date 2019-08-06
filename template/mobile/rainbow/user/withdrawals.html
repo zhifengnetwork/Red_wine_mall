@@ -202,43 +202,6 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
-	var bank_card_number = '{$user_extend.cash_unionpay}';
-		$(".withdraw-cheng").click(function () {
-			if (cash_type == 0) {
-				$(".withdraw-addpay-pop").show();
-			} else if(cash_type == 1) {
-				$(".withdraw-addpay-pop").show();
-			}else {
-				var str = $("#bank_card").val();
-				if (str.indexOf('openid') == -1) {
-					layer.open({
-						content: '可登录电脑端扫码绑定',
-						icon: 2,
-						time: 1000
-					});
-					return;
-				}
-			}
-			if (cash_type == 0) {
-				$('#add_style').html('支付宝提现');
-				$('#card_title').html('支付宝账号:');
-			}
-			// if (cash_type == 1) {
-			// 	$('#add_style').html('微信提现');
-			// 	$('#card_title').html('微信账号:')
-			// }
-			if (cash_type == 1) {
-				// bank_card_number
-				$('#pop_card').val(bank_card_number);
-				$('#add_style').html('银行卡提现');
-				$('#card_title').html('银行卡号:')
-			}
-		})
-		$(".withdraw-left-icon").click(function () {
-			$(".withdraw-addpay-pop").hide();
-		})
-	</script>
 	<!-- 添加支付宝账号弹窗  d-->
 	</form>
 	</div>
@@ -419,6 +382,12 @@
 				}
 				$('#bank_card').val(card);
 				$(".withdraw-addpay-pop").hide();
+			}else{
+				layer.open({
+					content: res.msg,
+					icon: 2,
+					time: 1000
+				});
 			}
 		}, 'JSON')
 	})
@@ -550,5 +519,49 @@
 
    
 </script>
+
+
+
+
+<script type="text/javascript">
+	var bank_card_number = '{$user_extend.cash_unionpay}';
+	var alipay_card_number = '{$user_extend.cash_alipay}';
+	// alert(bank_card_number);
+		$(".withdraw-cheng").click(function () {
+			if (cash_type == 0) {
+				$(".withdraw-addpay-pop").show();
+			} else if(cash_type == 1) {
+				$(".withdraw-addpay-pop").show();
+			}else {
+				var str = $("#bank_card").val();
+				if (str.indexOf('openid') == -1) {
+					layer.open({
+						content: '可登录电脑端扫码绑定',
+						icon: 2,
+						time: 1000
+					});
+					return;
+				}
+			}
+			if (cash_type == 0) {
+				$('#pop_card').val(alipay_card_number);
+				$('#add_style').html('支付宝提现');
+				$('#card_title').html('支付宝账号:');
+			}
+			// if (cash_type == 1) {
+			// 	$('#add_style').html('微信提现');
+			// 	$('#card_title').html('微信账号:')
+			// }
+			if (cash_type == 1) {
+				// bank_card_number
+				$('#pop_card').val(bank_card_number);
+				$('#add_style').html('银行卡提现');
+				$('#card_title').html('银行卡号:')
+			}
+		})
+		$(".withdraw-left-icon").click(function () {
+			$(".withdraw-addpay-pop").hide();
+		})
+	</script>
 
 </html>

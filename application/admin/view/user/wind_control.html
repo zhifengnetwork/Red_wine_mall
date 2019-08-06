@@ -1,0 +1,410 @@
+<include file="public/layout" />
+<script src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+	<div class="fixed-bar">
+		<div class="item-title" id="comm_li">
+			<div class="subject">
+				<h3>风控详情</h3>
+				<h5>风控详情</h5>
+			</div>
+			<ul class="tab-base nc-row">
+				<li>
+					<a href="{:U('distribution/commission_log',array('type'=>0))}" data-state="">
+						<span>全部</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!-- 操作说明 -->
+	<div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+		<div id="checkZoom" class="title" style="display:flex"><i class="fa fa-lightbulb-o"></i>
+			<!-- <h4 title="提示相关设置操作时应注意的要点">操作提示</h4>
+			<span title="收起提示" id="explanationZoom" style="display: block;"></span> -->
+				异常人数：（单位：人）
+				<div id="container1" style="height: 400px;width:45%;">
+				</div>
+				异常订单：（单位：元）
+				<div id="container2" style="height: 400px;width:45%;">
+				</div>
+			
+		</div>
+		<ul>
+			<li>风控详情，显示所有人的支付方式绑定，可修改为白名单</li>
+		</ul>
+	</div>
+	<div class="flexigrid">
+		<div class="mDiv">
+			<div class="ftitle">
+				<h3>风控详情</h3>
+				<h5>(共{$count}条记录)</h5>
+			</div>
+			<div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
+			<form class="navbar-form form-inline" id="search-form" method="get" action="{:U('User/wind_control')}" onsubmit="return check_form();">
+				<div class="sDiv">
+					<div class="sDiv2" style="margin-right: 10px;">
+						<select class="form-control" id="user_type" name="user_level" style="border: none;">
+							<option value="" >等级</option>
+							<option value="1" <if condition="$user_level eq 1">selected</if>>经理</option>
+							<option value="2" <if condition="$user_level eq 2">selected</if>>总监</option>
+							<option value="3" <if condition="$user_level eq 3">selected</if>>总裁</option>
+							<option value="4" <if condition="$user_level eq 4">selected</if>>合伙人</option>
+						</select> 
+					</div>
+					<div class="sDiv2" style="margin-right: 10px;">
+						<select class="form-control" id="user_type" name="status" style="border: none;">
+							<option value="" >状态</option>
+							<option value="0" <if condition="$status eq 0">selected</if>>正常</option>
+							<option value="1" <if condition="$status eq 1">selected</if>>异常</option>
+						</select> 
+					</div>
+					<div class="sDiv2" style="margin-right: 10px;">
+						<input type="text" size="130" style="width:311px" name="cash_account" value="{$cash_account}" placeholder="提现账号" class="qsbox">
+					</div>
+					<div class="sDiv2">
+				
+						<input class="btn" value="搜索" type="submit">
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="tDiv">
+			<div class="tDiv2">
+				<div class="fbutton">
+					<a href="javascript:;" onclick="exportUser()">
+						<div class="add" title="导出返佣明细">
+							<span><i class="fa fa-share"></i>导出返佣明细</span>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div style="clear:both"></div>
+		</div>
+		<div class="hDiv">
+			<div class="hDivBox">
+				<table cellspacing="0" cellpadding="0">
+					<thead>
+					<tr>
+						<th class="sign" axis="col8">
+							<div style="width: 24px;"><i class="ico-check"></i></div>
+						</th>
+						<th align="center" abbr="ac_id" axis="col3" class="">
+							<div style="text-align: center; width: 80px;" class="">用户ID</div>
+						</th>
+						<th align="center" abbr="article_time" axis="col4" class="">
+								<div style="text-align: center; width: 150px;" class="">用户名称</div>
+							</th>
+							<th align="center" abbr="article_time" axis="col4" class="">
+								<div style="text-align: center; width: 200px;" class="">提现账号-支付宝</div>
+							</th>
+							<th align="center" abbr="article_time" axis="col4" class="">
+								<div style="text-align: center; width: 200px;" class="">提现账号-银联</div>
+							</th>
+						
+							<th align="center" axis="col4" class="">
+								<div style="text-align: center; width: 100px;" class="">手机号</div>
+							</th>
+					
+						<th align="center" axis="col4" class="">
+							<div style="text-align: center; width: 100px;" class="">等级</div>
+						</th>
+						<th align="center" abbr="article_time" axis="col5" class="">
+							<div style="text-align: center; width: 200px;" class="">注册时间</div>
+						</th>
+					
+						<th align="center" abbr="article_time" axis="col6" class="">
+							<div style="text-align: center; width: 200px;" class="">状态</div>
+						</th>
+					
+                        <th align="center" abbr="article_time" axis="col6" class="">
+							<div style="text-align: center; width: 200px;" class="">设置</div>
+						</th>
+						<th style="width:100%" axis="col7">
+							<div></div>
+						</th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+		<div class="bDiv" style="height: auto;">
+			<div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+				<table>
+					<tbody>
+					<foreach name="list" item="vo" key="k" >
+						<tr>
+							<td class="sign">
+								<div style="width: 24px;"><i class="ico-check"></i></div>
+							</td>
+							<td align="center" class="">
+								<div style="text-align: center; width: 80px;">{$vo.user_id}</div>
+							</td> 
+							    <td align="center" class="">
+									<div style="text-align: center; width: 150px;">{$vo.realname}</div>
+							</td>
+							<td align="center" class="">
+								<div style="text-align: center; width: 200px;">{$vo.cash_alipay}</div>
+                            </td>
+							<td align="center" class="">
+								<div style="text-align: center; width: 200px;">{$vo.cash_unionpay}</div>
+                            </td>
+                       
+							<neq name="$type" value="$is_type">
+								
+								<td align="left" class="">
+									<div style="text-align: center; width: 100px;">
+										<if condition="!empty($vo.user_name) and !empty($vo.user_head_pic)">
+											<img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt="">
+										<elseif condition="!empty($vo.user_name)"/>
+											<img src="/public/images/user_default_icon.jpg" style="width:30px;height:30px;" alt="">
+										</if>
+									</div>
+								</td>
+							</neq>
+							
+							<td align="left" class="">
+			                    <div style="text-align: center; width: 100px;">
+										{$vo.mobile}
+			                    </div>
+			                </td>
+							
+						
+							<td align="center" class="">
+								<div style="text-align: center; width: 100px;">{$vo.leader_level|get_agent_name}</div>
+							</td>
+						
+							<td align="center" class="">
+								<div style="text-align: center; width: 200px;">{$vo.reg_time|date="Y-m-d H:i:s",###}</div>
+							</td>
+							<td align="center" class="">
+                            <if condition="$vo.status_alipay === 0">
+								<div style="text-align: center; width: 200px;">
+									<center style="width:100px;background-color: #0f0;text-align: center;margin:0 auto">
+										支付宝正常
+									</center>
+								</div>
+                            <else/>
+								<div style="text-align: center; width: 200px;">
+									<center style="width:100px;background-color:#f00;margin:0 auto">
+									支付宝异常
+								</center>
+								</div>
+                            </if>
+                            <if condition="$vo.status_unionpay === 0">
+								<div style="text-align: center; width: 200px;">
+									<center style="width:100px;background-color: #0f0;margin:0 auto">
+									银联正常
+								</center>
+								</div>
+                            <else/>
+								<div style="text-align: center; width: 200px;">
+									<center style="width:100px;background-color:#f00;margin:0 auto">
+									银联异常
+								</center>
+								</div>
+                            </if>
+							</td>
+                            <td align="center" class="handle" style="width:216px;max-width:216px;">
+								<div style="text-align: center; width: 200px; max-width:200px;">
+									<a class="btn blue" href="javascript:set_white({$vo['id']});"><i class="fa fa-search"></i>设置白名单</a>
+									<a class="btn blue" href="javascript:set_black({$vo['id']});"><i class="fa fa-search"></i>设置黑名单</a>
+								</div>
+							</td>
+							<td align="" class="" style="width: 10%;">
+								<div>&nbsp;</div>
+							</td>
+						</tr>
+					</foreach>
+					</tbody>
+				</table>
+			</div>
+			<div class="iDiv" style="display: none;"></div>
+		</div>
+		<!--分页位置-->
+		{$page} </div>
+</div>
+
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<!-- <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script> -->
+<!-- <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script> -->
+<!-- <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script> -->
+<!-- <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script> -->
+<!-- <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script> -->
+<!-- <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=xfhhaTThl11qYVrqLZii6w8qE5ggnhrY&__ec_v__=20190126"></script> -->
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+
+<script>
+	$(document).ready(function(){
+		var li_index = '';
+		var type = '{$type}';
+		//导航栏切换
+		$('#comm_li ul li').each(function(){
+			if($(this).index() == type){
+				console.log($(this).index());
+				$(this).children().addClass('current');
+			};
+		});
+
+		console.log(li_index)
+		// 表格行点击选中切换
+		$('#flexigrid > table>tbody >tr').click(function(){
+			$(this).toggleClass('trSelected');
+		});
+
+		// 点击刷新数据
+		$('.fa-refresh').click(function(){
+			location.href = location.href;
+		});
+
+		$('#start_time').layDate();
+        $('#end_time').layDate();
+	});
+
+	function check_form(){
+        var start_time = $.trim($('#start_time').val());
+        var end_time =  $.trim($('#end_time').val());
+        if(start_time == '' ^ end_time == ''){
+            layer.alert('请选择完整的时间间隔', {icon: 2});
+            return false;
+        }
+        if(start_time !== '' && end_time !== ''){
+            $('#ctime').val(start_time+" - "+end_time);
+        }
+        if(start_time == '' && end_time == ''){
+            $('#ctime').val('');
+        }
+        return true;
+    }
+
+	//导出Excel表格
+	function exportUser() {
+        $('#search-form').attr('action',"{:U('Distribution/export_commission_log')}")
+
+        $('#search-form').submit();
+    }
+
+
+
+	function set_white(id){
+		$.ajax({
+			url:"{:url('user/set_white_list')}",
+			data:{
+				id:id
+			},
+			method:"get",
+			success:function(res){
+				var res=JSON.parse(res);
+				if(res.status==1){
+					alert(res.msg);
+					setTimeout(function(){
+						location.replace(location.href);
+					},1000);
+				}else{
+					alert(res.msg);
+				}
+			}
+		})
+	}
+	function set_black(id){
+		// alert(id);
+		$.ajax({
+			url:"{:url('user/set_black_list')}",
+			data:{
+				id:id
+			},
+			method:"get",
+			success:function(res){
+				var res=JSON.parse(res);
+				if(res.status==1){
+					alert(res.msg);
+					setTimeout(function(){
+						location.replace(location.href);
+					},1000);
+				}else{
+					alert(res.msg);
+				}
+			}
+		})
+	}
+</script>
+
+<script type="text/javascript">
+
+window.onload=function(){
+	var dom1 = document.getElementById("container1");
+	var myChart1 = echarts.init(dom1);
+	var app1 = {};
+	option1 = null;
+	var month_show='';
+	option1 = {
+		xAxis: {
+			type: 'category',
+			data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月','8月','9月','10月','11月','12月']
+		},
+		yAxis: {
+			type: 'value'
+		},
+		series: [{
+			data: [],
+			type: 'line',
+			smooth: true
+		}]
+	};
+
+	$.ajax({
+		url:"{:url('user/get_strange_num')}",
+		method:"get",
+		async:false,
+		success:function(data){
+			var data=JSON.parse(data);
+			month_show=data.data;
+			option1.series[0].data=month_show;
+		}
+	});
+	
+	if (option1 && typeof option1 === "object") {
+		myChart1.setOption(option1, true);
+	}
+
+	var dom2 = document.getElementById("container2");
+	var myChart2 = echarts.init(dom2);
+	var app2 = {};
+	option2 = null;
+	option2 = {
+		xAxis: {
+			type: 'category',
+			data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月','8月','9月','10月','11月','12月']
+		},
+		yAxis: {
+			type: 'value'
+		},
+		series: [{
+			data: [],
+			type: 'line',
+			smooth: true
+		}]
+	};
+	$.ajax({
+		url:"{:url('user/get_strange_amount')}",
+		method:"get",
+		async:false,
+		success:function(data){
+			var data=JSON.parse(data);
+			month_show=data.data;
+			option2.series[0].data=month_show;
+		}
+	});
+	
+	if (option1 && typeof option1 === "object") {
+		myChart2.setOption(option2, true);
+	}
+}
+
+
+</script>
+</body>
+</html>
