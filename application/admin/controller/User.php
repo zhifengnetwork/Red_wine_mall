@@ -186,7 +186,7 @@ class User extends Base
         if (!$user) {
             exit($this->error('会员不存在'));
         }
-        $user['pay_way']=Db::name('user_extend')->where(['user_id'=>$uid])->find();
+        $user['pay_way'] = Db::name('user_extend')->where(['user_id' => $uid])->find();
         if (IS_POST) {
             //  会员信息编辑
             $password = I('post.password');
@@ -297,15 +297,15 @@ class User extends Base
                 $post_data['add_agent_time'] = $time;
                 $post_data['default_period'] = 1;
             }
-             if($_POST['pay_way_alipay']==1){
-                Db::name('user_extend')->where(['user_id'=>$uid])->update(['cash_alipay'=>'']);
-             }
-             if($_POST['pay_way_unionpay']==1){
-                Db::name('user_extend')->where(['user_id'=>$uid])->update(['cash_unionpay'=>'']);
-             }
-             if($_POST['pay_way_alipay']==1&&$_POST['pay_way_unionpay']==1){
-                 Db::name('user_extend')->where(['user_id'=>$uid])->delete();
-             }
+            if ($_POST['pay_way_alipay'] == 1) {
+                Db::name('user_extend')->where(['user_id' => $uid])->update(['cash_alipay' => '']);
+            }
+            if ($_POST['pay_way_unionpay'] == 1) {
+                Db::name('user_extend')->where(['user_id' => $uid])->update(['cash_unionpay' => '']);
+            }
+            if ($_POST['pay_way_alipay'] == 1 && $_POST['pay_way_unionpay'] == 1) {
+                Db::name('user_extend')->where(['user_id' => $uid])->delete();
+            }
             $row = M('users')->where(array('user_id' => $uid))->save($post_data);
             if ($row !== false) {
                 exit($this->success('修改成功', 'User/index'));
@@ -1173,7 +1173,7 @@ class User extends Base
         if ($alipay['batch_num'] > 0) {
             //支付宝在线批量付款
             include_once PLUGIN_PATH . "payment/alipay/alipay.class.php";
-            $alipay_obj = new \alipay();
+            $alipay_obj = new alipay();
             $alipay_obj->transfer($alipay);
         }
         $this->success("操作成功!", U('remittance'), 3);
@@ -1800,45 +1800,45 @@ class User extends Base
 
     public function wind_control()
     {
-        $cash_account=I('cash_account');
-        $user_level=I('user_level');
-        $status=I('status');
-        $map=array();
-        if($cash_account){
-            $map['ue.cash_alipay|ue.cash_unionpay']=['=',$cash_account];
+        $cash_account = I('cash_account');
+        $user_level = I('user_level');
+        $status = I('status');
+        $map = array();
+        if ($cash_account) {
+            $map['ue.cash_alipay|ue.cash_unionpay'] = ['=', $cash_account];
         }
-        if($user_level){
-            $map['u.leader_level']=['=',$user_level];
+        if ($user_level) {
+            $map['u.leader_level'] = ['=', $user_level];
         }
-        if($status){
-            $map['ue.status_alipay|ue.status_unionpay']=['=',$status];
+        if ($status) {
+            $map['ue.status_alipay|ue.status_unionpay'] = ['=', $status];
         }
         $this->assign([
-            'user_level'=>$user_level,
-            'cash_account'=>$cash_account,
-            'status'=>$status
+            'user_level' => $user_level,
+            'cash_account' => $cash_account,
+            'status' => $status
         ]);
-        $count = Db::name('user_extend')->alias('ue')->join('users u','u.user_id=ue.user_id',LEFT)->where($map)->count();
+        $count = Db::name('user_extend')->alias('ue')->join('users u', 'u.user_id=ue.user_id', LEFT)->where($map)->count();
         $Page = new Page($count, 15);
-        $list=Db::name('user_extend')->alias('ue')->join('users u','u.user_id=ue.user_id',LEFT)->field('ue.id,ue.user_id,cash_alipay,cash_unionpay,u.reg_time,u.mobile,u.nickname,u.leader_level,ue.status_alipay,ue.status_unionpay,ue.realname')->where($map)->limit($Page->firstRow . ',' . $Page->listRows)->order('ue.id DESC')->select();
+        $list = Db::name('user_extend')->alias('ue')->join('users u', 'u.user_id=ue.user_id', LEFT)->field('ue.id,ue.user_id,cash_alipay,cash_unionpay,u.reg_time,u.mobile,u.nickname,u.leader_level,ue.status_alipay,ue.status_unionpay,ue.realname')->where($map)->limit($Page->firstRow . ',' . $Page->listRows)->order('ue.id DESC')->select();
 
-        $strange_list=Db::name('user_extend')->alias('ue')->join('users u','u.user_id=ue.user_id',LEFT)->field('ue.id,ue.user_id,cash_alipay,cash_unionpay,u.reg_time,u.mobile,u.nickname,u.leader_level,ue.status_alipay,ue.status_unionpay,ue.realname,u.first_leader')->where('status_alipay|status_unionpay','=','1')->select();
+        $strange_list = Db::name('user_extend')->alias('ue')->join('users u', 'u.user_id=ue.user_id', LEFT)->field('ue.id,ue.user_id,cash_alipay,cash_unionpay,u.reg_time,u.mobile,u.nickname,u.leader_level,ue.status_alipay,ue.status_unionpay,ue.realname,u.first_leader')->where('status_alipay|status_unionpay', '=', '1')->select();
         // dump($strange_list);die;
-        foreach($strange_list as $sk=>$sv){
-            $first=Db::name('users')->where(['user_id'=>$sv['first_leader']])->value('nickname');
-            $strange_list[$sk]['first_leader_name']=$first?$first:'';
+        foreach ($strange_list as $sk => $sv) {
+            $first = Db::name('users')->where(['user_id' => $sv['first_leader']])->value('nickname');
+            $strange_list[$sk]['first_leader_name'] = $first ? $first : '';
         }
 
         $show = $Page->show();
 
         // $month_show=$this->get_strange_num();
         $this->assign([
-            'list'=>$list,
-            'page'=> $show,
-            'pager'=> $Page,
-            'count'=>$count,
+            'list' => $list,
+            'page' => $show,
+            'pager' => $Page,
+            'count' => $count,
             // 'month_people'=>$month_show,
-            'strange_list'=>$strange_list
+            'strange_list' => $strange_list
         ]);
         return $this->fetch();
     }
@@ -1846,85 +1846,85 @@ class User extends Base
 
     public function get_strange_num()
     {
-            $January =strtotime("1 January ");
-            $February=strtotime("1 February");
-            $March=strtotime("1 March");
-            $April=strtotime("1 April");
-            $May=strtotime("1 May");
-            $June=strtotime("1 June");
-            $July=strtotime("1 July");
-            $August=strtotime("1 August");
-            $September=strtotime("1 September");
-            $October=strtotime("1 October");
-            $November=strtotime("1 November");
-            $December=strtotime("1 December");
+        $January = strtotime("1 January ");
+        $February = strtotime("1 February");
+        $March = strtotime("1 March");
+        $April = strtotime("1 April");
+        $May = strtotime("1 May");
+        $June = strtotime("1 June");
+        $July = strtotime("1 July");
+        $August = strtotime("1 August");
+        $September = strtotime("1 September");
+        $October = strtotime("1 October");
+        $November = strtotime("1 November");
+        $December = strtotime("1 December");
 
-            //每个月的总数   除以   每个月的条数
+        //每个月的总数   除以   每个月的条数
 
-            // 1月
-            $January_sum=$this->month_sum_strange($January,$February);
-            $February_sum=$this->month_sum_strange($February,$March);
-            $March_sum=$this->month_sum_strange($March,$April);
-            $April_sum=$this->month_sum_strange($April,$May);
-            $May_sum=$this->month_sum_strange($May,$June);
-            $June_sum=$this->month_sum_strange($June,$July);
-            $July_sum=$this->month_sum_strange($July,$August);
-            $August_sum=$this->month_sum_strange($August,$September);
-            $September_sum=$this->month_sum_strange($September,$October);
-            $October_sum=$this->month_sum_strange($October,$November);
-            $November_sum=$this->month_sum_strange($November,$December);
-            $December_sum=$this->month_sum_strange($December,$January);
+        // 1月
+        $January_sum = $this->month_sum_strange($January, $February);
+        $February_sum = $this->month_sum_strange($February, $March);
+        $March_sum = $this->month_sum_strange($March, $April);
+        $April_sum = $this->month_sum_strange($April, $May);
+        $May_sum = $this->month_sum_strange($May, $June);
+        $June_sum = $this->month_sum_strange($June, $July);
+        $July_sum = $this->month_sum_strange($July, $August);
+        $August_sum = $this->month_sum_strange($August, $September);
+        $September_sum = $this->month_sum_strange($September, $October);
+        $October_sum = $this->month_sum_strange($October, $November);
+        $November_sum = $this->month_sum_strange($November, $December);
+        $December_sum = $this->month_sum_strange($December, $January);
 
-            $month_show=array($January_sum,$February_sum,$March_sum,$April_sum,$May_sum,$June_sum,$July_sum,$August_sum,$September_sum,$October_sum,$November_sum,$December_sum);
-            // return $month_show;
-            $this->ajaxReturn(['status' => 1, 'msg' => '请求成功!','data'=>$month_show]);
+        $month_show = array($January_sum, $February_sum, $March_sum, $April_sum, $May_sum, $June_sum, $July_sum, $August_sum, $September_sum, $October_sum, $November_sum, $December_sum);
+        // return $month_show;
+        $this->ajaxReturn(['status' => 1, 'msg' => '请求成功!', 'data' => $month_show]);
     }
 
 
     public function get_strange_amount()
     {
-            $January =strtotime("1 January ");
-            $February=strtotime("1 February");
-            $March=strtotime("1 March");
-            $April=strtotime("1 April");
-            $May=strtotime("1 May");
-            $June=strtotime("1 June");
-            $July=strtotime("1 July");
-            $August=strtotime("1 August");
-            $September=strtotime("1 September");
-            $October=strtotime("1 October");
-            $November=strtotime("1 November");
-            $December=strtotime("1 December");
+        $January = strtotime("1 January ");
+        $February = strtotime("1 February");
+        $March = strtotime("1 March");
+        $April = strtotime("1 April");
+        $May = strtotime("1 May");
+        $June = strtotime("1 June");
+        $July = strtotime("1 July");
+        $August = strtotime("1 August");
+        $September = strtotime("1 September");
+        $October = strtotime("1 October");
+        $November = strtotime("1 November");
+        $December = strtotime("1 December");
 
-            //每个月的总数   除以   每个月的条数
-            // 1月
-            $January_sum=$this->month_amount_strange($January,$February);
-            $February_sum=$this->month_amount_strange($February,$March);
-            $March_sum=$this->month_amount_strange($March,$April);
-            $April_sum=$this->month_amount_strange($April,$May);
-            $May_sum=$this->month_amount_strange($May,$June);
-            $June_sum=$this->month_amount_strange($June,$July);
-            $July_sum=$this->month_amount_strange($July,$August);
-            $August_sum=$this->month_amount_strange($August,$September);
-            $September_sum=$this->month_amount_strange($September,$October);
-            $October_sum=$this->month_amount_strange($October,$November);
-            $November_sum=$this->month_amount_strange($November,$December);
-            $December_sum=$this->month_amount_strange($December,$January);
+        //每个月的总数   除以   每个月的条数
+        // 1月
+        $January_sum = $this->month_amount_strange($January, $February);
+        $February_sum = $this->month_amount_strange($February, $March);
+        $March_sum = $this->month_amount_strange($March, $April);
+        $April_sum = $this->month_amount_strange($April, $May);
+        $May_sum = $this->month_amount_strange($May, $June);
+        $June_sum = $this->month_amount_strange($June, $July);
+        $July_sum = $this->month_amount_strange($July, $August);
+        $August_sum = $this->month_amount_strange($August, $September);
+        $September_sum = $this->month_amount_strange($September, $October);
+        $October_sum = $this->month_amount_strange($October, $November);
+        $November_sum = $this->month_amount_strange($November, $December);
+        $December_sum = $this->month_amount_strange($December, $January);
 
-            $month_amount_show=array($January_sum,$February_sum,$March_sum,$April_sum,$May_sum,$June_sum,$July_sum,$August_sum,$September_sum,$October_sum,$November_sum,$December_sum);
-            // return $month_show;
-            $this->ajaxReturn(['status' => 1, 'msg' => '请求成功!','data'=>$month_amount_show]);
+        $month_amount_show = array($January_sum, $February_sum, $March_sum, $April_sum, $May_sum, $June_sum, $July_sum, $August_sum, $September_sum, $October_sum, $November_sum, $December_sum);
+        // return $month_show;
+        $this->ajaxReturn(['status' => 1, 'msg' => '请求成功!', 'data' => $month_amount_show]);
     }
 
-    public function month_amount_strange($begin_time,$end_time)
+    public function month_amount_strange($begin_time, $end_time)
     {
-        $strange_log_model=Db::name('strange_amount_log');
-        $strange_amount_sum=$strange_log_model->where('change_time','between',"{$begin_time},{$end_time}")->sum("strange_amount");
+        $strange_log_model = Db::name('strange_amount_log');
+        $strange_amount_sum = $strange_log_model->where('change_time', 'between', "{$begin_time},{$end_time}")->sum("strange_amount");
         // $strange_amount_count=$strange_log_model->where('change_time','between',"{$begin_time},{$end_time}")->count();
-        if($strange_amount_sum){
-            $strange_amount_show=$strange_amount_sum;
-        }else{
-            $strange_amount_show=0;
+        if ($strange_amount_sum) {
+            $strange_amount_show = $strange_amount_sum;
+        } else {
+            $strange_amount_show = 0;
         }
         return $strange_amount_show;
     }
@@ -1932,53 +1932,54 @@ class User extends Base
 
 
 
-  
 
-    public function month_sum_strange($begin_time,$end_time)
+
+    public function month_sum_strange($begin_time, $end_time)
     {
-        $strange_log_model=Db::name('strange_log');
+        $strange_log_model = Db::name('strange_log');
         // $strange_sum=$strange_log_model->whereTime('change_time', 'between', [$begin_time, $end_time])->sum("strange_num");
-        $strange_count=$strange_log_model->whereTime('change_time', 'between', [$begin_time, $end_time])->count();
-      
+        $strange_count = $strange_log_model->whereTime('change_time', 'between', [$begin_time, $end_time])->count();
+
         // die;
-        if($strange_count){
-            $strange_show=$strange_count;
-        }else{
-            $strange_show=0;
+        if ($strange_count) {
+            $strange_show = $strange_count;
+        } else {
+            $strange_show = 0;
         }
         // dump($strange_show);
         return $strange_show;
     }
 
-  
+
 
     //设置白名单
-    public function set_white_list(){
-        $ue_id=I('id');
-        if(!$ue_id){
+    public function set_white_list()
+    {
+        $ue_id = I('id');
+        if (!$ue_id) {
             $this->ajaxReturn(['status' => -1, 'msg' => '需要传入参数!']);
-        }else{
-            $one_extend=Db::name('user_extend')->where(['id'=>$ue_id])->find();
-            if($one_extend['cash_alipay']){
-                $same_list=$this->get_same_list($one_extend['cash_alipay'],'alipay');
-                foreach($same_list as $sk=>$sv){
-                    $old_limit_alipay=Db::name('user_extend')->where(['id'=>$sv['id']])->value('old_limit_alipay');
-                    $old_limit_alipay+=2;
-                    Db::name('user_extend')->where(['id'=>$sv['id']])->update(['old_limit_alipay'=>$old_limit_alipay,'status_alipay'=>0]);
+        } else {
+            $one_extend = Db::name('user_extend')->where(['id' => $ue_id])->find();
+            if ($one_extend['cash_alipay']) {
+                $same_list = $this->get_same_list($one_extend['cash_alipay'], 'alipay');
+                foreach ($same_list as $sk => $sv) {
+                    $old_limit_alipay = Db::name('user_extend')->where(['id' => $sv['id']])->value('old_limit_alipay');
+                    $old_limit_alipay += 2;
+                    Db::name('user_extend')->where(['id' => $sv['id']])->update(['old_limit_alipay' => $old_limit_alipay, 'status_alipay' => 0]);
                 }
             }
-            if($one_extend['cash_unionpay']){
-                $same_list2=$this->get_same_list($one_extend['cash_unionpay'],'unionpay');
-                foreach($same_list2 as $sk2=>$sv2){
-                    $old_limit_unionpay=Db::name('user_extend')->where(['id'=>$sv2['id']])->value('old_limit_unionpay');
-                    $old_limit_unionpay+=2;
-                    Db::name('user_extend')->where(['id'=>$sv2['id']])->update(['old_limit_unionpay'=>$old_limit_unionpay,'status_unionpay'=>0]);
+            if ($one_extend['cash_unionpay']) {
+                $same_list2 = $this->get_same_list($one_extend['cash_unionpay'], 'unionpay');
+                foreach ($same_list2 as $sk2 => $sv2) {
+                    $old_limit_unionpay = Db::name('user_extend')->where(['id' => $sv2['id']])->value('old_limit_unionpay');
+                    $old_limit_unionpay += 2;
+                    Db::name('user_extend')->where(['id' => $sv2['id']])->update(['old_limit_unionpay' => $old_limit_unionpay, 'status_unionpay' => 0]);
                 }
             }
             $this->ajaxReturn(['status' => 1, 'msg' => '设置成功!']);
         }
     }
-    
+
 
 
 
@@ -1987,21 +1988,21 @@ class User extends Base
     //设置黑名单
     public function set_black_list()
     {
-        $ue_id=I('id');
-        if(!$ue_id){
+        $ue_id = I('id');
+        if (!$ue_id) {
             $this->ajaxReturn(['status' => -1, 'msg' => '需要传入参数!']);
-        }else{
-            $one_extend=Db::name('user_extend')->where(['id'=>$ue_id])->find();
-            if($one_extend['cash_alipay']){
-                $same_list=$this->get_same_list($one_extend['cash_alipay'],'alipay');
-                foreach($same_list as $sk=>$sv){
-                    Db::name('user_extend')->where(['id'=>$sv['id']])->update(['status_alipay'=>1]);
+        } else {
+            $one_extend = Db::name('user_extend')->where(['id' => $ue_id])->find();
+            if ($one_extend['cash_alipay']) {
+                $same_list = $this->get_same_list($one_extend['cash_alipay'], 'alipay');
+                foreach ($same_list as $sk => $sv) {
+                    Db::name('user_extend')->where(['id' => $sv['id']])->update(['status_alipay' => 1]);
                 }
             }
-            if($one_extend['cash_unionpay']){
-                $same_list2=$this->get_same_list($one_extend['cash_unionpay'],'unionpay');
-                foreach($same_list2 as $sk2=>$sv2){
-                    Db::name('user_extend')->where(['id'=>$sv2['id']])->update(['status_unionpay'=>1]);
+            if ($one_extend['cash_unionpay']) {
+                $same_list2 = $this->get_same_list($one_extend['cash_unionpay'], 'unionpay');
+                foreach ($same_list2 as $sk2 => $sv2) {
+                    Db::name('user_extend')->where(['id' => $sv2['id']])->update(['status_unionpay' => 1]);
                 }
             }
             $this->ajaxReturn(['status' => 1, 'msg' => '设置成功!']);
@@ -2011,18 +2012,18 @@ class User extends Base
 
 
 
-    
+
     // 统计异常账号   //每三小时执行一次
     public function count_strange()
     {
-        $strange_alipay=Db::name('user_extend')->where(['status_alipay'=>'1'])->count();
-        $strange_unionpay=Db::name('user_extend')->where(['status_unionpay'=>'1'])->count();
-        $time=time();
-        if($strange_alipay){
-            Db::name('strange_log')->insert(['strange_num'=>$strange_alipay,'type'=>1,'change_time'=>$time]);
+        $strange_alipay = Db::name('user_extend')->where(['status_alipay' => '1'])->count();
+        $strange_unionpay = Db::name('user_extend')->where(['status_unionpay' => '1'])->count();
+        $time = time();
+        if ($strange_alipay) {
+            Db::name('strange_log')->insert(['strange_num' => $strange_alipay, 'type' => 1, 'change_time' => $time]);
         }
-        if($strange_unionpay){
-              Db::name('strange_log')->insert(['strange_num'=>$strange_unionpay,'type'=>2,'change_time'=>$time]);
+        if ($strange_unionpay) {
+            Db::name('strange_log')->insert(['strange_num' => $strange_unionpay, 'type' => 2, 'change_time' => $time]);
         }
     }
 
@@ -2032,55 +2033,47 @@ class User extends Base
     //检测异常账号
     public function run_pay_way()
     {
-        $user_extend_model=Db::name('user_extend');
+        $user_extend_model = Db::name('user_extend');
         //支付宝
-        $old_user_alipay=$user_extend_model
-        ->field('id,user_id,realname,cash_alipay,cash_unionpay,count(cash_alipay) as ids,old_limit_alipay,old_limit_unionpay,status_alipay,status_unionpay')
-        ->group('cash_alipay')
-        ->where('cash_alipay','not null')
-        ->where('cash_alipay','<>','')
-        ->select();
+        $old_user_alipay = $user_extend_model
+            ->field('id,user_id,realname,cash_alipay,cash_unionpay,count(cash_alipay) as ids,old_limit_alipay,old_limit_unionpay,status_alipay,status_unionpay')
+            ->group('cash_alipay')
+            ->where('cash_alipay', 'not null')
+            ->where('cash_alipay', '<>', '')
+            ->select();
         //银联
-        $old_user_unionpay=$user_extend_model->field('id,user_id,realname,cash_alipay,cash_unionpay,count(cash_unionpay) as ids,old_limit_alipay,old_limit_unionpay,old_limit_unionpay,status_alipay,status_unionpay')
-        ->group('cash_unionpay')
-        ->where('cash_unionpay','not null')
-        ->where('cash_unionpay','<>','')
-        ->select();
-        $this->update_pay_status($old_user_alipay,'alipay');
-        $this->update_pay_status($old_user_unionpay,'unionpay');
+        $old_user_unionpay = $user_extend_model->field('id,user_id,realname,cash_alipay,cash_unionpay,count(cash_unionpay) as ids,old_limit_alipay,old_limit_unionpay,old_limit_unionpay,status_alipay,status_unionpay')
+            ->group('cash_unionpay')
+            ->where('cash_unionpay', 'not null')
+            ->where('cash_unionpay', '<>', '')
+            ->select();
+        $this->update_pay_status($old_user_alipay, 'alipay');
+        $this->update_pay_status($old_user_unionpay, 'unionpay');
     }
 
-    public function update_pay_status($list_pay,$pay_way){
-        $user_extend_model=Db::name('user_extend');
-        foreach($list_pay as $ak=>$av){
-            if($av['ids']>=$av["old_limit_{$pay_way}"]+2){
-                $same_list=$this->get_same_list($av["cash_{$pay_way}"],$pay_way);
-                foreach($same_list as $sk=>$sv){
-                    $user_extend_model->where(['id'=>$sv['id']])->update(["status_{$pay_way}"=>1]);
+    public function update_pay_status($list_pay, $pay_way)
+    {
+        $user_extend_model = Db::name('user_extend');
+        foreach ($list_pay as $ak => $av) {
+            if ($av['ids'] >= $av["old_limit_{$pay_way}"] + 2) {
+                $same_list = $this->get_same_list($av["cash_{$pay_way}"], $pay_way);
+                foreach ($same_list as $sk => $sv) {
+                    $user_extend_model->where(['id' => $sv['id']])->update(["status_{$pay_way}" => 1]);
                 }
             }
-            if(!$av["old_limit_{$pay_way}"]){
-                if($av['ids']>=2){
-                    $same_list=$this->get_same_list($av["cash_{$pay_way}"],$pay_way);
-                    $user_extend_model->where(['id'=>$av['id']])->update(["status_alipay{$pay_way}"=>1]);
+            if (!$av["old_limit_{$pay_way}"]) {
+                if ($av['ids'] >= 2) {
+                    $same_list = $this->get_same_list($av["cash_{$pay_way}"], $pay_way);
+                    $user_extend_model->where(['id' => $av['id']])->update(["status_alipay{$pay_way}" => 1]);
                 }
             }
         }
     }
 
-    public function get_same_list($condition,$pay_way)
+    public function get_same_list($condition, $pay_way)
     {
-        $user_extend_model=Db::name('user_extend');
-        $same_list=$user_extend_model->where(["cash_{$pay_way}"=>$condition])->select();
+        $user_extend_model = Db::name('user_extend');
+        $same_list = $user_extend_model->where(["cash_{$pay_way}" => $condition])->select();
         return $same_list;
     }
-
-
-
-
-
-
-
-
-
 }
