@@ -20,11 +20,11 @@
 		</div>
 	</div>
 	<div style="height:100px;width:800px;">
-			<div  class="list" style="width: 800px;height: 100px;overflow-y: hidden">
-					<ul style="height:200px;width:800px;">
+			<div  class="list" style="width: 1000px;height: 100px;overflow-y: hidden">
+					<ul style="height:200px;width:1000px;">
 					<foreach name="strange_list" item="lo" key="lk" >
 						<li style="display:flex">
-								<span style="width:250px;">用户:　{$lo.nickname}</span><span style="width:250px;">上级:　
+								<span style="width:420px;">用户:　{$lo.nickname}</span><span style="width:250px;">上级:　
 									<if condition="!empty($lo.first_leader_name)">
 										<!-- <img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt=""> -->
 										{$lo.first_leader_name}
