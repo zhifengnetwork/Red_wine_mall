@@ -1336,10 +1336,11 @@ class User extends MobileBase
                 $qrcode_res_path=$share_poster_dir.'/'.$user_id.'.png';
                 $background_deal=\think\Image::open($background_path); 
                 $background_deal->water($root.$qrcode_res_path,[275,802]);
-                $name_font = dirname(realpath(APP_PATH)).'\\vendor\\topthink\\think-captcha\\assets\\zhttfs\\1.ttf';
+                // $name_font = dirname(realpath(APP_PATH)).'\\vendor\\topthink\\think-captcha\\assets\\zhttfs\\1.ttf';
                 // $background_deal->text("用户名称：", $name_font,25,'#ffffff',[10,200]);
                 // $background_deal->text(mb_substr($user_info['nickname'],0,55,'utf-8'), $name_font,25,'#ffffff',[235,200]);
                 // $background_deal->text('用户头像：', $name_font,25,'#ffffff',[10,10]);
+                $name_font="./vendor/topthink/think-captcha/assets/zhttfs/1.ttf";
 
                 $background_deal->text(mb_substr($user_info['nickname'],0,45,'utf-8')."  \"邀您共筑新零售商业帝国\"",$name_font,20,'#ffffff',[100,30]);
                 $background_deal->water($root.$share_poster_dir.'/head'.$user_id.'.png',[10,10])->save($root.$share_poster_dir.'/'.$user_id.'-share.png'); 
