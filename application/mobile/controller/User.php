@@ -1314,12 +1314,12 @@ class User extends MobileBase
                 $head_source=httpRequest($user_info['head_pic'],'GET');
                 file_put_contents($root.$share_poster_dir.'/head'.$user_id.'.png',$head_source);
                 $local_head=\think\Image::open($root.$share_poster_dir.'/head'.$user_id.'.png');
-                $local_head->thumb(80,80,\think\Image::THUMB_SCALING)->radius(35)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
+                $local_head->thumb(80,80,\think\Image::THUMB_SCALING)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
         }else{
                 $head_source=httpRequest($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] .$user_info['head_pic'],'GET');
                 file_put_contents($root.$share_poster_dir.'/head_tem'.$user_id.'.png',$head_source);
                 $local_head=\think\Image::open($root.$share_poster_dir.'/head_tem'.$user_id.'.png');
-                $local_head->thumb(80,80,\think\Image::THUMB_SCALING)->radius(35)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
+                $local_head->thumb(80,80,\think\Image::THUMB_SCALING)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
         }
         $qrcode='/'.$user_id.'.png';
         $qrcode_path = $root.$share_poster_dir.$qrcode;

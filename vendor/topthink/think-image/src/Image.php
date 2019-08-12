@@ -118,7 +118,7 @@ class Image
         //这一句一定要有
         imagesavealpha($img, true);
         //拾取一个完全透明的颜色,最后一个参数127为全透明
-        $bg = imagecolorallocatealpha($img, 255, 255, 255, 75);
+        $bg = imagecolorallocatealpha($img, 255, 255, 255, 127);
         imagefill($img, 0, 0, $bg);
         $r = $radius; //圆 角半径
         for ($x = 0; $x < $w; $x++) {
