@@ -1958,10 +1958,9 @@ class User extends Base
         $ue_id = I('id');
         if (!$ue_id) {
             $this->ajaxReturn(['status' => -1, 'msg' => '需要传入参数!']);
-<<<<<<< HEAD
         } else {
             $one_extend = Db::name('user_extend')->where(['id' => $ue_id])->find();
-            if ($one_extend['cash_alipay']) {
+            if ($one_extend['status_alipay'] == '1') {
                 $same_list = $this->get_same_list($one_extend['cash_alipay'], 'alipay');
                 foreach ($same_list as $sk => $sv) {
                     $old_limit_alipay = Db::name('user_extend')->where(['id' => $sv['id']])->value('old_limit_alipay');
@@ -1969,30 +1968,12 @@ class User extends Base
                     Db::name('user_extend')->where(['id' => $sv['id']])->update(['old_limit_alipay' => $old_limit_alipay, 'status_alipay' => 0]);
                 }
             }
-            if ($one_extend['cash_unionpay']) {
+            if ($one_extend['status_unionpay'] == '1') {
                 $same_list2 = $this->get_same_list($one_extend['cash_unionpay'], 'unionpay');
                 foreach ($same_list2 as $sk2 => $sv2) {
                     $old_limit_unionpay = Db::name('user_extend')->where(['id' => $sv2['id']])->value('old_limit_unionpay');
                     $old_limit_unionpay += 2;
                     Db::name('user_extend')->where(['id' => $sv2['id']])->update(['old_limit_unionpay' => $old_limit_unionpay, 'status_unionpay' => 0]);
-=======
-        }else{
-            $one_extend=Db::name('user_extend')->where(['id'=>$ue_id])->find();
-            if($one_extend['status_alipay']=='1'){
-                $same_list=$this->get_same_list($one_extend['cash_alipay'],'alipay');
-                foreach($same_list as $sk=>$sv){
-                    $old_limit_alipay=Db::name('user_extend')->where(['id'=>$sv['id']])->value('old_limit_alipay');
-                    $old_limit_alipay+=2;
-                    Db::name('user_extend')->where(['id'=>$sv['id']])->update(['old_limit_alipay'=>$old_limit_alipay,'status_alipay'=>0]);
-                }
-            }
-            if($one_extend['status_unionpay']=='1'){
-                $same_list2=$this->get_same_list($one_extend['cash_unionpay'],'unionpay');
-                foreach($same_list2 as $sk2=>$sv2){
-                    $old_limit_unionpay=Db::name('user_extend')->where(['id'=>$sv2['id']])->value('old_limit_unionpay');
-                    $old_limit_unionpay+=2;
-                    Db::name('user_extend')->where(['id'=>$sv2['id']])->update(['old_limit_unionpay'=>$old_limit_unionpay,'status_unionpay'=>0]);
->>>>>>> 7ba114ed175c4e1d156b9ef848a7fad7666cbecc
                 }
             }
             $this->ajaxReturn(['status' => 1, 'msg' => '设置成功!']);

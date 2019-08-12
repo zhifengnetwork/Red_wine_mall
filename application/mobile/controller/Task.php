@@ -26,7 +26,7 @@ class Task
         $time = time();
         if ($strange_log) {
             foreach ($strange_alipay as $k => $veal) {
-                $strange_log = Db::name('strange_log')->where(['user_id' => $veal['user_id']])->select();
+                $strange_log = Db::name('strange_log')->where(['user_id' => $veal['user_id']])->find();
                 if (empty($strange_log)) {
                     Db::name('strange_log')->insert(['strange_num' => 1, 'type' => 1, 'change_time' => $time, 'user_id' => $veal['user_id']]);
                 }
