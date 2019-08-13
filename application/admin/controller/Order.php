@@ -138,6 +138,116 @@ class Order extends Base {
         return $this->fetch();
     }
 
+    //期数订单列表
+    public function order_period()
+    {
+        return $this->fetch();
+    }
+
+    public function ajaxorderperiod()
+    {
+
+        $condition=true;
+        $begin = $this->begin;
+        $end = $this->end;
+        // 搜索条件
+        // $condition = array('shop_id'=>0);
+        $keyType = I("key_type");
+        $keywords = I('keywords','','trim');
+        
+        $consignee =  ($keyType && $keyType == 'consignee') ? $keywords : I('consignee','','trim');
+        // $consignee ? $condition['consignee'] = trim($consignee) : false;
+
+        // if($begin && $end){
+        // 	$condition['add_time'] = array('between',"$begin,$end");
+        // }
+        // $condition['prom_type'] = array('lt',5);
+        $order_sn = ($keyType && $keyType == 'order_sn') ? $keywords : I('order_sn') ;
+        // $order_sn ? $condition['order_sn'] = trim($order_sn) : false;
+        
+        // I('order_status') != '' ? $condition['order_status'] = I('order_status') : false;
+        // I('pay_status') != '' ? $condition['pay_status'] = I('pay_status') : false;
+        //I('pay_code') != '' ? $condition['pay_code'] = I('pay_code') : false;
+        // if(I('pay_code')){
+        //     switch (I('pay_code')){
+        //         case '余额支付':
+        //             $condition['pay_name'] = I('pay_code');
+        //             break;
+        //         case '积分兑换':
+        //             $condition['pay_name'] = I('pay_code');
+        //             break;
+        //         case 'alipay':
+        //             $condition['pay_code'] = ['in',['alipay','alipayMobile']];
+        //             break;
+        //         case 'weixin':
+        //             $condition['pay_code'] = ['in',['weixin','weixinH5','miniAppPay']];
+        //             break;
+        //         case '其他方式':
+        //             $condition['pay_name'] = '';
+        //             $condition['pay_code'] = '';
+        //             break;
+        //         default:
+        //             $condition['pay_code'] = I('pay_code');
+        //             break;
+        //     }
+        // }
+
+        // I('shipping_status') != '' ? $condition['shipping_status'] = I('shipping_status') : false;
+        // I('user_id') ? $condition['user_id'] = trim(I('user_id')) : false;
+        $sort_order = 'id asc';
+        $count = Db::name('order_period')->where($condition)->count();
+        $Page  = new AjaxPage($count,20);
+        $show = $Page->show();
+        $orderList = Db::name('order_period')->alias('op')->join("order o","op.order_id=o.order_id",LEFT)->join("order_goods og","o.order_id=og.order_id",LEFT)->where($condition)->limit($Page->firstRow,$Page->listRows)->order($sort_order)->select();
+        if ($orderList) {
+            $user_ids = array_column($orderList, 'user_id');
+            $order_sn = array_column($orderList, 'order_sn');
+            // if($order_ids){
+            //     foreach($order_ids as $oid){
+            //         $sql = " select a.order_id,a.goods_name,b.original_img from `tp_order_goods` as a left join `tp_goods` as b on a.goods_id = b.goods_id where a.order_id = '$oid'";
+            //         $ogi = Db::query($sql);
+            //         if($ogi){
+            //             $oginfo[$oid] = $ogi[0];
+            //         }
+            //     }
+            // }
+            $avatar = get_avatar($user_ids);
+
+            foreach ($orderList as $key => $value) {
+                $orderList[$key]['head_pic'] = $avatar[$value['user_id']];
+            }
+        }
+        
+        // dump($show);exit;
+        // $this->assign('oginfo',$oginfo);
+        $this->assign('orderList',$orderList);
+        $this->assign('page',$show);// 赋值分页输出
+        $this->assign('pager',$Page);
+        return $this->fetch();
+    }
+
+    public function count_period(){
+        return $this->fetch();
+    }
+    
+    public function ajaxcountperiod()
+    {
+        $count =Db::name('users')->where('agent_level','<>',0)->count(); 
+        $Page  = new AjaxPage($count,20);
+        $count_period=Db::name('users')->where('agent_level','<>',0)->select();
+      
+        $show = $Page->show();
+        $this->assign([
+            'pager'=>$Page,
+            'page'=>$show,
+            'count_period'=>$count_period
+        ]);
+        return $this->fetch();
+    }
+
+
+
+
     /**
      * 虚拟订单列表
      * @return mixed
