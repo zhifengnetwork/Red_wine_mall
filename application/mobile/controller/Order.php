@@ -107,6 +107,46 @@ class Order extends MobileBase
                 }
             })
             ->limit($Page->firstRow . ',' . $Page->listRows)->order("order_id DESC")->select();
+
+            $order_list = collection($order_list)->toArray();
+            foreach($order_list as $lk=>$lv){
+                $order_connect = Db::name('order')
+                    ->alias('or')
+                    ->join('order_goods og', 'or.order_id=og.order_id', LEFT)
+                    ->join('goods g', "g.goods_id=og.goods_id", LEFT)
+                    ->field('g.agent_good,or.user_id')
+                    ->where('or.order_sn', '=', $lv['order_sn'])->find();
+                $order_list[$lk]['agent_good']=$order_connect['agent_good'];
+            }
+
+            if($type=='WAITSEND'){
+                $order_period_model = Db::name('order_period');
+                $order_period= $order_period_model->where(['user_id'=>$this->user_id])->find();
+                $person_num_total=$order_period_model->where(['user_id'=>$this->user_id])->sum('person_num');
+                $person_num=$order_period['person_num'];
+                $poped_num_total=$order_period_model->where(['user_id'=>$this->user_id])->sum('poped_per_num');
+                $period=$order_period_model->where(['user_id'=>$this->user_id,'status'=>0,'able'=>1])->value('period');
+                $shipping_status="待发货";
+                $period_name="预发放期数{$period}";
+            }
+            if($type=='FINISH'){
+                $order_period_model = Db::name('order_period');
+                $order_period= $order_period_model->where(['user_id'=>$this->user_id])->find();
+                $person_num_total=$order_period_model->where(['user_id'=>$this->user_id])->sum('person_num');
+                $person_num=$order_period['person_num'];
+                $poped_num_total=$order_period_model->where(['user_id'=>$this->user_id])->sum('poped_per_num');
+                $period=$order_period_model->where(['user_id'=>$this->user_id,'status'=>1,'able'=>1])->value('period');
+                $shipping_status="已完成";
+                $period_name="已发放期数{$period}";
+            }
+            $this->assign([
+                'order_period'=>$order_period,
+                'person_num_total'=>$person_num_total,
+                'person_num'=>$person_num,
+                'poped_num_total'=>$poped_num_total,
+                'period'=>$period
+            ]);
+            
         $this->assign('order_list', $order_list);
         if ($_GET['is_ajax']) {
             return $this->fetch('ajax_order_list');
@@ -210,12 +250,28 @@ class Order extends MobileBase
         if ($order['prom_type'] == 5) {   //虚拟订单
             $this->redirect(U('virtual/virtual_order', ['order_id' => $id]));
         }
-
         $this->assign('order', $order);
         if($order['receive_btn']){
             //待收货详情
             return $this->fetch('wait_receive_detail');
         }
+        return $this->fetch();
+    }
+
+    public function order_detail_period()
+    {
+        $id = input('id/d', 0);
+        $order_period=Db::name('order_period')->where(['user_id'=>$this->user_id,'id'=>$id])->find();
+        if(!$order_period){
+            $this->error("没有获取到订单信息");
+        }
+        $arr=explode("-",$order_period['order_sn']);
+        $Order = new OrderModel();
+        $order = $Order::get(['order_sn'=>$arr[0], 'user_id' => $this->user_id]);
+        $this->assign([
+            'order'=>$order,
+            'order_period'=>$order_period,
+        ]);
         return $this->fetch();
     }
 

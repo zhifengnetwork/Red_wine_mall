@@ -544,6 +544,29 @@ function get_sub_images($sub_img, $goods_id, $width, $height)
     }
 }
 
+function period_total($user_id){
+    $period_total=Db::name('pop_period')->where(['user_id'=>$user_id])->sum('person_num');
+    return $period_total;
+}
+
+function period_num($user_id){
+    $period_num=Db::name('pop_period')->where(['user_id'=>$user_id])->find();
+    return $period_num['person_num'];
+}
+
+function poped_num($user_id){
+    $poped_per_num=Db::name('pop_period')->where(['user_id'=>$user_id])->sum('poped_per_num');
+    return $poped_per_num;
+}
+
+function less_num($user_id){
+    $period_total=Db::name('pop_period')->where(['user_id'=>$user_id])->sum('person_num');
+    $poped_per_num=Db::name('pop_period')->where(['user_id'=>$user_id])->sum('poped_per_num');
+    return $period_total-$poped_per_num;
+}
+
+
+
 /**
  * 刷新商品库存, 如果商品有设置规格库存, 则商品总库存 等于 所有规格库存相加
  * @param type $goods_id  商品id

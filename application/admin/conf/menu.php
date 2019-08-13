@@ -90,6 +90,8 @@ return	array(
 			// array('name' => '拼团列表','act'=>'team_list','op'=>'Team'),
 			// array('name' => '拼团订单','act'=>'order_list','op'=>'Team'),
 			// array('name' => '上门自提','act'=>'index','op'=>'ShopOrder'),
+			array('name' => '期数订单列表', 'act' => 'order_period', 'op' => 'Order'),
+			array('name' => '期数统计列表', 'act' => 'count_period', 'op' => 'Order'),
 		)),
 
 		array('name' => '广告', 'child' => array(
