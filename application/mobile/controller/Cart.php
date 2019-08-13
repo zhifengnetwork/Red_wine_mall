@@ -594,7 +594,7 @@ class Cart extends MobileBase
     //检查是否在第五周
     public function in_five_week($begin_time)
     {
-        if ($begin_time + 3600 * 24 * 7 * 5 > time() && $firstLeader['begin_time'] + 3600 * 24 * 7 * 6 < time()) {
+        if ($begin_time + 3600 * 24 * 7 * 5 < time() && $firstLeader['begin_time'] + 3600 * 24 * 7 * 6 > time()) {
             return true;
         } else {
             return false;
@@ -604,7 +604,7 @@ class Cart extends MobileBase
     //检查是否6周后
     public function after_six_week($begin_time)
     {
-        if ($begin_time + 3600 * 24 * 7 * 6 > time()) {
+        if ($begin_time + 3600 * 24 * 7 * 6 < time()) {
             return true;
         } else {
             return false;
