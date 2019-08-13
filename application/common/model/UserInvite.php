@@ -128,7 +128,7 @@ class UserInvite extends Model
                          $whereStr['period']=['=',$recommendInfo['default_period']];
                          $periodInfo=Db::name('pop_period')->where($whereStr)->find();
                          if($periodInfo['begin_time']){  //如果时间已经开始再操作下面
-                             if($periodInfo['poped_per_num']<$periodInfo['person_num']){ //还有位置就操作
+                             if($periodInfo['poped_per_num']+1<$periodInfo['person_num']){ //还有位置就操作
                                 $ind_res=$periodInfo['poped_per_num']+1;
                                 Db::name('pop_period')->where($whereStr)->update(['poped_per_num'=>$ind_res]);
 
