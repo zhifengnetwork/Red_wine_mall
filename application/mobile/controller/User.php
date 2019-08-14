@@ -137,10 +137,24 @@ class User extends MobileBase
                 $agent_level = $agent_level_arr[$myuser['agent_level']];
             }
         }
+
+        $order_model=Db::name('order');
+        $waitpay=$order_model->where(['user_id'=>$user_id,'pay_status'=>0,'order_status'=>0])->count();
+        $waitsend=$order_model->where(['user_id'=>$user_id,'pay_status'=>1,'order_status'=>0,'shipping_status'=>0])->count();
+        $waitreceive=$order_model->where(['user_id'=>$user_id,'order_status'=>1,'shipping_status'=>1])->count();
+        $waitccomment=$order_model->where(['user_id'=>$user_id,'order_status'=>2])->count();
+
         $this->assign([
             'agnet_name' => $agnet_name,
-            'agent_level' => $agent_level
+            'agent_level' => $agent_level,
+            'waitpay'=>$waitpay?$waitpay:0,
+            'waitsend'=>$waitsend?$waitsend:0,
+            'waitreceive'=>$waitreceive?$waitreceive:0,
+            'waitccomment'=>$waitccomment?$waitccomment:0
         ]);
+      
+
+        
 
         $MenuCfg = new MenuCfg();
         $menu_list = $MenuCfg->where('is_show', 1)->order('menu_id asc')->select();
