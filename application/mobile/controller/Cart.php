@@ -308,7 +308,7 @@ class Cart extends MobileBase
                 } else {
                     Db::name('agent_performance')->insert(['user_id' => $v['user_id'], 'agent_per' => $agent_per, 'create_time' => $time]);
                 }
-                Db::name('agent_performance_log')->insert(['user_id'=>$v['user_id'],'money'=>$order['total_amount'],'create_time'=>$time,'note'=>'下单消费','order_id'=>$order['order_id']]);
+                Db::name('agent_performance_log')->insert(['user_id'=>$v['user_id'],'money'=>$order['total_amount'],'create_time'=>$time,'note'=>'下单消费','order_id'=>$order['order_id'],'status'=>0]);
             }
             $this->check_user_upgrade($v['user_id']);
         }
