@@ -820,12 +820,15 @@ class User extends MobileBase
     {
         $user_id = $this->user_id;
         $user = M('users')->where(['user_id' => $user_id])->field('user_id,nickname,mobile,distribut_level,distribut_money,head_pic')->find();
-        $get_all_lower = get_all_lower($user_id);
+        // $get_all_lower = get_all_lower($user_id);
+        // foreach ($get_all_lower as $key => $vale) {
+        //     $get_all_lower[$key] = M('users')->where(['user_id' => $vale])->field('user_id,nickname,mobile')->find();
+        //     $get_all_lower[$key]['nickname']=mb_substr(trim($get_all_lower[$key]['nickname']),0,30,'utf-8');
+        // }
+        //只显示直推
+        $get_all_lower=Db::name('users')->where(['first_leader'=>$user_id])->field('user_id,nickname,mobile')->select();
         foreach ($get_all_lower as $key => $vale) {
-            // dump($vale);
-            $get_all_lower[$key] = M('users')->where(['user_id' => $vale])->field('user_id,nickname,mobile')->find();
             $get_all_lower[$key]['nickname']=mb_substr(trim($get_all_lower[$key]['nickname']),0,30,'utf-8');
-            // dump($user);
         }
         $this->assign('nickname', $user['nickname']);
         $this->assign('user_id', $user_id);
