@@ -355,7 +355,7 @@ class Distribution extends Base
             $all_user_name = M('users')->whereIn('user_id', $all_user_ids)->column('user_id,nickname,mobile');
             $avatar = get_avatar($all_user_ids);
 
-            $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '级差领导奖', '6' => '领导奖奖励豪车');
+            $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '月度绩效奖励', '6' => '领导奖奖励豪车');
             foreach ($list as $key => $value) {
                 $list[$key]['user_name'] = $all_user_name[$value['user_id']]['nickname'] ?: $all_user_name[$value['user_id']]['mobile'];
                 $list[$key]['to_user_name'] = $all_user_name[$value['to_user_id']]['nickname'] ?: $all_user_name[$value['to_user_id']]['mobile'];
@@ -393,7 +393,7 @@ class Distribution extends Base
 
         $detail = Db::name('account_log')->alias("al")->join("users u", "u.user_id=al.user_id", LEFT)->where('log_id', $id)->field("al.user_id,al.user_money,al.change_time,al.desc,u.nickname,u.mobile,al.type")->find();
         $is_type = 4;
-        $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '级差领导奖', '6' => '领导奖奖励豪车');
+        $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '月度绩效奖励', '6' => '领导奖奖励豪车');
         $detail['typename'] = $typeList[$detail['type']];
         $this->assign('is_type', $is_type);
         $this->assign('detail', $detail);
