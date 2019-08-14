@@ -681,7 +681,7 @@ class System extends Base
             $all_user_name = M('users')->whereIn('user_id', $all_user_ids)->column('user_id,nickname,mobile');
             $avatar = get_avatar($all_user_ids);
 
-            $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '级差领导奖', '6' => '领导奖奖励豪车');
+            $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '月度绩效奖励', '6' => '领导奖奖励豪车');
             foreach ($list as $key => $value) {
                 $list[$key]['user_name'] = $all_user_name[$value['user_id']]['nickname'] ?: $all_user_name[$value['user_id']]['mobile'];
                 $list[$key]['to_user_name'] = $all_user_name[$value['to_user_id']]['nickname'] ?: $all_user_name[$value['to_user_id']]['mobile'];
@@ -762,7 +762,7 @@ class System extends Base
                         $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>6]);
                     }else{
                         Db::name('users')->where('user_id','=',$av['user_id'])->update(['user_money'=>$addDistribut]);
-                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'级差奖领导奖','type'=>5]);
+                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'月度绩效奖励','type'=>5]);
                     }
                 }
             }
