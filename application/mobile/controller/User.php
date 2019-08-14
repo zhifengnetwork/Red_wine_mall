@@ -1301,8 +1301,8 @@ class User extends MobileBase
 
     public function sharePoster()
     {
-        // $user_id = $this->user_id;
-        $user_id=2;
+        $user_id = $this->user_id;
+        // $user_id=2;
 
         $user_info=Db::name('users')->where(['user_id'=>$user_id])->find();
         $share_error = 0;
