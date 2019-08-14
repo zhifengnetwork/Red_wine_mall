@@ -749,12 +749,14 @@ class System extends Base
     //   每月定时发放极差奖领导奖  优化方法
       public function team_bonus(){
         $time=time();
-        $allUserPerformace=Db::name('users')->alias('u')->join("agent_performance_log apl",'apl.user_id=u.user_id')->field('u.leader_level,u.user_id,u.mobile,u.nickname,u.distribut_money,u.user_money,sum(apl.money) as agent_per')->where('u.leader_level','<>','0')->where('apl.create_time','>',strtotime("-0 year -3 month -0 day"))->select();
+        $allUserPerformace=Db::name('users')->alias('u')->join("agent_performance_log apl",'apl.user_id=u.user_id')->field('u.leader_level,u.user_id,u.mobile,u.nickname,u.distribut_money,u.user_money,sum(apl.money) as agent_per')->where('u.leader_level','<>','0')->where('apl.status','=','0')->where('apl.create_time','>',strtotime("-0 year -3 month -0 day"))->select();
+     
         if($allUserPerformace){
             $accountLogModel=Db::name('account_log');
             foreach($allUserPerformace as $ak=>$av){
-                $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();
+                $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();  
                 if($av['agent_per']>=$one_agent_level['describe']){
+                    $this->update_perlog_status($av['user_id']);
                     $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
                     // $addDistribut=$av['distribut_money']+$bonus;
                     $addDistribut=$av['user_money']+$bonus;
@@ -768,6 +770,16 @@ class System extends Base
             }
             $this->ajaxReturn(['status' => 1, 'msg' => '发放成功']);
         }
+        $this->ajaxReturn(['status' => -1, 'msg' => '没有新业绩可以发放']);
+   }
+
+   public function update_perlog_status($user_id)
+   {
+    $agent_performance_model=Db::name('agent_performance_log');
+     $agent_logs=$agent_performance_model->where(['user_id'=>$user_id])->field('performance_id')->where('create_time','>',strtotime("-0 year -3 month -0 day"))->select();
+     foreach($agent_logs as $ak=>$av){
+        $agent_performance_model->where(['performance_id'=>$av['performance_id']])->update(['status'=>1]);
+     }
    }
 
 
