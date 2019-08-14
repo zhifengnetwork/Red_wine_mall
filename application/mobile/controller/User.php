@@ -1302,7 +1302,7 @@ class User extends MobileBase
     public function sharePoster()
     {
         $user_id = $this->user_id;
-        // $user_id=130;
+        // $user_id=2;
 
         $user_info=Db::name('users')->where(['user_id'=>$user_id])->find();
         $share_error = 0;
@@ -1314,12 +1314,12 @@ class User extends MobileBase
                 $head_source=httpRequest($user_info['head_pic'],'GET');
                 file_put_contents($root.$share_poster_dir.'/head'.$user_id.'.png',$head_source);
                 $local_head=\think\Image::open($root.$share_poster_dir.'/head'.$user_id.'.png');
-                $local_head->thumb(65,65,\think\Image::THUMB_SCALING)->radius(30)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
+                $local_head->thumb(100,100,\think\Image::THUMB_SCALING)->radius(50)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
         }else{
                 $head_source=httpRequest($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] .$user_info['head_pic'],'GET');
                 file_put_contents($root.$share_poster_dir.'/head_tem'.$user_id.'.png',$head_source);
                 $local_head=\think\Image::open($root.$share_poster_dir.'/head_tem'.$user_id.'.png');
-                $local_head->thumb(65,65,\think\Image::THUMB_SCALING)->radius(30)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
+                $local_head->thumb(100,100,\think\Image::THUMB_SCALING)->radius(50)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
         }
         $qrcode='/'.$user_id.'.png';
         $qrcode_path = $root.$share_poster_dir.$qrcode;
@@ -1332,18 +1332,19 @@ class User extends MobileBase
         }
         if(!$share_error){
                 $qrcode_deal=\think\Image::open($qrcode_path);
-                $qrcode_deal->thumb(235,235,\think\Image::THUMB_SOUTHEAST)->save($root.$share_poster_dir.'/'.$user_id.'.png');
+                $qrcode_deal->thumb(200,200,\think\Image::THUMB_SOUTHEAST)->save($root.$share_poster_dir.'/'.$user_id.'.png');
                 $qrcode_res_path=$share_poster_dir.'/'.$user_id.'.png';
                 $background_deal=\think\Image::open($background_path); 
-                $background_deal->water($root.$qrcode_res_path,[275,802]);
+                $background_deal->water($root.$qrcode_res_path,[275,812]);
                 // $name_font = dirname(realpath(APP_PATH)).'\\vendor\\topthink\\think-captcha\\assets\\zhttfs\\1.ttf';
                 // $background_deal->text("用户名称：", $name_font,25,'#ffffff',[10,200]);
                 // $background_deal->text(mb_substr($user_info['nickname'],0,55,'utf-8'), $name_font,25,'#ffffff',[235,200]);
                 // $background_deal->text('用户头像：', $name_font,25,'#ffffff',[10,10]);
                 $name_font="./vendor/topthink/think-captcha/assets/zhttfs/1.ttf";
 
-                $background_deal->text(mb_substr($user_info['nickname'],0,45,'utf-8')."  \"邀您共筑新零售商业帝国\"",$name_font,20,'#ffffff',[100,30]);
-                $background_deal->water($root.$share_poster_dir.'/head'.$user_id.'.png',[10,10])->save($root.$share_poster_dir.'/'.$user_id.'-share.png'); 
+                // $background_deal->text(mb_substr($user_info['nickname'],0,45,'utf-8')."  \"邀您共筑新零售商业帝国\"",$name_font,20,'#ffffff',[100,30]);
+                $background_deal->text(mb_substr($user_info['nickname'],0,45,'utf-8'),$name_font,20,'#ffffff',[310,150]);
+                $background_deal->water($root.$share_poster_dir.'/head'.$user_id.'.png',[310,30])->save($root.$share_poster_dir.'/'.$user_id.'-share.png'); 
                 @unlink($root.$share_poster_dir.'/head'.$user_id.'.png');
                 @unlink($root.$share_poster_dir.'/'.$user_id.'.png');
                 @unlink($root.$share_poster_dir.'/head_tem'.$user_id.'.png');

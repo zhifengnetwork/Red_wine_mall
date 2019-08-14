@@ -128,14 +128,33 @@ class UserInvite extends Model
                          $whereStr['period']=['=',$recommendInfo['default_period']];
                          $periodInfo=Db::name('pop_period')->where($whereStr)->find();
                          if($periodInfo['begin_time']){  //如果时间已经开始再操作下面
+
                              if($periodInfo['poped_per_num']<$periodInfo['person_num']){ //还有位置就操作
+                                if($periodInfo['poped_per_num']+1==$periodInfo['person_num']){
+                                    $upPeriod=$recommendInfo['default_period']+1; 
+                                    $upPeriodInfo=Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->find();
+                                    if($upPeriodInfo){ //如果有上级
+                                        //还有下一期的话 分情况   一周内 和一周外
+                                        if(($periodInfo['begin_time']+3600*24*7)>$time){
+                                                Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['week_release'=>1]);
+                                        }else{
+                                                Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['day_release'=>1]);
+                                        }
+                                    }else{
+                                        Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0,'add_agent_time'=>0]);
+                                        Db::name('pop_period')->where("user_id", '=', $recommendInfo['user_id'])->delete();
+                                    }
+                                }
                                 $ind_res=$periodInfo['poped_per_num']+1;
                                 Db::name('pop_period')->where($whereStr)->update(['poped_per_num'=>$ind_res]);
-
                                 Db::name('users')->update(['user_id'=>$recommend_id,'user_money'=>$user_money]);
                                 Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$pop_money,'pay_points'=>$addmoney,'change_time'=>$time,'desc'=>'邀请1个新会员奖励50','type'=>2]);
                                 Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$minusmoney,'pay_points'=>$minusmoney,'change_time'=>$time,'desc'=>"邀请1个新会员平台扣除手续费{$minusmoney}",'type'=>7]);
 
+
+                           
+
+                                
                                 //  Db::name('pop_period')->where($whereStr)->setInc('poped_per_num');
                              }else{ //没有位置就跳到上一级    如果没有上一级就修改用户表    
                                  $upPeriod=$recommendInfo['default_period']+1; 
@@ -151,8 +170,11 @@ class UserInvite extends Model
                                      Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0,'add_agent_time'=>0]);
                                      Db::name('pop_period')->where("user_id", '=', $recommendInfo['user_id'])->delete();
                                  }
- 
                              }
+
+
+
+
                             
                          }
                         
