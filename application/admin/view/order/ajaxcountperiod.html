@@ -41,28 +41,31 @@
             </if>
          </td>
          <td align="center" abbr="article_time" axis="col5" class="">
-           <div style="text-align: center; width: 60px;" class="">{$list.period}</div>
+           <div style="text-align: center; width: 60px;" class="">{$list.default_period}</div>
          </td>
          <td align="center" abbr="article_time" axis="col6" class="">
            <div style="text-align: center; width: 160px;" class="">{$list['add_agent_time']|date="Y-m-d",###}</div>
          </td>
          <td align="center" abbr="article_time" axis="col7" class="">
-           <div style="text-align: center; width: 160px;" class="">{$list['user_id']|period_total="#"}</div>
+           <div style="text-align: center; width: 100px;" class="">{$list['user_id']|period_total="#"}</div>
          </td>
          <td align="center" abbr="article_time" axis="col8" class="">
-           <div style="text-align: center; width: 160px;" class="">{$list['user_id']|period_num="#"}</div>
+           <div style="text-align: center; width: 100px;" class="">{$list['user_id']|period_num="#"}</div>
          </td>
          <td align="center" abbr="article_time" axis="col9" class="">
-           <div style="text-align: center; width: 160px;" class="">{$list['user_id']|poped_num="#"}</div>
+           <div style="text-align: center; width: 100px;" class="">{$list['user_id']|poped_num="#"}</div>
          </td>
          <td align="center" abbr="article_time" axis="col10" class="">
-                  <div style="text-align: center; width: 160px;" class="">{$list['user_id']|less_num="#"}</div>
+                  <div style="text-align: center; width: 100px;" class="">{$list['user_id']|less_num="#"}</div>
+         </td>
+         <td align="center" abbr="article_time" axis="col10" class="">
+                  <div style="text-align: center; width: 160px;" class="">{$list['user_id']|last_end_time="#"}</div>
          </td>
        
      <td style="width: 100%;">
              <div style="text-align: left; ">
-                 <!-- <a class="btn green" href="{:U('Admin/order/detail',array('order_id'=>$list['order_id']))}"><i class="fa fa-list-alt"></i>查看</a>
-                 <if condition="($list['order_status'] eq 3  and $list['pay_status'] eq 0) or ($list['order_status'] eq 5)">
+                 <a class="btn green" href="{:U('Admin/order/period_detail',array('user_id'=>$list['user_id']))}"><i class="fa fa-list-alt"></i>查看</a>
+                 <!--  <if condition="($list['order_status'] eq 3  and $list['pay_status'] eq 0) or ($list['order_status'] eq 5)">
                      <a class="btn red" href="javascript:void(0);" data-order-id="{$list['order_id']}" onclick="del(this)"><i class="fa fa-trash-o"></i>删除</a>
                  </if> -->
                  <!--<if condition="($list['order_status'] eq 3  and $list['pay_status'] eq 1)">

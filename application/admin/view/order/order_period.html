@@ -32,12 +32,12 @@
         <h5>(共{$page->totalRows}条记录)</h5>
       </div>
       <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
-	  <!-- <form class="navbar-form form-inline"  method="post" action="{:U('Admin/order/export_order')}"  name="search-form2" id="search-form2">  
+	  <form class="navbar-form form-inline"  method="post" action="{:U('Admin/order/export_order')}"  name="search-form2" id="search-form2">  
 	  		<input type="hidden" name="order_by" value="order_id">
             <input type="hidden" name="sort" value="desc">
             <input type="hidden" name="user_id" value="{$Request.param.user_id}">
             <input type="hidden" name="order_ids" value="">
-         
+            <!--用于查看结算统计 包含了哪些订单-->
             <input type="hidden" value="{$_GET['order_statis_id']}" name="order_statis_id" />
                                     
       <div class="sDiv">
@@ -100,7 +100,7 @@
           <input type="button" onclick="ajax_get_table('search-form2',1)"  class="btn" value="搜索">
         </div>
       </div>
-     </form> -->
+     </form>
     </div>
     <div class="hDiv">
       <div class="hDivBox" id="ajax_return">
@@ -111,39 +111,52 @@
 	                <div style="width: 24px;"><i class="ico-check"></i></div>
 	              </th>
 	              <th align="center" abbr="order_sn" axis="col3" class="">
-	                <div style="text-align: center; width: 140px;" class="">用户id</div>
+	                <div style="text-align: center; width: 40px;" class="">期数</div>
                 </th>
-               
-	              <th align="center" abbr="consignee" axis="col4" class="">
-	                <div style="text-align: center; width: 120px;" class="">用户名</div>
-	              </th>
+	              <th align="center" abbr="order_sn" axis="col3" class="">
+	                <div style="text-align: center; width: 140px;" class="">订单编号</div>
+                </th> 
+                <!-- <th align="center" axis="col4" class="">
+                  <div style="text-align: center; width: 60px;" class="">商品图片</div>
+                </th> -->
                 <th align="center" axis="col4" class="">
-                  <div style="text-align: center; width: 60px;" class="">用户头像</div>
-                </th>
+                    <div style="text-align: center; width: 60px;" class="">收货人头像</div>
+                  </th>
+                <th align="center" abbr="goods_name" axis="col3" class="">
+	                <div style="text-align: center; width: 140px;" class="">商品名称</div>
+	              </th>
+	              <th align="center" abbr="consignee" axis="col4" class="">
+	                <div style="text-align: center; width: 120px;" class="">收货人</div>
+	              </th>
+               
 	              <th align="center" abbr="article_show" axis="col5" class="">
-	                <div style="text-align: center; width: 60px;" class="">等级</div>
+	                <div style="text-align: center; width: 60px;" class="">总金额</div>
+	              </th>
+	              <!-- <th align="center" abbr="article_time" axis="col6" class="">
+	                <div style="text-align: center; width: 60px;" class="">应付金额</div>
+	              </th> -->
+	              <th align="center" abbr="article_time" axis="col6" class="">
+	                <div style="text-align: center; width: 60px;" class="">订单状态</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 60px;" class="">当前期数</div>
+	                <div style="text-align: center; width: 60px;" class="">支付状态</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 160px;" class="">加入代理时间</div>
+	                <div style="text-align: center; width: 60px;" class="">物流状态</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 100px;" class="">礼盒数量</div>
+	                <div style="text-align: center; width: 60px;" class="">支付方式</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 100px;" class="">每期发放数量</div>
+	                <div style="text-align: center; width: 60px;" class="">配送方式</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 100px;" class="">已发放数量</div>
+	                <div style="text-align: center; width: 120px;" class="">下单时间</div>
 	              </th>
-	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 100px;" class="">还剩发放数量</div>
+	              <th align="left" axis="col1" class="handle">
+	                <div style="text-align: center; width: 100px;">可否发放</div>
 	              </th>
-	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 160px;" class="">上期结束时间</div>
-	              </th>
+	            
                   <th align="left" axis="col1" class="handle">
                       <div style="text-align: left; width: 150px;">操作</div>
                   </th>
@@ -216,7 +229,7 @@
         cur_page = page; //当前页面 保存为全局变量
         $.ajax({
             type : "POST",
-            url:"/index.php/Admin/order/ajaxcountperiod/p/"+page,//+tab,
+            url:"/index.php/Admin/order/ajaxorderperiod/p/"+page,//+tab,
             data : $('#'+tab).serialize(),//
             success: function(data){
                 $("#flexigrid").html('');
