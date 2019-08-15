@@ -401,8 +401,54 @@ class Cart extends MobileBase
 
             //升级奖励上级和上上级
             $this->pay_leader($order['user_id'], $order['agent_good']);
+            $this->set_order_period($order_sn);
         }
     }
+
+    public function set_order_period($order_sn)
+    {
+        // $order_sn='201908132356085826';
+        $order = Db::name('order')
+        ->alias('or')
+        ->join('order_goods og', 'or.order_id=og.order_id', LEFT)
+        ->join('goods g', "g.goods_id=og.goods_id", LEFT)
+        ->field('g.agent_good,or.user_id,g.goods_name,or.consignee,or.province,or.city,or.district,or.address,or.mobile,or.order_status,or.shipping_status,or.province,or.city,or.district,or.address,or.mobile,or.pay_name,or.order_id')
+        ->where('or.order_sn', '=', $order_sn)->find();
+        $confModel = M('config');
+        $time = time();
+        $pop_num_area = $confModel->where('name', '=', 'pop_num_area')->value('value');
+        $pop_num_city = $confModel->where('name', '=', 'pop_num_city')->value('value');
+        $pop_num_province = $confModel->where('name', '=', 'pop_num_province')->value('value');
+        if ($order['agent_good'] == 1) {
+            $pop_name = 'pop_person_num';
+            $pop_num = $pop_num_area;
+        }
+        if ($order['agent_good'] == 2) {
+            $pop_name = 'pop_person_num_city';
+            $pop_num = $pop_num_city;
+        }
+        if ($order['agent_good'] == 3) {
+            $pop_name = 'pop_person_num_province';
+            $pop_num = $pop_num_province;
+        }
+        $person_num=$pop_num;
+        $pop_person_num = Db::name('config')->where(['name' => $pop_name])->value('value');
+        $period_count = ceil($pop_person_num / $pop_num);
+        static $current_num = '';
+        $current_num = $pop_person_num;
+        $orderPeriodModel = Db::name('order_period');
+            for ($i = 1; $i <= $period_count; $i++) {
+                if ($current_num > $pop_num) {
+                    $current_num -= $pop_num;
+                    $person_num_ed=$person_num*$i;
+                    $orderPeriodModel->insert(['user_id'=>$order['user_id'],'goods_name'=>$order['goods_name'],'person_total'=>$pop_person_num,'person_num'=>$person_num,'period'=>$i,'level'=>$order['agent_good'],'release_per_num'=>$person_num_ed,'order_status'=>0,'shipping_status'=>0,'province'=>$order['province'],'city'=>$order['city'],'district'=>$order['district'],'address'=>$order['address'],'mobile'=>$order['mobile'],'pay_name'=>$order['pay_name'],'order_sn'=>$order_sn,'order_id'=>$order['order_id']]);
+            }else{
+                $person_num_ed= $pop_person_num;
+                $orderPeriodModel->insert(['user_id'=>$order['user_id'],'goods_name'=>$order['goods_name'],'person_total'=>$pop_person_num,'person_num'=>$current_num,'period'=>$i,'level'=>$order['agent_good'],'release_per_num'=>$person_num_ed,'order_status'=>0,'shipping_status'=>0,'province'=>$order['province'],'city'=>$order['city'],'district'=>$order['district'],'address'=>$order['address'],'mobile'=>$order['mobile'],'pay_name'=>$order['pay_name'],'order_sn'=>$order_sn,'order_id'=>$order['order_id']]);
+            }
+        }
+    }
+
 
     //晋升为县代奖励上级
     public function pay_leader($userid,$agent_level)

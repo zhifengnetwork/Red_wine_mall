@@ -147,85 +147,98 @@ class Order extends Base {
 
     public function ajaxorderperiod()
     {
-
         $condition=true;
         $begin = $this->begin;
         $end = $this->end;
-        // 搜索条件
-        // $condition = array('shop_id'=>0);
         $keyType = I("key_type");
         $keywords = I('keywords','','trim');
-        
         $consignee =  ($keyType && $keyType == 'consignee') ? $keywords : I('consignee','','trim');
-        // $consignee ? $condition['consignee'] = trim($consignee) : false;
-
-        // if($begin && $end){
-        // 	$condition['add_time'] = array('between',"$begin,$end");
-        // }
-        // $condition['prom_type'] = array('lt',5);
         $order_sn = ($keyType && $keyType == 'order_sn') ? $keywords : I('order_sn') ;
-        // $order_sn ? $condition['order_sn'] = trim($order_sn) : false;
-        
-        // I('order_status') != '' ? $condition['order_status'] = I('order_status') : false;
-        // I('pay_status') != '' ? $condition['pay_status'] = I('pay_status') : false;
-        //I('pay_code') != '' ? $condition['pay_code'] = I('pay_code') : false;
-        // if(I('pay_code')){
-        //     switch (I('pay_code')){
-        //         case '余额支付':
-        //             $condition['pay_name'] = I('pay_code');
-        //             break;
-        //         case '积分兑换':
-        //             $condition['pay_name'] = I('pay_code');
-        //             break;
-        //         case 'alipay':
-        //             $condition['pay_code'] = ['in',['alipay','alipayMobile']];
-        //             break;
-        //         case 'weixin':
-        //             $condition['pay_code'] = ['in',['weixin','weixinH5','miniAppPay']];
-        //             break;
-        //         case '其他方式':
-        //             $condition['pay_name'] = '';
-        //             $condition['pay_code'] = '';
-        //             break;
-        //         default:
-        //             $condition['pay_code'] = I('pay_code');
-        //             break;
-        //     }
-        // }
-
-        // I('shipping_status') != '' ? $condition['shipping_status'] = I('shipping_status') : false;
-        // I('user_id') ? $condition['user_id'] = trim(I('user_id')) : false;
         $sort_order = 'id asc';
         $count = Db::name('order_period')->where($condition)->count();
         $Page  = new AjaxPage($count,20);
         $show = $Page->show();
-        $orderList = Db::name('order_period')->alias('op')->join("order o","op.order_id=o.order_id",LEFT)->join("order_goods og","o.order_id=og.order_id",LEFT)->where($condition)->limit($Page->firstRow,$Page->listRows)->order($sort_order)->select();
-        if ($orderList) {
-            $user_ids = array_column($orderList, 'user_id');
-            $order_sn = array_column($orderList, 'order_sn');
-            // if($order_ids){
-            //     foreach($order_ids as $oid){
-            //         $sql = " select a.order_id,a.goods_name,b.original_img from `tp_order_goods` as a left join `tp_goods` as b on a.goods_id = b.goods_id where a.order_id = '$oid'";
-            //         $ogi = Db::query($sql);
-            //         if($ogi){
-            //             $oginfo[$oid] = $ogi[0];
-            //         }
-            //     }
-            // }
-            $avatar = get_avatar($user_ids);
+        $orderList=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.order_status=:order_status",['order_status'=>1])->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id")->limit($Page->firstRow,$Page->listRows)->select();
 
-            foreach ($orderList as $key => $value) {
-                $orderList[$key]['head_pic'] = $avatar[$value['user_id']];
-            }
-        }
-        
-        // dump($show);exit;
-        // $this->assign('oginfo',$oginfo);
         $this->assign('orderList',$orderList);
         $this->assign('page',$show);// 赋值分页输出
         $this->assign('pager',$Page);
         return $this->fetch();
     }
+
+    //订单期数发货页面
+    public function send_good(){
+        $id=I("id");
+        $order_period=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.id=:id",['id'=>$id])->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id,op.address,op.mobile,op.order_id,op.person_num")->find();
+        $this->assign([
+            'order_period'=>$order_period,
+        ]);
+
+        $order_id=$order_period['order_id'];
+         $orderGoodsMdel = new OrderGoods();
+         $orderModel = new OrderModel();
+         $orderObj = $orderModel->where(['order_id'=>$order_id])->find();
+         $order =$orderObj->append(['full_address'])->toArray();
+         $orderGoods = $orderGoodsMdel::all(['order_id'=>$order_id,'is_send'=>['lt',2]]);
+        
+        $delivery_record = M('delivery_doc')->alias('d')->join('__ADMIN__ a','a.admin_id = d.admin_id')->where('d.order_id='.$order_id)->select();
+        if($delivery_record){
+            $order['invoice_no'] = $delivery_record[count($delivery_record)-1]['invoice_no'];
+        }
+        $this->assign('order',$order);
+        $this->assign('orderGoods',$orderGoods);
+        $this->assign('delivery_record',$delivery_record);//发货记录
+        $shipping_list = Db::name('shipping')->field('shipping_name,shipping_code')->where('')->select();
+        $this->assign('shipping_list',$shipping_list);
+        $express_switch = tpCache('express.express_switch');
+        $this->assign('express_switch',$express_switch);
+      
+        return $this->fetch();
+    }
+
+    //订单期数发货--填写物流信息处理
+    public function send_handel()
+    {
+        $data=input();
+        $update_shipping=Db::name('order_period')->where(['id'=>$data['id']])->update(['shipping_name'=>$data['shipping_name'],'shipping_code'=>$data['shipping_code'],'shipping_status'=>1,'invoice_no'=>$data['invoice_no']]);
+        if($update_shipping!=false){
+            $this->success('操作成功',U('Admin/order/order_period'));
+        }else{
+            $this->error('操作失败');
+        }
+    }
+
+    //查看订单详情
+    public function send_good_show(){
+        $id=I("id");
+        $order_period=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.id=:id",['id'=>$id])->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id,op.address,op.mobile,op.order_id,op.person_num,op.invoice_no")->find();
+        $this->assign([
+            'order_period'=>$order_period,
+        ]);
+
+        $order_id=$order_period['order_id'];
+         $orderGoodsMdel = new OrderGoods();
+         $orderModel = new OrderModel();
+         $orderObj = $orderModel->where(['order_id'=>$order_id])->find();
+         $order =$orderObj->append(['full_address'])->toArray();
+         $orderGoods = $orderGoodsMdel::all(['order_id'=>$order_id,'is_send'=>['lt',2]]);
+        
+        $delivery_record = M('delivery_doc')->alias('d')->join('__ADMIN__ a','a.admin_id = d.admin_id')->where('d.order_id='.$order_id)->select();
+        if($delivery_record){
+            $order['invoice_no'] = $delivery_record[count($delivery_record)-1]['invoice_no'];
+        }
+        $this->assign('order',$order);
+        $this->assign('orderGoods',$orderGoods);
+        $this->assign('delivery_record',$delivery_record);//发货记录
+        $shipping_list = Db::name('shipping')->field('shipping_name,shipping_code')->where('')->select();
+        $this->assign('shipping_list',$shipping_list);
+        $express_switch = tpCache('express.express_switch');
+        $this->assign('express_switch',$express_switch);
+      
+        return $this->fetch();
+    }
+
+
 
     public function count_period(){
         return $this->fetch();

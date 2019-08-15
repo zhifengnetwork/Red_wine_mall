@@ -81,6 +81,7 @@ class Order extends MobileBase
      */
     public function order_list()
     {
+     
         $type = input('type');
         $is_shop = input('is_shop/d');
         $order = new OrderModel();
@@ -99,6 +100,7 @@ class Order extends MobileBase
                 }
             })
             ->count();
+        
         $Page = new Page($count, 10);
         $order_list = $order->where($where_arr)
             ->where(function ($query) use ($type) {
@@ -106,51 +108,21 @@ class Order extends MobileBase
                     $query->where("1=1".C(strtoupper($type)));
                 }
             })
-            ->limit($Page->firstRow . ',' . $Page->listRows)->order("order_id DESC")->select();
-
-            $order_list = collection($order_list)->toArray();
-            foreach($order_list as $lk=>$lv){
-                $order_connect = Db::name('order')
-                    ->alias('or')
-                    ->join('order_goods og', 'or.order_id=og.order_id', LEFT)
-                    ->join('goods g', "g.goods_id=og.goods_id", LEFT)
-                    ->field('g.agent_good,or.user_id')
-                    ->where('or.order_sn', '=', $lv['order_sn'])->find();
-                $order_list[$lk]['agent_good']=$order_connect['agent_good'];
-            }
-
-            if($type=='WAITSEND'){
-                $order_period_model = Db::name('order_period');
-                $order_period= $order_period_model->where(['user_id'=>$this->user_id])->find();
-                $person_num_total=$order_period_model->where(['user_id'=>$this->user_id])->sum('person_num');
-                $person_num=$order_period['person_num'];
-                $poped_num_total=$order_period_model->where(['user_id'=>$this->user_id])->sum('poped_per_num');
-                $period=$order_period_model->where(['user_id'=>$this->user_id,'status'=>0,'able'=>1])->value('period');
-                $shipping_status="待发货";
-                $period_name="预发放期数{$period}";
-            }
-            if($type=='FINISH'){
-                $order_period_model = Db::name('order_period');
-                $order_period= $order_period_model->where(['user_id'=>$this->user_id])->find();
-                $person_num_total=$order_period_model->where(['user_id'=>$this->user_id])->sum('person_num');
-                $person_num=$order_period['person_num'];
-                $poped_num_total=$order_period_model->where(['user_id'=>$this->user_id])->sum('poped_per_num');
-                $period=$order_period_model->where(['user_id'=>$this->user_id,'status'=>1,'able'=>1])->value('period');
-                $shipping_status="已完成";
-                $period_name="已发放期数{$period}";
-            }
-            $this->assign([
-                'order_period'=>$order_period,
-                'person_num_total'=>$person_num_total,
-                'person_num'=>$person_num,
-                'poped_num_total'=>$poped_num_total,
-                'period'=>$period
-            ]);
-            
+            ->limit($Page->firstRow . ',' . $Page->listRows)->order("order_id DESC")->select();  
+         
         $this->assign('order_list', $order_list);
+
+
+        $order_period=Db::name('order_period')->alias('op')->join("order o","o.order_id=op.order_id")->where(['op.user_id'=>$this->user_id,'op.order_status'=>1,'op.shipping_status'=>0])->select();
+        
+        $this->assign([
+            'order_period'=>$order_period
+        ]);
+
         if ($_GET['is_ajax']) {
             return $this->fetch('ajax_order_list');
         }
+        // echo 111;die;        
         return $this->fetch();
     }
     //拼团订单列表
