@@ -22,6 +22,7 @@ use app\common\model\OrderGoods;
 use app\common\logic\OrderLogic;
 use app\common\logic\MessageFactory;
 use app\common\model\ReturnGoods;
+use app\common\model\Users;
 use app\common\util\TpshopException;
 use think\AjaxPage;
 use think\Page;
@@ -245,7 +246,13 @@ class Order extends Base {
         return $this->fetch();
     }
 
-
+    public function period_detail($user_id){
+        $user_period=Db::name('users')->alias('a')->join("pop_period pp","a.user_id=pp.user_id",LEFT)->where("a.user_id=:user_id",["user_id"=>$user_id])->select();
+        $this->assign([
+            'user_period'=>$user_period
+        ]);
+        return $this->fetch();
+    }
 
 
     /**

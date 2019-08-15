@@ -1,5 +1,5 @@
 <include file="public/layout" />
-<script type="text/javascript" src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+<!-- <script type="text/javascript" src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script> -->
 
 <body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
 <div id="append_parent"></div>
@@ -8,8 +8,8 @@
   <div class="fixed-bar">
     <div class="item-title">
       <div class="subject">
-        <h3>商品订单</h3>
-        <h5>商城实物商品交易订单查询及管理</h5>
+        <h3>商品期数</h3>
+        <h5>商城实物商品交易期数查询及管理</h5>
       </div>
     </div>
   </div>
@@ -20,15 +20,15 @@
       <span title="收起提示" id="explanationZoom" style="display: block;"></span>
     </div>
      <ul>
-      <li>查看操作可以查看订单详情, 包括支付费用, 商品详情等</li>
-      <li>未支付的订单可以取消</li>
+      <li>查看操作可以查看期数详情, 包括支付费用, 商品详情等</li>
+      <li>未支付的期数可以取消</li>
       <li>用户收货后, 如果没有点击"确认收货",系统自动根据设置的时间自动收货.</li>
     </ul>
   </div>
   <div class="flexigrid">
     <div class="mDiv">
       <div class="ftitle">
-        <h3>订单列表</h3>
+        <h3>期数列表</h3>
         <h5>(共{$page->totalRows}条记录)</h5>
       </div>
       <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
@@ -80,7 +80,7 @@
           </div>
           <div class="sDiv2">	 
              <select name="order_status" class="select sDiv3" >
-                  <option value="">订单状态</option>
+                  <option value="">期数状态</option>
                   <volist name="order_status" id="v" key="k">
                       <option value="{$k-1}">{$v}</option>
                   </volist>
@@ -89,7 +89,7 @@
          <div class="sDiv2">	                
           <select  name="key_type" class="select">
             <option value="consignee">收货人</option>
-            <option value="order_sn">订单编号</option>
+            <option value="order_sn">期数编号</option>
             </foreach>            
           </select>
          </div>
@@ -127,26 +127,26 @@
 	                <div style="text-align: center; width: 60px;" class="">当前期数</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 160px;" class="">加入代理时间</div>
+	                <div style="text-align: center; width: 160px;" class="">礼盒数量</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 100px;" class="">礼盒数量</div>
+	                <div style="text-align: center; width: 100px;" class="">已推人数</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 100px;" class="">每期发放数量</div>
+	                <div style="text-align: center; width: 100px;" class="">当前期数</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 100px;" class="">已发放数量</div>
+	                <div style="text-align: center; width: 160px;" class="">开始时间</div>
 	              </th>
 	              <th align="center" abbr="article_time" axis="col6" class="">
-	                <div style="text-align: center; width: 100px;" class="">还剩发放数量</div>
+	                <div style="text-align: center; width: 160px;" class="">结束时间</div>
 	              </th>
-	              <th align="center" abbr="article_time" axis="col6" class="">
+	              <!-- <th align="center" abbr="article_time" axis="col6" class="">
 	                <div style="text-align: center; width: 160px;" class="">上期结束时间</div>
-	              </th>
-                  <th align="left" axis="col1" class="handle">
+	              </th> -->
+                  <!-- <th align="left" axis="col1" class="handle">
                       <div style="text-align: left; width: 150px;">操作</div>
-                  </th>
+                  </th> -->
 	            </tr>
 	          </thead>
         </table>
@@ -163,8 +163,8 @@
           </div>
           <div class="fbutton"> 
         	<!--<a href="/index.php?m=Admin&c=Order&a=add_order">
-	          	<div class="add" title="添加订单">
-	            	<span><i class="fa fa-plus"></i>添加订单</span>
+	          	<div class="add" title="添加期数">
+	            	<span><i class="fa fa-plus"></i>添加期数</span>
 	          	</div>
           	</a> -->
           </div>
@@ -173,85 +173,104 @@
     </div>
     <div class="bDiv" style="height: auto;">
       <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
-        
+          <table>
+              <tbody>
+            
+              <volist name="user_period" id="list">
+               <tr data-order-id="{$list.order_id}" id="{$list.order_id}">
+                   <td class="sign" axis="col0">
+                     <div style="width: 24px;"><i class="ico-check"></i></div>
+                   </td>
+                   <td align="center" abbr="order_sn" axis="col1" class="">
+                     <div style="text-align: center; width: 140px;" class="">{$list.user_id}</div>
+                   </td>
+               
+                   <td align="center" abbr="consignee" axis="col2" class="">
+                     <div style="text-align: center; width: 120px;" class="">{$list.nickname}</div>
+                   </td>
+                   <td align="center" axis="col3" class="">
+                       <div style="text-align: center; width: 60px;">
+                           <empty name="$list.head_pic">
+                               <img src="/public/images/user_default_icon.jpg" style="width:30px;height:30px;" alt="">
+                           <else/>
+                               <img src="{$list.head_pic}" style="width:30px;height:30px;" alt="">
+                           </empty>
+                       </div>
+                   </td>
+                   <td align="center" abbr="article_show" axis="col4" class="">
+                    <if condition="$list.agent_level eq 1">
+                        <div style="text-align: center; width: 60px;" class="">县级代理</div>
+                      </if>
+                    <if condition="$list.agent_level eq 2">
+                        <div style="text-align: center; width: 60px;" class="">市级代理</div>
+                      </if>
+                    
+                    <if condition="$list.agent_level eq 3">
+                        <div style="text-align: center; width: 60px;" class="">省级代理</div>
+                      </if>
+                   </td>
+                   <td align="center" abbr="article_time" axis="col5" class="">
+                     <div style="text-align: center; width: 60px;" class="">{$list.default_period}</div>
+                   </td>
+                   <td align="center" abbr="article_time" axis="col6" class="">
+                     <div style="text-align: center; width: 160px;" class="">{$list['person_num']}</div>
+                   </td>
+                   <td align="center" abbr="article_time" axis="col7" class="">
+                     <div style="text-align: center; width: 100px;" class="">{$list['poped_per_num']}</div>
+                   </td>
+                   <td align="center" abbr="article_time" axis="col8" class="">
+                     <div style="text-align: center; width: 100px;" class="">{$list['period']}</div>
+                   </td>
+                   <td align="center" abbr="article_time" axis="col9" class="">
+                      <if condition="$list['begin_time'] neq 0">
+                          <div style="text-align: center; width: 160px;" class="">{$list['begin_time']|date="Y-m-d h:i:s",###}</div>
+                    <else />
+                           <div style="text-align: center; width: 160px;" class="">暂无日期</div>
+                    </if>
+                   </td>
+                   <td align="center" abbr="article_time" axis="col10" class="">
+                    <if condition="$list['end_time'] neq 0">
+                            <div style="text-align: center; width: 160px;" class="">{$list['end_time']|date="Y-m-d h:i:s",###}</div>
+                      <else />
+                             <div style="text-align: center; width: 160px;" class="">暂无日期</div>
+                      </if>
+                   </td>
+                   <!-- <td align="center" abbr="article_time" axis="col10" class="">
+                        <if condition="$list['day_release']==1">
+                            <div style="text-align: center; width: 160px;" class="">次日释放</div>
+                        </if>
+                        <if condition="$list['week_release']==1">
+                            <div style="text-align: center; width: 160px;" class="">下周一释放</div>
+                        </if>
+                        <if condition="$list['day_release'] eq 0 and $list['week_release'] eq 0">
+                            <div style="text-align: center; width: 160px;" class="">暂无记录</div>
+                        </if>
+                   </td> -->
+                 
+               <td style="width: 100%;">
+                       <div style="text-align: left; ">
+                           <!-- <a class="btn green" href="{:U('Admin/order/period_detail',array('user_id'=>$list['user_id']))}"><i class="fa fa-list-alt"></i>查看</a> -->
+                           <!--  <if condition="($list['order_status'] eq 3  and $list['pay_status'] eq 0) or ($list['order_status'] eq 5)">
+                               <a class="btn red" href="javascript:void(0);" data-order-id="{$list['order_id']}" onclick="del(this)"><i class="fa fa-trash-o"></i>删除</a>
+                           </if> -->
+                           <!--<if condition="($list['order_status'] eq 3  and $list['pay_status'] eq 1)">
+                               <a class="btn green" href="{:U('Admin/order/detail',array('order_id'=>$list['order_id']))}"><i class="fa fa-list-alt"></i>查看</a>
+                           </if>-->
+                       </div>
+                   </td>
+                 </tr>
+                 </volist>
+
+             
+               </tbody>
+           </table>
+
       </div>
       <div class="iDiv" style="display: none;"></div>
     </div>
     <!--分页位置--> 
    	</div>
 </div>
-<script type="text/javascript">
-    $(document).ready(function(){	
-	   
-     	$('#start_time').layDate();
-     	$('#end_time').layDate();
-     	
-		// 点击刷新数据
-		$('.fa-refresh').click(function(){
-			location.href = location.href;
-		});
-		
-		ajax_get_table('search-form2',1);
-		
-		$('.ico-check ' , '.hDivBox').click(function(){
-			$('tr' ,'.hDivBox').toggleClass('trSelected' , function(index,currentclass){
-	    		var hasClass = $(this).hasClass('trSelected');
-	    		$('tr' , '#flexigrid').each(function(){
-	    			if(hasClass){
-	    				$(this).addClass('trSelected');
-	    			}else{
-	    				$(this).removeClass('trSelected');
-	    			}
-	    		});  
-	    	});
-		});
-		 
-	});
-    /**
-     * ajax 抓取页面
-     * @param tab
-     * @param page
-     */
-    function ajax_get_table(tab,page){
-        cur_page = page; //当前页面 保存为全局变量
-        $.ajax({
-            type : "POST",
-            url:"/index.php/Admin/order/ajaxcountperiod/p/"+page,//+tab,
-            data : $('#'+tab).serialize(),//
-            success: function(data){
-                $("#flexigrid").html('');
-                $("#flexigrid").append(data);
-                // 表格行点击选中切换
-                $('#flexigrid > table>tbody >tr').click(function(){
-                    $(this).toggleClass('trSelected');
-                });
 
-            }
-        });
-    }
-    /**
-     * 点击排序
-     * @param field
-     */
-    function sort(field){
-        $("input[name='order_by']").val(field);
-        var v = $("input[name='sort']").val() == 'desc' ? 'asc' : 'desc';
-        $("input[name='sort']").val(v);
-        ajax_get_table('search-form2',cur_page);
-    }
-	
-	function exportReport(){
-        var selected_ids = '';
-        $('.trSelected' , '#flexigrid').each(function(i){
-            selected_ids += $(this).data('order-id')+',';
-        });
-        if(selected_ids != ''){
-            $('input[name="order_ids"]').val(selected_ids.substring(0,selected_ids.length-1));
-        }
-		$('#search-form2').submit();
-	}
-	
-	 
-</script>
 </body>
 </html>
