@@ -144,6 +144,12 @@ class User extends MobileBase
         $waitreceive=$order_model->where(['user_id'=>$user_id,'order_status'=>1,'shipping_status'=>1])->count();
         $waitccomment=$order_model->where(['user_id'=>$user_id,'order_status'=>2])->count();
 
+        $waitsent_period=Db::name('order_period')->where(["user_id"=>$user_id,'order_status'=>1,'shipping_status'=>0])->count();
+        $waitreceive_period=Db::name('order_period')->where(['user_id'=>$user_id,'order_status'=>1,'shipping_status'=>1])->count();
+
+        $waitsend=$waitsend+$waitsent_period;
+        $waitreceive=$waitreceive+$waitreceive_period;
+
         $this->assign([
             'agnet_name' => $agnet_name,
             'agent_level' => $agent_level,
