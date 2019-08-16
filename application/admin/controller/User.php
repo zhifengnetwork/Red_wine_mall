@@ -377,8 +377,8 @@ class User extends Base
                     $strTable .= '<td style="text-align:center;font-size:12px;">' . $val['user_id'] . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['nickname'] . ' </td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . $level_name['leader_level'][$val['leader_level']].'---'. $level_name['agent_level'][$val['agent_level']] . '</td>';
-                    $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['first_leader'] .'/'. $nickname['nickname']. '</td>';
-                    $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['email'] . '</td>';
+                    $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['mobile'] . '</td>';
+                    $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['first_leader'] . '/' . $nickname['nickname'] . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . date('Y-m-d H:i', $val['reg_time']) . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . date('Y-m-d H:i', $val['last_login']) . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['user_money'] . '</td>';
