@@ -112,8 +112,17 @@ class Order extends MobileBase
          
         $this->assign('order_list', $order_list);
 
+        if($type=='WAITSEND'){
+            $condition['op.order_status']=1;
+            $condition['op.shipping_status']=0;
+        }else if($type=='FINISH'){
+            $condition['op.order_status']=1;
+            $condition['op.shipping_status']=1;
+        }else{
+            $condition['op.shipping_status']=10;
+        }
 
-        $order_period=Db::name('order_period')->alias('op')->join("order o","o.order_id=op.order_id")->where(['op.user_id'=>$this->user_id,'op.order_status'=>1,'op.shipping_status'=>0])->select();
+        $order_period=Db::name('order_period')->alias('op')->join("order o","o.order_id=op.order_id")->where(['op.user_id'=>$this->user_id])->where($condition)->select();
         
         $this->assign([
             'order_period'=>$order_period

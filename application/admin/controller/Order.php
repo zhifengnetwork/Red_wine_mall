@@ -159,7 +159,6 @@ class Order extends Base {
         $Page  = new AjaxPage($count,20);
         $show = $Page->show();
         $orderList=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.order_status=:order_status",['order_status'=>1])->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id")->limit($Page->firstRow,$Page->listRows)->select();
-
         $this->assign('orderList',$orderList);
         $this->assign('page',$show);// 赋值分页输出
         $this->assign('pager',$Page);
@@ -185,6 +184,11 @@ class Order extends Base {
         if($delivery_record){
             $order['invoice_no'] = $delivery_record[count($delivery_record)-1]['invoice_no'];
         }
+
+        $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
+        $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
+        $spec=implode(",",$spec_good);
+        $this->assign('spec',$spec);
         $this->assign('order',$order);
         $this->assign('orderGoods',$orderGoods);
         $this->assign('delivery_record',$delivery_record);//发货记录
@@ -227,6 +231,13 @@ class Order extends Base {
         if($delivery_record){
             $order['invoice_no'] = $delivery_record[count($delivery_record)-1]['invoice_no'];
         }
+
+        $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
+        $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
+        $spec=implode(",",$spec_good);
+
+        $this->assign('spec',$spec);
+
         $this->assign('order',$order);
         $this->assign('orderGoods',$orderGoods);
         $this->assign('delivery_record',$delivery_record);//发货记录
@@ -561,11 +572,15 @@ class Order extends Base {
     public function detail(){
         $order_id = input('order_id', 0);
         $orderModel = new OrderModel();
+        $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
+        $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
+        $spec=implode(",",$spec_good);
         $order = $orderModel::get(['order_id'=>$order_id]);
         if(empty($order)){
             $this->error('订单不存在或已被删除');
         }
         $this->assign('order', $order);
+        $this->assign('spec',$spec);
         return $this->fetch();
     }
 
@@ -1397,13 +1412,19 @@ class Order extends Base {
 	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['pay_name'].'</td>';
 	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$this->pay_status[$val['pay_status']].'</td>';
 	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$this->shipping_status[$val['shipping_status']].'</td>';
-	    		$orderGoods = D('order_goods')->where('order_id='.$val['order_id'])->select();
+                $orderGoods = D('order_goods')->where('order_id='.$val['order_id'])->select();
+               
+             
 	    		$strGoods="";
                 $goods_num = 0;
 	    		foreach($orderGoods as $goods){
+                    $sec_goods=D('spec_goods_price')->where('goods_id='.$goods['goods_id'])->column('key_name');
+                    $spec_key_name=implode(",",$sec_goods);
+
                     $goods_num = $goods_num + $goods['goods_num'];
 	    			$strGoods .= "商品编号：".$goods['goods_sn']." 商品名称：".$goods['goods_name'];
-	    			if ($goods['spec_key_name'] != '') $strGoods .= " 规格：".$goods['spec_key_name'];
+	    			// if ($goods['spec_key_name'] != '') $strGoods .= " 规格：".$goods['spec_key_name'];
+	    			if ($spec_key_name != '') $strGoods .= " 规格：".$spec_key_name;
 	    			$strGoods .= "<br />";
 	    		}
 	    		unset($orderGoods);
