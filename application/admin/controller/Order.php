@@ -185,6 +185,12 @@ class Order extends Base {
         if($delivery_record){
             $order['invoice_no'] = $delivery_record[count($delivery_record)-1]['invoice_no'];
         }
+
+        $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
+        $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
+        $spec=implode(",",$spec_good);
+
+        $this->assign('spec',$spec);
         $this->assign('order',$order);
         $this->assign('orderGoods',$orderGoods);
         $this->assign('delivery_record',$delivery_record);//发货记录
@@ -227,6 +233,13 @@ class Order extends Base {
         if($delivery_record){
             $order['invoice_no'] = $delivery_record[count($delivery_record)-1]['invoice_no'];
         }
+
+        $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
+        $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
+        $spec=implode(",",$spec_good);
+
+        $this->assign('spec',$spec);
+
         $this->assign('order',$order);
         $this->assign('orderGoods',$orderGoods);
         $this->assign('delivery_record',$delivery_record);//发货记录
