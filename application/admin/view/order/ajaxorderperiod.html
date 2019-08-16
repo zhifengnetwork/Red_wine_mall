@@ -61,7 +61,9 @@
         <td align="left"  axis="col12" align="center">
           <if condition="($list.order_status eq 1) and ($list.shipping_status eq 0)">
               <div style="text-align: left; width: 100px;">可以发放</div>
-            <else />
+            <else if condition="($list.order_status eq 0) and ($list.shipping_status eq 0)">
+                <div style="text-align: left; width: 100px;">暂不可发放</div>
+              <else />
                <div style="text-align: left; width: 100px;">已发货</div>
             </if>
         </td>
