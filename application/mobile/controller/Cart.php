@@ -441,7 +441,11 @@ class Cart extends MobileBase
                 if ($current_num > $pop_num) {
                     $current_num -= $pop_num;
                     $person_num_ed=$person_num*$i;
-                    $orderPeriodModel->insert(['user_id'=>$order['user_id'],'goods_name'=>$order['goods_name'],'person_total'=>$pop_person_num,'person_num'=>$person_num,'period'=>$i,'level'=>$order['agent_good'],'release_per_num'=>$person_num_ed,'order_status'=>0,'shipping_status'=>0,'province'=>$order['province'],'city'=>$order['city'],'district'=>$order['district'],'address'=>$order['address'],'mobile'=>$order['mobile'],'pay_name'=>$order['pay_name'],'order_sn'=>$order_sn,'order_id'=>$order['order_id']]);
+                    if($i==1){
+                        $orderPeriodModel->insert(['user_id'=>$order['user_id'],'goods_name'=>$order['goods_name'],'person_total'=>$pop_person_num,'person_num'=>$person_num,'period'=>$i,'level'=>$order['agent_good'],'release_per_num'=>$person_num_ed,'order_status'=>1,'shipping_status'=>0,'province'=>$order['province'],'city'=>$order['city'],'district'=>$order['district'],'address'=>$order['address'],'mobile'=>$order['mobile'],'pay_name'=>$order['pay_name'],'order_sn'=>$order_sn,'order_id'=>$order['order_id']]);
+                    }else{
+                        $orderPeriodModel->insert(['user_id'=>$order['user_id'],'goods_name'=>$order['goods_name'],'person_total'=>$pop_person_num,'person_num'=>$person_num,'period'=>$i,'level'=>$order['agent_good'],'release_per_num'=>$person_num_ed,'order_status'=>0,'shipping_status'=>0,'province'=>$order['province'],'city'=>$order['city'],'district'=>$order['district'],'address'=>$order['address'],'mobile'=>$order['mobile'],'pay_name'=>$order['pay_name'],'order_sn'=>$order_sn,'order_id'=>$order['order_id']]);
+                    }
             }else{
                 $person_num_ed= $pop_person_num;
                 $orderPeriodModel->insert(['user_id'=>$order['user_id'],'goods_name'=>$order['goods_name'],'person_total'=>$pop_person_num,'person_num'=>$current_num,'period'=>$i,'level'=>$order['agent_good'],'release_per_num'=>$person_num_ed,'order_status'=>0,'shipping_status'=>0,'province'=>$order['province'],'city'=>$order['city'],'district'=>$order['district'],'address'=>$order['address'],'mobile'=>$order['mobile'],'pay_name'=>$order['pay_name'],'order_sn'=>$order_sn,'order_id'=>$order['order_id']]);
