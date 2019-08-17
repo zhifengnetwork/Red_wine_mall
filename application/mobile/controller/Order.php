@@ -121,7 +121,6 @@ class Order extends MobileBase
         }else{
             $condition['op.shipping_status']=10;
         }
-
         $order_period=Db::name('order_period')->alias('op')->join("order o","o.order_id=op.order_id")->where(['op.user_id'=>$this->user_id])->where($condition)->select();
         
         $this->assign([
@@ -130,8 +129,7 @@ class Order extends MobileBase
 
         if ($_GET['is_ajax']) {
             return $this->fetch('ajax_order_list');
-        }
-        // echo 111;die;        
+        } 
         return $this->fetch();
     }
     //拼团订单列表

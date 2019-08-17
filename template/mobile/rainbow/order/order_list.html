@@ -28,6 +28,7 @@
     <!--订单列表-s-->
     <div class="ajax_return">
         <if condition="count($order_list) eq 0">
+            <notpresent name="order_period">
             <!--没有内容时-s--->
             <div class="comment_con p">
                 <div class="none">
@@ -42,6 +43,7 @@
                 </div>
             </div>
             <!--没有内容时-e--->
+            </notpresent>
         </if>
         <!-- <volist name="order_list" id="order">
             111
@@ -183,11 +185,8 @@
                     <div class="shop-rebuy-price p">
                         <div class="maleri30">
                     <span class="price-alln">
-                       
                         <span class="red">￥{$op['total_amount']}  </span>
                         <span>&nbsp;&nbsp;&nbsp;预发放期数：{$op['period']}</span>
-                   
-                     
                     </span>
                             <if condition="$order.pay_btn eq 1">
                                 <a class="shop-rebuy paysoon" href="{:U('Mobile/Cart/cart4',array('order_id'=>$order['order_id']))}">立即付款</a>
