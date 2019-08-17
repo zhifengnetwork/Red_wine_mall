@@ -165,7 +165,8 @@
                         <div class="maleri30">
                                 <div class="sc_list se_sclist paycloseto">
                                            <div class="shopimg fl">
-                                                <img src="{$order[order_goods][0][goods_id]|goods_thum_images=200,200}">
+                                                <!-- <img src="{$order[order_goods][0][goods_id]|goods_thum_images=200,200}"> -->
+                                                <img src="{$op[goods_id]|goods_thum_images=200,200}">
                                             </div>
                                             <div class="deleshow fr">
                                                     <div class="deletes">
@@ -186,7 +187,9 @@
                         <div class="maleri30">
                     <span class="price-alln">
                         <span class="red">￥{$op['total_amount']}  </span>
-                        <span>&nbsp;&nbsp;&nbsp;预发放期数：{$op['period']}</span>
+
+                        <span>&nbsp;&nbsp;&nbsp;{$periodword}第{$op['period']}期</span>
+
                     </span>
                             <if condition="$order.pay_btn eq 1">
                                 <a class="shop-rebuy paysoon" href="{:U('Mobile/Cart/cart4',array('order_id'=>$order['order_id']))}">立即付款</a>
