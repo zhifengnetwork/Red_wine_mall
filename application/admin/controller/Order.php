@@ -147,19 +147,38 @@ class Order extends Base {
 
     public function ajaxorderperiod()
     {
-        $condition=true;
-        $begin = $this->begin;
-        $end = $this->end;
+        // $condition=true;
+        // $begin = $this->begin;
+        // $end = $this->end;
         $keyType = I("key_type");
         $keywords = I('keywords','','trim');
         $consignee =  ($keyType && $keyType == 'consignee') ? $keywords : I('consignee','','trim');
-        $order_sn = ($keyType && $keyType == 'order_sn') ? $keywords : I('order_sn') ;
+        $order_sn = ($keyType && $keyType == 'order_sn') ? $keywords : '' ;
+        $mobile= ($keyType && $keyType == 'mobile') ? $keywords : '' ;
+
         $sort_order = 'id asc';
-        $count = Db::name('order_period')->where($condition)->count();
+        if($consignee){
+            $condition['o.consignee']=$consignee;
+        }  
+        if($order_sn){
+            $condition['op.order_sn']=$order_sn;
+        }
+        if($mobile){
+            $condition['op.mobile']=$mobile;
+        }
+
+        if(!$condition){
+            $condition=true;
+        }
+
+        // $count = Db::name('order_period')->where($condition)->count();
+        $count=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.order_status=:order_status",['order_status'=>1])->where($condition)->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id,op.order_id")->count();
+        
         $Page  = new AjaxPage($count,20);
         $show = $Page->show();
-        $orderList=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.order_status=:order_status",['order_status'=>1])->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id")->limit($Page->firstRow,$Page->listRows)->select();
+        $orderList=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.order_status=:order_status",['order_status'=>1])->where($condition)->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id,op.order_id")->limit($Page->firstRow,$Page->listRows)->select();
         $this->assign('orderList',$orderList);
+
         $this->assign('page',$show);// 赋值分页输出
         $this->assign('pager',$Page);
         return $this->fetch();
@@ -1438,7 +1457,7 @@ class Order extends Base {
     	downloadExcel($strTable,'order');
     	exit();
     }
-    
+
     /**
      * 退货单列表
      */

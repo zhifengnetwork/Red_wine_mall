@@ -32,65 +32,30 @@
         <h5>(共{$page->totalRows}条记录)</h5>
       </div>
       <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
-	  <form class="navbar-form form-inline"  method="post" action="{:U('Admin/order/export_order')}"  name="search-form2" id="search-form2">  
+	  <form class="navbar-form form-inline"  method="post" action="{:U('Admin/order/export_order_period')}"  name="search-form2" id="search-form2">  
 	  		<input type="hidden" name="order_by" value="order_id">
             <input type="hidden" name="sort" value="desc">
-            <input type="hidden" name="user_id" value="{$Request.param.user_id}">
-            <input type="hidden" name="order_ids" value="">
+            <!-- <input type="hidden" name="user_id" value="{$Request.param.user_id}"> -->
+            <input type="hidden" name="ids" value="">
             <!--用于查看结算统计 包含了哪些订单-->
-            <input type="hidden" value="{$_GET['order_statis_id']}" name="order_statis_id" />
+            <!-- <input type="hidden" value="{$_GET['order_statis_id']}" name="order_statis_id" /> -->
                                     
       <div class="sDiv">
-        <div class="sDiv2">
-        	<input type="text" size="30" id="start_time" name="start_time" value="{$start_time}" class="qsbox"  placeholder="下单开始时间">
-        </div>
-        <div class="sDiv2">
-        	<input type="text" size="30" id="end_time" name="end_time" value="{$end_time}" class="qsbox"  placeholder="下单结束时间">
-        </div>
-        <div class="sDiv2">	 
-        	<select name="pay_status" class="select sDiv3" style="margin-right:5px;margin-left:5px">
-                    <option value="">支付状态</option>
-                    <option value="0">未支付</option>
-        			<option value="1">已支付</option>
-                    <option value="3">已退款</option>
-                    <option value="4">拒绝退款</option>
-            </select>
-        </div>
-        <div class="sDiv2">	   
-            <select name="pay_code" class="select sDiv3" style="margin-right:5px;margin-left:5px">
-                <option value="">支付方式</option>
-                <option value="unionpay">银联在线支付</option>
-                <option value="tenpay">PC端财付通</option>
-                <option value="alipay">支付宝支付</option>
-				<option value="weixin">微信支付</option>
-                <option value="miniAppPay">微信小程序支付</option>
-				<option value="cod">到货付款</option>
-                <option value="余额支付">余额支付</option>
-                <option value="其他方式">其他方式</option>
-                <option value="积分兑换">积分兑换</option>
-             </select>
-         </div>
-         <div class="sDiv2">	 
+         <!-- <div class="sDiv2">	 
              <select name="shipping_status" class="select sDiv3" >
                 <option value="">发货状态</option>
-                <option value="0">未发货</option>
-                <option value="1">已发货</option>
-                <option value="2">部分发货</option>
+                <option value="0">暂不可发放</option>
+                <option value="1">待发货</option>
+                <option value="2">已发货</option>
              </select>
-          </div>
+          </div> -->
           <div class="sDiv2">	 
-             <select name="order_status" class="select sDiv3" >
-                  <option value="">订单状态</option>
-                  <volist name="order_status" id="v" key="k">
-                      <option value="{$k-1}">{$v}</option>
-                  </volist>
-              </select>       
          </div>
          <div class="sDiv2">	                
           <select  name="key_type" class="select">
             <option value="consignee">收货人</option>
             <option value="order_sn">订单编号</option>
-            </foreach>            
+            <option value="mobile">手机号码</option>
           </select>
          </div>
          <div class="sDiv2">	 
@@ -255,11 +220,11 @@
 	
 	function exportReport(){
         var selected_ids = '';
-        $('.trSelected' , '#flexigrid').each(function(i){
-            selected_ids += $(this).data('order-id')+',';
+        $('#flexigrid>table>tbody>tr').each(function(i){
+            selected_ids += $(this)[0]['dataset'].id+',';
         });
         if(selected_ids != ''){
-            $('input[name="order_ids"]').val(selected_ids.substring(0,selected_ids.length-1));
+            $('input[name="ids"]').val(selected_ids.substring(0,selected_ids.length-1));
         }
 		$('#search-form2').submit();
 	}
