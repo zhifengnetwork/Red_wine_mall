@@ -276,6 +276,7 @@ class System extends Base
         $config=tpCache('commission');
         $confModel=Db::name('config');
 
+        $open_exchange=$confModel->where('name','=','open_exchange')->find();
         $pop_person=$confModel->where('name','=','pop_person_num')->find();
         $pop_person_city=$confModel->where('name','=','pop_person_num_city')->find();
         $pop_person_province=$confModel->where('name','=','pop_person_num_province')->find();
@@ -296,6 +297,7 @@ class System extends Base
        
       
         $this->assign([
+            'open_exchange'=>$open_exchange,
             'pop_person'=>$pop_person,
 
             'pop_person_city'=>$pop_person_city,
@@ -421,6 +423,13 @@ class System extends Base
         if(request()->isPost()){
             $data=input(); 
             $confModel=Db::name('config');
+            
+            $open_exchange= $confModel->where('name','=','open_exchange')->find();
+            if($open_exchange){
+                $confModel->update(['id'=>$open_exchange['id'],'name'=>'open_exchange','value'=>$data['open_exchange'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'open_exchange','value'=>$data['open_exchange'],'inc_type'=>'commison_conf']);
+            }
 
             $pop_person= $confModel->where('name','=','pop_person_num')->find();
             if($pop_person){

@@ -47,12 +47,21 @@
                 </a>
             </li>
 
+            <if condition="$open_exchange eq 1">
                 <li style="float: right;">
                     <a href="{:U('Mobile/User/balance')}">
                         <img src="__STATIC__/images/tx.png"/>
                         <p> 余额转账</p>
                     </a>
                 </li>
+                <else />
+                <li style="float: right;">
+                    <a href="javascript:alert('转账功能暂时关闭！')">
+                        <img src="__STATIC__/images/tx.png"/>
+                        <p> 余额转账</p>
+                    </a>
+                </li>
+            </if>
         </ul>
     </div>
 </div>
