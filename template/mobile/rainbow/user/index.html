@@ -21,6 +21,16 @@
         color: #d90830;
         font-weight: bold;
     }
+    .fa_position{
+        position: relative;
+    }
+    .num_position{
+        height:10px;
+        width:10px;
+        border-radius: 10px;
+        position: absolute;top:37px;
+        color:red
+    }
 </style>
 <div class="z_user_vs">
     <div class="z_user_head" style="height:8.74rem;">
@@ -114,33 +124,34 @@
                                 </div>
                             </div>
                         </a>
+
                         <div class="z_user_nav">
                             <ul>
                                 <li>
-                                    <a href="{:U('/Mobile/Order/order_list',array('type'=>'WAITPAY'))}">
+                                    <a href="{:U('/Mobile/Order/order_list',array('type'=>'WAITPAY'))}" class="fa_position" >
                                         <img src="__PUBLIC__/static/images/hong1.png" />
-
+                                        <span class="num_position">{$waitpay}</span>
                                         <p>待付款</p>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{:U('/Mobile/Order/order_list',array('type'=>'WAITSEND'))}">
-                                        <img src="__PUBLIC__/static/images/hong2.png" />
-
+                                    <a href="{:U('/Mobile/Order/order_list',array('type'=>'WAITSEND'))}" class="fa_position">
+                                        <img src="__PUBLIC__/static/images/hong2.png"  />
+                                        <span class="num_position">{$waitsend}</span>
                                         <p>待发货</p>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{:U('/Mobile/Order/wait_receive',array('type'=>'WAITRECEIVE'))}">
+                                    <a href="{:U('/Mobile/Order/wait_receive',array('type'=>'WAITRECEIVE'))}" class="fa_position">
                                         <img src="__PUBLIC__/static/images/hong3.png" />
-
+                                        <span class="num_position">{$waitreceive}</span>
                                         <p>待收货</p>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{:U('Mobile/Order/comment',array('status'=>0))}">
+                                    <a href="{:U('Mobile/Order/comment',array('status'=>0))}" class="fa_position">
                                         <img src="__PUBLIC__/static/images/hong4.png" />
-
+                                        <span class="num_position">{$waitccomment}</span>
                                         <p>待评价</p>
                                     </a>
                                 </li>

@@ -137,10 +137,24 @@ class User extends MobileBase
                 $agent_level = $agent_level_arr[$myuser['agent_level']];
             }
         }
+
+        $order_model=Db::name('order');
+        $waitpay=$order_model->where(['user_id'=>$user_id,'pay_status'=>0,'order_status'=>0])->count();
+        $waitsend=$order_model->where(['user_id'=>$user_id,'pay_status'=>1,'order_status'=>0,'shipping_status'=>0])->count();
+        $waitreceive=$order_model->where(['user_id'=>$user_id,'order_status'=>1,'shipping_status'=>1])->count();
+        $waitccomment=$order_model->where(['user_id'=>$user_id,'order_status'=>2])->count();
+
         $this->assign([
             'agnet_name' => $agnet_name,
-            'agent_level' => $agent_level
+            'agent_level' => $agent_level,
+            'waitpay'=>$waitpay?$waitpay:0,
+            'waitsend'=>$waitsend?$waitsend:0,
+            'waitreceive'=>$waitreceive?$waitreceive:0,
+            'waitccomment'=>$waitccomment?$waitccomment:0
         ]);
+      
+
+        
 
         $MenuCfg = new MenuCfg();
         $menu_list = $MenuCfg->where('is_show', 1)->order('menu_id asc')->select();
@@ -806,12 +820,15 @@ class User extends MobileBase
     {
         $user_id = $this->user_id;
         $user = M('users')->where(['user_id' => $user_id])->field('user_id,nickname,mobile,distribut_level,distribut_money,head_pic')->find();
-        $get_all_lower = get_all_lower($user_id);
+        // $get_all_lower = get_all_lower($user_id);
+        // foreach ($get_all_lower as $key => $vale) {
+        //     $get_all_lower[$key] = M('users')->where(['user_id' => $vale])->field('user_id,nickname,mobile')->find();
+        //     $get_all_lower[$key]['nickname']=mb_substr(trim($get_all_lower[$key]['nickname']),0,30,'utf-8');
+        // }
+        //只显示直推
+        $get_all_lower=Db::name('users')->where(['first_leader'=>$user_id])->field('user_id,nickname,mobile')->select();
         foreach ($get_all_lower as $key => $vale) {
-            // dump($vale);
-            $get_all_lower[$key] = M('users')->where(['user_id' => $vale])->field('user_id,nickname,mobile')->find();
             $get_all_lower[$key]['nickname']=mb_substr(trim($get_all_lower[$key]['nickname']),0,30,'utf-8');
-            // dump($user);
         }
         $this->assign('nickname', $user['nickname']);
         $this->assign('user_id', $user_id);
@@ -1302,6 +1319,8 @@ class User extends MobileBase
     public function sharePoster()
     {
         $user_id = $this->user_id;
+        // $user_id=2;
+
         $user_info=Db::name('users')->where(['user_id'=>$user_id])->find();
         $share_error = 0;
         $root=$_SERVER['DOCUMENT_ROOT'];
@@ -1311,11 +1330,13 @@ class User extends MobileBase
             if(strpos($user_info['head_pic'],'ttp:')){
                 $head_source=httpRequest($user_info['head_pic'],'GET');
                 file_put_contents($root.$share_poster_dir.'/head'.$user_id.'.png',$head_source);
+                $local_head=\think\Image::open($root.$share_poster_dir.'/head'.$user_id.'.png');
+                $local_head->thumb(100,100,\think\Image::THUMB_SCALING)->radius(50)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
         }else{
                 $head_source=httpRequest($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] .$user_info['head_pic'],'GET');
                 file_put_contents($root.$share_poster_dir.'/head_tem'.$user_id.'.png',$head_source);
                 $local_head=\think\Image::open($root.$share_poster_dir.'/head_tem'.$user_id.'.png');
-                $local_head->thumb(150,150,\think\Image::THUMB_SCALING)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
+                $local_head->thumb(100,100,\think\Image::THUMB_SCALING)->radius(50)->save($root.$share_poster_dir.'/head'.$user_id.'.png');
         }
         $qrcode='/'.$user_id.'.png';
         $qrcode_path = $root.$share_poster_dir.$qrcode;
@@ -1328,14 +1349,19 @@ class User extends MobileBase
         }
         if(!$share_error){
                 $qrcode_deal=\think\Image::open($qrcode_path);
-                $qrcode_deal->thumb(235,235,\think\Image::THUMB_SOUTHEAST)->save($root.$share_poster_dir.'/'.$user_id.'.png');
+                $qrcode_deal->thumb(200,200,\think\Image::THUMB_SOUTHEAST)->save($root.$share_poster_dir.'/'.$user_id.'.png');
                 $qrcode_res_path=$share_poster_dir.'/'.$user_id.'.png';
                 $background_deal=\think\Image::open($background_path); 
-                $background_deal->water($root.$qrcode_res_path,[275,802]);
-                $background_deal->text("用户名称：","./vendor/topthink/think-captcha/assets/zhttfs/1.ttf",25,'#ffffff',[10,200]);
-                $background_deal->text(mb_substr($user_info['nickname'],0,55,'utf-8'),"./vendor/topthink/think-captcha/assets/zhttfs/1.ttf",25,'#ffffff',[235,200]);
-                $background_deal->text('用户头像：',"./vendor/topthink/think-captcha/assets/zhttfs/1.ttf",25,'#ffffff',[10,10]);
-                $background_deal->water($root.$share_poster_dir.'/head'.$user_id.'.png',[220,0])->save($root.$share_poster_dir.'/'.$user_id.'-share.png'); 
+                $background_deal->water($root.$qrcode_res_path,[275,812]);
+                // $name_font = dirname(realpath(APP_PATH)).'\\vendor\\topthink\\think-captcha\\assets\\zhttfs\\1.ttf';
+                // $background_deal->text("用户名称：", $name_font,25,'#ffffff',[10,200]);
+                // $background_deal->text(mb_substr($user_info['nickname'],0,55,'utf-8'), $name_font,25,'#ffffff',[235,200]);
+                // $background_deal->text('用户头像：', $name_font,25,'#ffffff',[10,10]);
+                $name_font="./vendor/topthink/think-captcha/assets/zhttfs/1.ttf";
+
+                // $background_deal->text(mb_substr($user_info['nickname'],0,45,'utf-8')."  \"邀您共筑新零售商业帝国\"",$name_font,20,'#ffffff',[100,30]);
+                $background_deal->text(mb_substr($user_info['nickname'],0,45,'utf-8'),$name_font,20,'#ffffff',[310,150]);
+                $background_deal->water($root.$share_poster_dir.'/head'.$user_id.'.png',[310,30])->save($root.$share_poster_dir.'/'.$user_id.'-share.png'); 
                 @unlink($root.$share_poster_dir.'/head'.$user_id.'.png');
                 @unlink($root.$share_poster_dir.'/'.$user_id.'.png');
                 @unlink($root.$share_poster_dir.'/head_tem'.$user_id.'.png');

@@ -109,6 +109,61 @@ class Image
         return new self($file);
     }
 
+    public function radius($radius = 15) {
+        // $wh = getimagesize($imgpath);
+        $w = $this->width();
+        $h = $this->height();
+        // $radius = $radius == 0 ? (min($w, $h) / 2) : $radius;
+        $img = imagecreatetruecolor($w, $h);
+        //这一句一定要有
+        imagesavealpha($img, true);
+        //拾取一个完全透明的颜色,最后一个参数127为全透明
+        $bg = imagecolorallocatealpha($img, 71, 95, 249, 127);
+        imagefill($img, 0, 0, $bg);
+        $r = $radius; //圆 角半径
+        for ($x = 0; $x < $w; $x++) {
+            for ($y = 0; $y < $h; $y++) {
+                $rgbColor = imagecolorat($this->im, $x, $y);
+                if (($x >= $radius && $x <= ($w - $radius)) || ($y >= $radius && $y <= ($h - $radius))) {
+                    //不在四角的范围内,直接画
+                    imagesetpixel($img, $x, $y, $rgbColor);
+                } else {
+                    //在四角的范围内选择画
+                    //上左
+                    $y_x = $r; //圆心X坐标
+                    $y_y = $r; //圆心Y坐标
+                    if (((($x - $y_x) * ($x - $y_x) + ($y - $y_y) * ($y - $y_y)) <= ($r * $r))) {
+                        imagesetpixel($img, $x, $y, $rgbColor);
+                        continue;
+                    }
+                    //上右
+                    $y_x = $w - $r; //圆心X坐标
+                    $y_y = $r; //圆心Y坐标
+                    if (((($x - $y_x) * ($x - $y_x) + ($y - $y_y) * ($y - $y_y)) <= ($r * $r))) {
+                        imagesetpixel($img, $x, $y, $rgbColor);
+                        continue;
+                    }
+                    //下左
+                    $y_x = $r; //圆心X坐标
+                    $y_y = $h - $r; //圆心Y坐标
+                    if (((($x - $y_x) * ($x - $y_x) + ($y - $y_y) * ($y - $y_y)) <= ($r * $r))) {
+                        imagesetpixel($img, $x, $y, $rgbColor);
+                        continue;
+                    }
+                    //下右
+                    $y_x = $w - $r; //圆心X坐标
+                    $y_y = $h - $r; //圆心Y坐标
+                    if (((($x - $y_x) * ($x - $y_x) + ($y - $y_y) * ($y - $y_y)) <= ($r * $r))) {
+                        imagesetpixel($img, $x, $y, $rgbColor);
+                        continue;
+                    }
+                }
+            }
+        }
+        $this->im = $img;
+        return $this;
+    }
+
     /**
      * 保存图像
      * @param string      $pathname  图像保存路径名称

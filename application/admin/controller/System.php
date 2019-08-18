@@ -681,7 +681,7 @@ class System extends Base
             $all_user_name = M('users')->whereIn('user_id', $all_user_ids)->column('user_id,nickname,mobile');
             $avatar = get_avatar($all_user_ids);
 
-            $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '级差领导奖', '6' => '领导奖奖励豪车');
+            $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '月度绩效奖励', '6' => '领导奖奖励豪车');
             foreach ($list as $key => $value) {
                 $list[$key]['user_name'] = $all_user_name[$value['user_id']]['nickname'] ?: $all_user_name[$value['user_id']]['mobile'];
                 $list[$key]['to_user_name'] = $all_user_name[$value['to_user_id']]['nickname'] ?: $all_user_name[$value['to_user_id']]['mobile'];
@@ -749,12 +749,14 @@ class System extends Base
     //   每月定时发放极差奖领导奖  优化方法
       public function team_bonus(){
         $time=time();
-        $allUserPerformace=Db::name('users')->alias('u')->join("agent_performance_log apl",'apl.user_id=u.user_id')->field('u.leader_level,u.user_id,u.mobile,u.nickname,u.distribut_money,u.user_money,sum(apl.money) as agent_per')->where('u.leader_level','<>','0')->where('apl.create_time','>',strtotime("-0 year -3 month -0 day"))->select();
+        $allUserPerformace=Db::name('users')->alias('u')->join("agent_performance_log apl",'apl.user_id=u.user_id')->field('u.leader_level,u.user_id,u.mobile,u.nickname,u.distribut_money,u.user_money,sum(apl.money) as agent_per')->where('u.leader_level','<>','0')->where('apl.status','=','0')->where('apl.create_time','>',strtotime("-0 year -3 month -0 day"))->select();
+     
         if($allUserPerformace){
             $accountLogModel=Db::name('account_log');
             foreach($allUserPerformace as $ak=>$av){
-                $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();
+                $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();  
                 if($av['agent_per']>=$one_agent_level['describe']){
+                    $this->update_perlog_status($av['user_id']);
                     $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
                     // $addDistribut=$av['distribut_money']+$bonus;
                     $addDistribut=$av['user_money']+$bonus;
@@ -762,12 +764,22 @@ class System extends Base
                         $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>6]);
                     }else{
                         Db::name('users')->where('user_id','=',$av['user_id'])->update(['user_money'=>$addDistribut]);
-                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'级差奖领导奖','type'=>5]);
+                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'月度绩效奖励','type'=>5]);
                     }
                 }
             }
             $this->ajaxReturn(['status' => 1, 'msg' => '发放成功']);
         }
+        $this->ajaxReturn(['status' => -1, 'msg' => '没有新业绩可以发放']);
+   }
+
+   public function update_perlog_status($user_id)
+   {
+    $agent_performance_model=Db::name('agent_performance_log');
+     $agent_logs=$agent_performance_model->where(['user_id'=>$user_id])->field('performance_id')->where('create_time','>',strtotime("-0 year -3 month -0 day"))->select();
+     foreach($agent_logs as $ak=>$av){
+        $agent_performance_model->where(['performance_id'=>$av['performance_id']])->update(['status'=>1]);
+     }
    }
 
 

@@ -81,6 +81,7 @@ class Order extends MobileBase
      */
     public function order_list()
     {
+     
         $type = input('type');
         $is_shop = input('is_shop/d');
         $order = new OrderModel();
@@ -99,6 +100,7 @@ class Order extends MobileBase
                 }
             })
             ->count();
+        
         $Page = new Page($count, 10);
         $order_list = $order->where($where_arr)
             ->where(function ($query) use ($type) {
@@ -106,11 +108,21 @@ class Order extends MobileBase
                     $query->where("1=1".C(strtoupper($type)));
                 }
             })
-            ->limit($Page->firstRow . ',' . $Page->listRows)->order("order_id DESC")->select();
+            ->limit($Page->firstRow . ',' . $Page->listRows)->order("order_id DESC")->select();  
+         
         $this->assign('order_list', $order_list);
+
+
+        $order_period=Db::name('order_period')->alias('op')->join("order o","o.order_id=op.order_id")->where(['op.user_id'=>$this->user_id,'op.order_status'=>1,'op.shipping_status'=>0])->select();
+        
+        $this->assign([
+            'order_period'=>$order_period
+        ]);
+
         if ($_GET['is_ajax']) {
             return $this->fetch('ajax_order_list');
         }
+        // echo 111;die;        
         return $this->fetch();
     }
     //拼团订单列表
@@ -210,12 +222,28 @@ class Order extends MobileBase
         if ($order['prom_type'] == 5) {   //虚拟订单
             $this->redirect(U('virtual/virtual_order', ['order_id' => $id]));
         }
-
         $this->assign('order', $order);
         if($order['receive_btn']){
             //待收货详情
             return $this->fetch('wait_receive_detail');
         }
+        return $this->fetch();
+    }
+
+    public function order_detail_period()
+    {
+        $id = input('id/d', 0);
+        $order_period=Db::name('order_period')->where(['user_id'=>$this->user_id,'id'=>$id])->find();
+        if(!$order_period){
+            $this->error("没有获取到订单信息");
+        }
+        $arr=explode("-",$order_period['order_sn']);
+        $Order = new OrderModel();
+        $order = $Order::get(['order_sn'=>$arr[0], 'user_id' => $this->user_id]);
+        $this->assign([
+            'order'=>$order,
+            'order_period'=>$order_period,
+        ]);
         return $this->fetch();
     }
 
