@@ -64,6 +64,17 @@
                         <if condition="isset($agnet_name[$list.distribut_level])">
                         {$agnet_name[$list.distribut_level]}
                         </if>
+                        <if condition="$list['leader_level'] eq 0">
+                                --普通会员
+                                <elseif condition="$list.leader_level eq 1">
+                                --经理
+                                <elseif condition="$list.leader_level eq 2">
+                                --总监
+                                <elseif condition="$list.leader_level eq 3">
+                                --总裁
+                                <elseif condition="$list.leader_level eq 3">
+                                --合伙人
+                            </if>
                         </div>
                 </td>
                 <td align="left" class="">

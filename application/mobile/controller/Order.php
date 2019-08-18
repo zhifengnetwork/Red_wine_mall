@@ -112,17 +112,45 @@ class Order extends MobileBase
          
         $this->assign('order_list', $order_list);
 
+<<<<<<< HEAD
 
         $order_period=Db::name('order_period')->alias('op')->join("order o","o.order_id=op.order_id")->where(['op.user_id'=>$this->user_id,'op.order_status'=>1,'op.shipping_status'=>0])->select();
         
         $this->assign([
             'order_period'=>$order_period
+=======
+        if($type=='WAITSEND'){
+            $condition['op.order_status']=1;
+            $condition['op.shipping_status']=0;
+            $periodword="预发放期数：";
+        }else if($type=='FINISH'){
+            $condition['op.order_status']=1;
+            $condition['op.shipping_status']=1;
+            $periodword="已发放期数：";
+        }else{
+            $condition['op.shipping_status']=10;
+        }
+        $order_period=Db::name('order_period')->alias('op')->join("order o","o.order_id=op.order_id")->where(['op.user_id'=>$this->user_id])->where($condition)->select();
+
+        foreach($order_period as $opk=>$opv){
+            $goods_id=Db::name('order_goods')->where(['order_id'=>$opv['order_id']])->value('goods_id');
+            $order_period[$opk]['goods_id']=$goods_id;
+        }
+        
+        $this->assign([
+            'order_period'=>$order_period,
+            'periodword'=>$periodword
+>>>>>>> 9e948bfc6eb9ea8009880354a66889fe2e4d4915
         ]);
 
         if ($_GET['is_ajax']) {
             return $this->fetch('ajax_order_list');
+<<<<<<< HEAD
         }
         // echo 111;die;        
+=======
+        } 
+>>>>>>> 9e948bfc6eb9ea8009880354a66889fe2e4d4915
         return $this->fetch();
     }
     //拼团订单列表

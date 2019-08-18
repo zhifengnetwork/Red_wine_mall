@@ -276,6 +276,7 @@ class System extends Base
         $config=tpCache('commission');
         $confModel=Db::name('config');
 
+        $open_exchange=$confModel->where('name','=','open_exchange')->find();
         $pop_person=$confModel->where('name','=','pop_person_num')->find();
         $pop_person_city=$confModel->where('name','=','pop_person_num_city')->find();
         $pop_person_province=$confModel->where('name','=','pop_person_num_province')->find();
@@ -296,6 +297,7 @@ class System extends Base
        
       
         $this->assign([
+            'open_exchange'=>$open_exchange,
             'pop_person'=>$pop_person,
 
             'pop_person_city'=>$pop_person_city,
@@ -421,6 +423,13 @@ class System extends Base
         if(request()->isPost()){
             $data=input(); 
             $confModel=Db::name('config');
+            
+            $open_exchange= $confModel->where('name','=','open_exchange')->find();
+            if($open_exchange){
+                $confModel->update(['id'=>$open_exchange['id'],'name'=>'open_exchange','value'=>$data['open_exchange'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'open_exchange','value'=>$data['open_exchange'],'inc_type'=>'commison_conf']);
+            }
 
             $pop_person= $confModel->where('name','=','pop_person_num')->find();
             if($pop_person){
@@ -716,35 +725,6 @@ class System extends Base
 
          return $this->fetch();
      }
-
-
-      //每月定时发放极差奖领导奖  优化方法
-//       public function team_bonus(){
-//         $allUserPerformace=Db::name('users')->alias('u')->join('agent_performance ap','u.user_id=ap.user_id',LEFT)->field('u.leader_level,u.user_id,u.mobile,u.nickname,u.distribut_money,ap.ind_per,ap.agent_per,u.user_money')->where('u.leader_level','<>','0')->select();
-//         $time=time();
-//         if($allUserPerformace){
-//             $accountLogModel=Db::name('account_log');
-//             foreach($allUserPerformace as $ak=>$av){
-//                 $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();
-                
-//                 if($av['agent_per']>=$one_agent_level['describe']){
-//                     $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
-//                     // $addDistribut=$av['distribut_money']+$bonus;
-//                     $addDistribut=$av['user_money']+$bonus;
-//                     if($av['leader_level']==4){
-//                         $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>6]);
-//                     }else{
-//                         Db::name('users')->where('user_id','=',$av['user_id'])->update(['user_money'=>$addDistribut]);
-//                         $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'级差奖领导奖','type'=>5]);
-//                     }
-//                 }
-//             }
-//             $this->ajaxReturn(['status' => 1, 'msg' => '发放成功']);
-//         }
-//    }
-
-
-
 
     //   每月定时发放极差奖领导奖  优化方法
       public function team_bonus(){

@@ -22,7 +22,7 @@
                     </div>
                 </td>
                 <td align="left" class="">
-                    <div style="text-align: center; width: 80px;">
+                    <div style="text-align: center; width: 130px;">
                         <if condition="$list.agent_level eq 0">
                             普通会员
                             <elseif condition="$list.agent_level eq 1">
@@ -32,6 +32,20 @@
                             <elseif condition="$list.agent_level eq 3">
                             省级代理
                         </if>
+                        <if condition="$list.leader_level eq 0">
+                                --普通会员
+                                <elseif condition="$list.leader_level eq 1">
+                                --经理
+                                <elseif condition="$list.leader_level eq 2">
+                                --总监
+                                <elseif condition="$list.leader_level eq 3">
+                                --总裁
+                                <elseif condition="$list.leader_level eq 3">
+                                --合伙人
+                            </if>
+
+
+
                         </div>
                 </td>
                 <td align="left" class="">

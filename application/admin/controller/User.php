@@ -347,7 +347,7 @@ class User extends Base
         $strTable .= '<td style="text-align:center;font-size:12px;" width="100">会员昵称</td>';
         $strTable .= '<td style="text-align:center;font-size:12px;" width="*">会员等级</td>';
         $strTable .= '<td style="text-align:center;font-size:12px;" width="*">手机号</td>';
-        $strTable .= '<td style="text-align:center;font-size:12px;" width="*">邮箱</td>';
+        $strTable .= '<td style="text-align:center;font-size:12px;" width="*">上级信息</td>';
         $strTable .= '<td style="text-align:center;font-size:12px;" width="*">注册时间</td>';
         $strTable .= '<td style="text-align:center;font-size:12px;" width="*">最后登陆</td>';
         $strTable .= '<td style="text-align:center;font-size:12px;" width="*">余额</td>';
@@ -355,6 +355,7 @@ class User extends Base
         $strTable .= '<td style="text-align:center;font-size:12px;" width="*">累计消费</td>';
         $strTable .= '</tr>';
         $user_ids = I('user_ids');
+        $level_name = ['leader_level'=>['0' => '普通会员', '1' => '经理', '2' => '总监', '3' => '总裁', '4' => '合伙人'], 'agent_level'=>['1' => '县级代理', '2' => '市级代理', '3' => '省级代理']];
         if ($user_ids) {
             $condition['user_id'] = ['in', $user_ids];
         } else {
@@ -371,12 +372,13 @@ class User extends Base
             $userList = M('users')->where($condition)->order('user_id')->limit($start, 5000)->select();
             if (is_array($userList)) {
                 foreach ($userList as $k => $val) {
+                    $nickname = M('users')->where(['user_id'=>$val['first_leader']])->field('user_id,nickname')->find();
                     $strTable .= '<tr>';
                     $strTable .= '<td style="text-align:center;font-size:12px;">' . $val['user_id'] . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['nickname'] . ' </td>';
-                    $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['level'] . '</td>';
+                    $strTable .= '<td style="text-align:left;font-size:12px;">' . $level_name['leader_level'][$val['leader_level']].'---'. $level_name['agent_level'][$val['agent_level']] . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['mobile'] . '</td>';
-                    $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['email'] . '</td>';
+                    $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['first_leader'] . '/' . $nickname['nickname'] . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . date('Y-m-d H:i', $val['reg_time']) . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . date('Y-m-d H:i', $val['last_login']) . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['user_money'] . '</td>';

@@ -144,6 +144,12 @@ class User extends MobileBase
         $waitreceive=$order_model->where(['user_id'=>$user_id,'order_status'=>1,'shipping_status'=>1])->count();
         $waitccomment=$order_model->where(['user_id'=>$user_id,'order_status'=>2])->count();
 
+        $waitsent_period=Db::name('order_period')->where(["user_id"=>$user_id,'order_status'=>1,'shipping_status'=>0])->count();
+        $waitreceive_period=Db::name('order_period')->where(['user_id'=>$user_id,'order_status'=>1,'shipping_status'=>1])->count();
+
+        $waitsend=$waitsend+$waitsent_period;
+        $waitreceive=$waitreceive+$waitreceive_period;
+
         $this->assign([
             'agnet_name' => $agnet_name,
             'agent_level' => $agent_level,
@@ -788,7 +794,7 @@ class User extends MobileBase
             $performance = 0;
         }
         $performance = bcadd($performance, '0.00', 2);
-        $bonus = Db::name('account_log')->where(['user_id' => $user_id, 'type' => ['in', '2,3,4,5']])->sum('user_money');
+        $bonus = Db::name('account_log')->where(['user_id' => $user_id, 'type' => ['in', '2,3,4,5']])->sum('pay_points');
         $bonus = bcadd($bonus, '0.00', 2);
 
         $this->assign('performance', $performance);
@@ -948,9 +954,12 @@ class User extends MobileBase
     //处理转账
     public function exchange_money_handle()
     {
+  
 
         $time = time();
         $data = input('post.');
+
+        $bonus_cash_exchange=Db::name('config')->where(['name'=>'bonus_cash_exchange'])->value('value');
 
         if (!$data['end_user_id']) {
             $this->ajaxReturn(['status' => -1, 'msg' => '转入人不能为空']);
@@ -980,10 +989,11 @@ class User extends MobileBase
         $data2['user_id'] = $data['end_user_id'];
         $data2['out_user_id'] = $this->user_id;
         $data2['in_user_id'] = $data['end_user_id'];
-        $data2['exchange_money'] = $data['exchange_money'];
+        $data2['exchange_money'] = $data['exchange_money']*$bonus_cash_exchange;   //被转入的  转成比例金额  1/bonus_cash_exchange
         $data2['description'] = $data['description'];
         $data2['create_time'] = $time;
-        $data2['detail'] = "+{$data['exchange_money']}";
+        $data2_detail=$data['exchange_money']*$bonus_cash_exchange;
+        $data2['detail'] = "+{$data2_detail}";
         $data2['type'] = 2;
 
         $data3['user_id'] = $this->user_id;;
@@ -993,18 +1003,21 @@ class User extends MobileBase
 
 
         $data4['user_id'] = $data['end_user_id'];
-        $data4['user_money'] = $data['exchange_money'];
+        $data4['user_money'] = $data['exchange_money']*$bonus_cash_exchange;
         $data4['desc'] = $user['nickname']."\n\r".$user['mobile'].'转账给我';
         $data4['change_time'] = time();
 
+        $myUser = Db::name('users')->where('user_id', '=', $data1['user_id'])->find();
+        $minusMoney = $myUser['user_money'] * 1 - $data['exchange_money'] * 1;
+        if($minusMoney<0){
+            $this->ajaxReturn(['status' => 0, 'msg' => '转载金额不能大于余额']);
+        }
+
         Db::startTrans();
         try {
-            $myUser = Db::name('users')->where('user_id', '=', $data1['user_id'])->find();
-            $minusMoney = $myUser['user_money'] * 1 - $data['exchange_money'] * 1;
             Db::name('users')->where('user_id', '=', $data1['user_id'])->update(['user_money' => $minusMoney]);
-
             $otherUser = Db::name('users')->where('user_id', '=', $data['end_user_id'])->find();
-            $addMoney = $otherUser['user_money'] + $data['exchange_money'];
+            $addMoney = $otherUser['user_money'] + $data['exchange_money']*$bonus_cash_exchange;
             Db::name('users')->where('user_id', '=', $data['end_user_id'])->update(['user_money' => $addMoney]);
             //                $res1 = Db::name('exchange_money')->insert($data1);
             $res2 = Db::name('exchange_money')->insert($data2);
@@ -1594,6 +1607,8 @@ class User extends MobileBase
         $logic = new UsersLogic();
         $data = $logic->get_account_log($this->user_id, I('get.type'));
         $account_log = $data['result'];
+        $open_exchange=Db::name('config')->where(['name'=>'open_exchange'])->value('value');
+        $this->assign('open_exchange',$open_exchange);
         $this->assign('user', $user);
         $this->assign('account_log', $account_log);
         $this->assign('page', $data['show']);

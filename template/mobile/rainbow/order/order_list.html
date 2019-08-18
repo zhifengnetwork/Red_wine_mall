@@ -1,5 +1,10 @@
 <include file="public/header" title="我的订单" body="g4"/>
 <include file="public/header_nav" title="我的订单" href="{:U('/Mobile/User/index')}"/>
+<style>
+.period{
+    margin-bottom: 15px;
+}
+</style>
 <div class="tit-flash-sale p mytit_flash">
     <div class="maleri30">
         <ul class="">
@@ -23,6 +28,7 @@
     <!--订单列表-s-->
     <div class="ajax_return">
         <if condition="count($order_list) eq 0">
+            <notpresent name="order_period">
             <!--没有内容时-s--->
             <div class="comment_con p">
                 <div class="none">
@@ -37,11 +43,15 @@
                 </div>
             </div>
             <!--没有内容时-e--->
+            </notpresent>
         </if>
         <!-- <volist name="order_list" id="order">
             111
         </volist> -->
+
+
         <volist name="order_list" id="order">
+         
             <div class="mypackeg ma-to-20 getmore">
                 <div class="packeg p">
                     <div class="maleri30">
@@ -57,10 +67,11 @@
                 <div class="shop-mfive p">
                     <div class="maleri30">
                             <div class="sc_list se_sclist paycloseto">
+                                    <a href="{:U('/Mobile/Order/order_detail',array('id'=>$order['order_id']))}">
                                        <div class="shopimg fl">
                                             <img src="{$order[order_goods][0][goods_id]|goods_thum_images=200,200}">
                                         </div>
-
+                                    </a>
                                         <div class="deleshow fr">
                                                 <div class="deletes">
                                                         <span class="similar-product-text">{$order[order_goods][0][goods_name]|getSubstr=0,20}</span>
@@ -107,7 +118,6 @@
                 <div class="shop-rebuy-price p">
                     <div class="maleri30">
                 <span class="price-alln">
-                   
                     <span class="red">￥{$order['total_amount']}</span>
                     <!-- <span class="threel" id="goodsnum">共{$order.count_goods_num}件</span> -->
                  
@@ -133,7 +143,81 @@
                     </div>
                 </div>
             </div>
+         
         </volist>
+
+            <present name="order_period">
+                <volist name="order_period"  id="op">
+            <div class="mypackeg ma-to-20 getmore">
+                    <div class="packeg p">
+                        <div class="maleri30">
+                            <div class="fl">
+                                <h1><span></span><span class="bgnum"></span></h1>
+                                <p class="bgnum"><span>订单编号:</span><span>{$op.order_sn}</span></p>
+                            </div>
+                            <div class="fr">
+                                <span>{$order['order_status_detail']}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{:U('/Mobile/Order/order_detail_period',array('id'=>$op['id']))}">
+                    <div class="shop-mfive p">
+                        <div class="maleri30">
+                                <div class="sc_list se_sclist paycloseto">
+                                           <div class="shopimg fl">
+                                                <!-- <img src="{$order[order_goods][0][goods_id]|goods_thum_images=200,200}"> -->
+                                                <img src="{$op[goods_id]|goods_thum_images=200,200}">
+                                            </div>
+                                            <div class="deleshow fr">
+                                                    <div class="deletes">
+                                                            <span class="similar-product-text">{$op[goods_name]|getSubstr=0,20}</span>
+                                                    </div>
+                                            </div>
+                                            <div class="deleshow fr">
+                                                            <div class="period">礼盒数量：{$op['person_total']}</div>
+                                                            <div class="period">每期发放量：{$op['person_num']}</div>
+                                                            <div class="period">已发放数量: {$op['release_per_num']}</div>
+                                                            <div class="period">还剩发放数量：{$op['person_total']-$op['release_per_num']}</div>
+                                            </div>
+                                    </div>
+                        </div>
+                    </div>
+                </a>
+                    <div class="shop-rebuy-price p">
+                        <div class="maleri30">
+                    <span class="price-alln">
+                        <span class="red">￥{$op['total_amount']}  </span>
+
+                        <span>&nbsp;&nbsp;&nbsp;{$periodword}第{$op['period']}期</span>
+
+                    </span>
+                            <if condition="$order.pay_btn eq 1">
+                                <a class="shop-rebuy paysoon" href="{:U('Mobile/Cart/cart4',array('order_id'=>$order['order_id']))}">立即付款</a>
+                            </if>
+                            <if condition="($order.cancel_btn eq 1) and ($order.is_distribut neq 1)">
+                                <if condition="$order.pay_status eq 0">
+                                    <a class="shop-rebuy " onClick="cancel_order({$order.order_id})">取消订单</a>
+                                </if>
+                             
+                            </if>
+                            <if condition="$order.receive_btn eq 1 && order.pay_status eq 1">
+                                <a class="shop-rebuy paysoon" onclick="orderConfirm({$order.order_id})">确认收货</a>
+                            </if>
+                            <if condition="$order.comment_btn eq 1">
+                                <a class="shop-rebuy" href="{:U('/Mobile/Order/comment')}">评价</a>
+                            </if>
+                            <if condition="$order.shipping_btn eq 1 && $order.shipping_name neq '' ">
+                                <a class="shop-rebuy" href="{:U('Mobile/Order/express',array('order_id'=>$order['order_id']))}">查看物流</a>
+                            </if>
+                        </div>
+                    </div>
+                </div>
+                </volist>
+            </present>
+
+
+          
+      
     </div>
     <!--订单列表-e-->
 <script type="text/javascript" src="__STATIC__/js/sourch_submit.js"></script>

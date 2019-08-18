@@ -141,7 +141,12 @@ class UserInvite extends Model
                                                 Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$upPeriod)->update(['day_release'=>1]);
                                         }
                                         Db::name('pop_period')->where('user_id','=',$recommendInfo['user_id'])->where('period','=',$recommendInfo['default_period'])->update(['end_time'=>$time]);
+<<<<<<< HEAD
                                         Db::name('order_period')->where(['user_id'=>$recommendInfo['user_id'],'period'=>$recommendInfo['default_period']])->update(['order_status'=>1]);
+=======
+                                        // Db::name('order_period')->where(['user_id'=>$recommendInfo['user_id'],'period'=>$recommendInfo['default_period']])->update(['order_status'=>1]);
+                                        Db::name('order_period')->where(['user_id'=>$recommendInfo['user_id'],'period'=>$upPeriod])->update(['order_status'=>1]);
+>>>>>>> 9e948bfc6eb9ea8009880354a66889fe2e4d4915
                                     }else{
                                         Db::name('users')->where('user_id','=',$recommendInfo['user_id'])->update(['agent_level'=>0,'default_period'=>0,'add_agent_time'=>0]);
                                         Db::name('pop_period')->where("user_id", '=', $recommendInfo['user_id'])->delete();

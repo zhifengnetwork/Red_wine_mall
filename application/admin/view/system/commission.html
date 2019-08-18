@@ -30,6 +30,18 @@
     <form method="post" enctype="multipart/form-data" id="handlepost" action="{:U('System/commison_conf')}">
         <div class="ncap-form-default">
             <div id="switch_on_off" >
+
+            <dl class="row">
+                    <dt class="tit">
+                        <label for="ac_sort">是否启用转账功能：</label>
+                    </dt>
+                    <dd class="opt">
+                        <input type="radio" name="open_exchange" value="1" <if condition="$open_exchange['value'] eq 1"> checked="checked"</if>> 开启
+                        <input type="radio" name="open_exchange" value="0" <if condition="$open_exchange['value'] eq 0"> checked="checked"</if>> 关闭
+                        <span class="err"></span>
+                        <p class="notic"></p>
+                    </dd>
+             </dl>	   	
         
             <dl class="row">
                 <dt class="tit">
