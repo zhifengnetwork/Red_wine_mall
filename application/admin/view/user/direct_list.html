@@ -61,20 +61,19 @@
                 </td>
                 <td align="left" class="">
                     <div style="text-align: center; width: 200px;">
-                        <if condition="isset($agnet_name[$list.distribut_level])">
-                        {$agnet_name[$list.distribut_level]}
+                        <if condition="$list['agent_level'] eq 0">
+                            普通会员
+                            <elseif condition="$list.agent_level eq 1">
+                            县级代理
+                            <elseif condition="$list.agent_level eq 2">
+                            市级代理
+                            <elseif condition="$list.agent_level eq 3">
+                            省级代理
                         </if>
-                        <if condition="$list['leader_level'] eq 0">
-                                --普通会员
-                                <elseif condition="$list.leader_level eq 1">
-                                --经理
-                                <elseif condition="$list.leader_level eq 2">
-                                --总监
-                                <elseif condition="$list.leader_level eq 3">
-                                --总裁
-                                <elseif condition="$list.leader_level eq 3">
-                                --合伙人
-                            </if>
+                        <if condition="isset($agnet_name[$list.distribut_level])">
+                            --{$agnet_name[$list.distribut_level]}
+                        </if>
+                      
                         </div>
                 </td>
                 <td align="left" class="">

@@ -132,7 +132,6 @@ class User extends Base
         $list = Db::query("select * from `tp_users` where `first_leader` > 0 and `first_leader` = $id");
         $count = count($list);
         $agnet_name = $this->all_level();
-
         $this->assign('agnet_name', $agnet_name);
 
         $this->assign('list', $list);
