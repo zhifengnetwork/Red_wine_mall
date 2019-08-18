@@ -959,6 +959,7 @@ class User extends MobileBase
         $data = input('post.');
 
         $bonus_cash_exchange=Db::name('config')->where(['name'=>'bonus_cash_exchange'])->value('value');
+        
 
         if (!$data['end_user_id']) {
             $this->ajaxReturn(['status' => -1, 'msg' => '转入人不能为空']);
@@ -966,6 +967,11 @@ class User extends MobileBase
         if (!$data['exchange_money']) {
             $this->ajaxReturn(['status' => -1, 'msg' => '转出金额不能为空']);
         }
+
+        if($data['exchange_money']<$bonus_cash_exchange){
+            $this->ajaxReturn(['status' => -1, 'msg' => "转账比例为{$bonus_cash_exchange}:1 转账金额不能低于{$bonus_cash_exchange}"]);
+        }
+
         if (!$data['out_user_in'] == $data['in_user_id']) {
             $this->ajaxReturn(['status' => -1, 'msg' => '不能给自己转账']);
         }
