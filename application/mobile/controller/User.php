@@ -2883,7 +2883,7 @@ class User extends MobileBase
             if (encrypt($data['paypwd']) != $this->user['paypwd']) {
                 $this->ajaxReturn(['status' => 0, 'msg' => '支付密码错误']);
             }
-            if ($data['money'] > $this->user['user_money']-$this->user['frozen_money']) {
+            if ($data['money'] > $this->user['user_money']) {
                 $this->ajaxReturn(['status' => 0, 'msg' => "本次提现余额不足"]);
             }
             if ($data['money'] <= 0) {
@@ -2901,7 +2901,7 @@ class User extends MobileBase
             //            if ($total_money + $data['money'] > $this->user['user_money']) {
             //                $this->ajaxReturn(['status'=>0, 'msg'=>"您有提现申请待处理，本次提现余额不足"]);
             //            }
-            if ($data['money'] > $this->user['user_money']-$this->user['frozen_money']) {
+            if ($data['money'] > $this->user['user_money']) {
                 $this->ajaxReturn(['status' => 0, 'msg' => "本次提现余额不足"]);
             }
 
@@ -3037,7 +3037,7 @@ class User extends MobileBase
         $this->assign('user_extend', $user_extend);
         $this->assign('manages', $manages);
         $this->assign('cash_config', tpCache('cash')); //提现配置项
-        $this->assign('user_money', $this->user['user_money']-$this->user['frozen_money']);    //用户余额
+        $this->assign('user_money', $this->user['user_money']);    //用户余额
         //        $this->assign('openid',$openid);    //用户绑定的微信openid
         return $this->fetch();
     }

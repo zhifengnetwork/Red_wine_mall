@@ -147,22 +147,6 @@ class Order extends Base {
 
     public function ajaxorderperiod()
     {
-<<<<<<< HEAD
-        $condition=true;
-        $begin = $this->begin;
-        $end = $this->end;
-        $keyType = I("key_type");
-        $keywords = I('keywords','','trim');
-        $consignee =  ($keyType && $keyType == 'consignee') ? $keywords : I('consignee','','trim');
-        $order_sn = ($keyType && $keyType == 'order_sn') ? $keywords : I('order_sn') ;
-        $sort_order = 'id asc';
-        $count = Db::name('order_period')->where($condition)->count();
-        $Page  = new AjaxPage($count,20);
-        $show = $Page->show();
-        $orderList=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.order_status=:order_status",['order_status'=>1])->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id")->limit($Page->firstRow,$Page->listRows)->select();
-
-        $this->assign('orderList',$orderList);
-=======
         // $condition=true;
         // $begin = $this->begin;
         // $end = $this->end;
@@ -195,7 +179,6 @@ class Order extends Base {
         $orderList=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.order_status=:order_status",['order_status'=>1])->where($condition)->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id,op.order_id")->limit($Page->firstRow,$Page->listRows)->select();
         $this->assign('orderList',$orderList);
 
->>>>>>> 9e948bfc6eb9ea8009880354a66889fe2e4d4915
         $this->assign('page',$show);// 赋值分页输出
         $this->assign('pager',$Page);
         return $this->fetch();
@@ -220,14 +203,11 @@ class Order extends Base {
         if($delivery_record){
             $order['invoice_no'] = $delivery_record[count($delivery_record)-1]['invoice_no'];
         }
-<<<<<<< HEAD
-=======
 
         $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
         $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
         $spec=implode(",",$spec_good);
         $this->assign('spec',$spec);
->>>>>>> 9e948bfc6eb9ea8009880354a66889fe2e4d4915
         $this->assign('order',$order);
         $this->assign('orderGoods',$orderGoods);
         $this->assign('delivery_record',$delivery_record);//发货记录
@@ -270,8 +250,6 @@ class Order extends Base {
         if($delivery_record){
             $order['invoice_no'] = $delivery_record[count($delivery_record)-1]['invoice_no'];
         }
-<<<<<<< HEAD
-=======
 
         $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
         $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
@@ -279,7 +257,6 @@ class Order extends Base {
 
         $this->assign('spec',$spec);
 
->>>>>>> 9e948bfc6eb9ea8009880354a66889fe2e4d4915
         $this->assign('order',$order);
         $this->assign('orderGoods',$orderGoods);
         $this->assign('delivery_record',$delivery_record);//发货记录
