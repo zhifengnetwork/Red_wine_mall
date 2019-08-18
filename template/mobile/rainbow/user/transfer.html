@@ -68,6 +68,7 @@
     <div class="transfer_top">
         <div class="top_box">时间</div>
         <div class="top_box">名称</div>
+        <div class="top_box">比例</div>
         <div class="top_box">金额</div>
         <div class="top_box">备注</div>
     </div>
@@ -83,6 +84,7 @@
                 <p>{$v[nickname]}</p>
                 <span>ID{$v[user_id]}</span>
             </div>
+            <div class="top_box">{$v[rate_desc]}</div>
             <div class="top_box">{$v[exchange_money]}</div>
             <div class="top_box">
                 <switch $v['type']>

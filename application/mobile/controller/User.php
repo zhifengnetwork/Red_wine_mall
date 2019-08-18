@@ -955,7 +955,6 @@ class User extends MobileBase
     public function exchange_money_handle()
     {
   
-
         $time = time();
         $data = input('post.');
 
@@ -989,11 +988,12 @@ class User extends MobileBase
         $data2['user_id'] = $data['end_user_id'];
         $data2['out_user_id'] = $this->user_id;
         $data2['in_user_id'] = $data['end_user_id'];
-        $data2['exchange_money'] = $data['exchange_money']*$bonus_cash_exchange;   //被转入的  转成比例金额  1/bonus_cash_exchange
+        $data2['exchange_money'] = $data['exchange_money']*(1/$bonus_cash_exchange);   //被转入的  转成比例金额  1/bonus_cash_exchange
         $data2['description'] = $data['description'];
         $data2['create_time'] = $time;
-        $data2_detail=$data['exchange_money']*$bonus_cash_exchange;
+        $data2_detail=$data['exchange_money']*(1/$bonus_cash_exchange);
         $data2['detail'] = "+{$data2_detail}";
+        $data2['rate_desc'] = "{$bonus_cash_exchange}:1";
         $data2['type'] = 2;
 
         $data3['user_id'] = $this->user_id;;
@@ -1003,7 +1003,7 @@ class User extends MobileBase
 
 
         $data4['user_id'] = $data['end_user_id'];
-        $data4['user_money'] = $data['exchange_money']*$bonus_cash_exchange;
+        $data4['user_money'] = $data['exchange_money']*(1/$bonus_cash_exchange);
         $data4['desc'] = $user['nickname']."\n\r".$user['mobile'].'转账给我';
         $data4['change_time'] = time();
 
@@ -1017,7 +1017,7 @@ class User extends MobileBase
         try {
             Db::name('users')->where('user_id', '=', $data1['user_id'])->update(['user_money' => $minusMoney]);
             $otherUser = Db::name('users')->where('user_id', '=', $data['end_user_id'])->find();
-            $addMoney = $otherUser['user_money'] + $data['exchange_money']*$bonus_cash_exchange;
+            $addMoney = $otherUser['user_money'] + $data['exchange_money']*(1/$bonus_cash_exchange);
             Db::name('users')->where('user_id', '=', $data['end_user_id'])->update(['user_money' => $addMoney]);
             //                $res1 = Db::name('exchange_money')->insert($data1);
             $res2 = Db::name('exchange_money')->insert($data2);
