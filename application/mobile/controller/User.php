@@ -794,7 +794,7 @@ class User extends MobileBase
             $performance = 0;
         }
         $performance = bcadd($performance, '0.00', 2);
-        $bonus = Db::name('account_log')->where(['user_id' => $user_id, 'type' => ['in', '2,3,4,5']])->sum('user_money');
+        $bonus = Db::name('account_log')->where(['user_id' => $user_id, 'type' => ['in', '2,3,4,5']])->sum('pay_points');
         $bonus = bcadd($bonus, '0.00', 2);
 
         $this->assign('performance', $performance);
@@ -1003,10 +1003,15 @@ class User extends MobileBase
         $data4['desc'] = $user['nickname']."\n\r".$user['mobile'].'转账给我';
         $data4['change_time'] = time();
 
+        $myUser = Db::name('users')->where('user_id', '=', $data1['user_id'])->find();
+        $minusMoney = $myUser['user_money'] * 1 - $data['exchange_money'] * 1;
+        if($minusMoney<0){
+            $this->ajaxReturn(['status' => 0, 'msg' => '转载金额不能大于余额']);
+        }
+
         Db::startTrans();
         try {
-            $myUser = Db::name('users')->where('user_id', '=', $data1['user_id'])->find();
-            $minusMoney = $myUser['user_money'] * 1 - $data['exchange_money'] * 1;
+          
             Db::name('users')->where('user_id', '=', $data1['user_id'])->update(['user_money' => $minusMoney]);
 
             $otherUser = Db::name('users')->where('user_id', '=', $data['end_user_id'])->find();
