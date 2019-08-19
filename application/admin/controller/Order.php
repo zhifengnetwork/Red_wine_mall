@@ -1406,7 +1406,7 @@ class Order extends Base {
         $orderList = Db::name('order')->field("*,FROM_UNIXTIME(add_time,'%Y-%m-%d') as create_time")->where($where)->order('order_id')->select();
     	$strTable ='<table width="500" border="1">';
     	$strTable .= '<tr>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;width:120px;">订单编号</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px; width:120px;">订单编号</td>';
     	$strTable .= '<td style="text-align:center;font-size:12px;" width="100">日期</td>';
     	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">收货人</td>';
     	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">收货地址</td>';
@@ -1451,6 +1451,88 @@ class Order extends Base {
 	    		unset($orderGoods);
                 $strTable .= '<td style="text-align:left;font-size:12px;">'.$goods_num.' </td>';
 	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$strGoods.' </td>';
+	    		$strTable .= '</tr>';
+	    	}
+	    }
+    	$strTable .='</table>';
+    	unset($orderList);
+    	downloadExcel($strTable,'order');
+    	exit();
+    }
+
+
+
+    /**
+     * 导出订单期数
+     */
+    public function export_order_period()
+    {
+    	//搜索条件
+        $order_status = I('order_status','');
+        $order_ids = I('order_ids');
+        $prom_type = I('prom_type'); //订单类型
+        $keyType =   I("key_type");  //查找类型
+        $keywords = I('keywords','','trim');
+        $where= ['add_time'=>['between',"$this->begin,$this->end"]];
+        if(!empty($keywords)){
+            $keyType == 'mobile'   ? $where['mobile']  = $keywords : false;
+            $keyType == 'order_sn' ? $where['order_sn'] = $keywords: false;
+            $keyType == 'consignee' ? $where['consignee'] = $keywords: false;
+        }
+        $prom_type != '' ? $where['prom_type'] = $prom_type : $where['prom_type'] = ['lt',5];
+        if($order_status>-1 && $order_status != ''){
+            $where['order_status'] = $order_status;
+        }
+        if($order_ids){
+            $where['order_id'] = ['in', $order_ids];
+        }
+
+        $orderList = Db::name('order_period')->alias('op')->join('order o','op.order_id=o.order_id')->field("op.*,o.consignee")->where(['op.order_status'=>1])->order('id')->select();
+        $order_status_arr=[0=>'异常',1=>'正常'];
+        $level_arr=[0=>'普通商品',1=>'县级代理',2=>'市级代理',3=>'省级代理'];
+
+    	$strTable ='<table width="500" border="1">';
+    	$strTable .= '<tr>';
+    	$strTable .= '<td style="text-align:center;font-size:12px; width:120px;">用户id</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px; width:120px;">收货人</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="100">礼盒名称</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">礼盒数量</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">该期人数</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">已经发放的人数</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">期数</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">礼包等级</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">订单状态</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">物流状况</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">详细地址</td>';
+        $strTable .= '<td style="text-align:center;font-size:12px;" width="*">手机号码</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width:120px;>原订单编号</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">物流名称</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">物流code</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width:120px;>快递单号</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">订单id</td>';
+    	$strTable .= '</tr>';
+	    if(is_array($orderList)){
+	    	$region	= get_region_list();
+	    	foreach($orderList as $k=>$val){
+	    		$strTable .= '<tr>';
+	    		$strTable .= '<td style="text-align:center;font-size:12px;">&nbsp;'.$val['user_id'].'</td>';
+	    		$strTable .= '<td style="text-align:center;font-size:12px;">&nbsp;'.$val['consignee'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['goods_name'].' </td>';	    		
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['person_total'].'</td>';
+                
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['person_num'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['release_per_num'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['period'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$level_arr[$val['level']].'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$order_status_arr[$val['order_status']].'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$this->shipping_status[$val['shipping_status']].'</td>';
+                $strTable .= '<td style="text-align:left;font-size:12px;">'."{$region[$val['province']]},{$region[$val['city']]},{$region[$val['district']]},{$region[$val['twon']]}{$val['address']}".' </td>';
+                $strTable .= '<td style="text-align:left;font-size:12px;">'.$val['mobile'].'</td>';
+                $strTable .= '<td style="text-align:left;font-size:12px; width:120px;">&nbsp;'.$val['order_sn'].'</td>';
+                $strTable .= '<td style="text-align:left;font-size:12px;">'.$val['shipping_name'].'</td>';
+                $strTable .= '<td style="text-align:left;font-size:12px;">'.$val['shipping_code'].'</td>';
+                $strTable .= '<td style="text-align:left;font-size:12px; width:120px;">&nbsp;'.$val['invoice_no'].'</td>';
+                $strTable .= '<td style="text-align:left;font-size:12px;">'.$val['order_id'].'</td>';
 	    		$strTable .= '</tr>';
 	    	}
 	    }
