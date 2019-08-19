@@ -1551,6 +1551,75 @@ class Order extends Base {
     }
 
     /**
+     * 导出订单期数
+     */
+    public function export_count_period()
+    {
+    	//搜索条件
+        $order_status = I('order_status','');
+        $order_ids = I('order_ids');
+        $prom_type = I('prom_type'); //订单类型
+        $keyType =   I("key_type");  //查找类型
+        $keywords = I('keywords','','trim');
+        $where= ['add_time'=>['between',"$this->begin,$this->end"]];
+        if(!empty($keywords)){
+            $keyType == 'mobile'   ? $where['mobile']  = $keywords : false;
+            $keyType == 'order_sn' ? $where['order_sn'] = $keywords: false;
+            $keyType == 'consignee' ? $where['consignee'] = $keywords: false;
+        }
+        $prom_type != '' ? $where['prom_type'] = $prom_type : $where['prom_type'] = ['lt',5];
+        if($order_status>-1 && $order_status != ''){
+            $where['order_status'] = $order_status;
+        }
+        if($order_ids){
+            $where['order_id'] = ['in', $order_ids];
+        }
+
+        // $orderList = Db::name('order_period')->alias('op')->join('order o','op.order_id=o.order_id')->field("op.*,o.consignee")->where(['op.order_status'=>1])->order('id')->select();
+       
+        $orderList=Db::name('users')->where('agent_level','<>',0)->select();
+
+        $order_status_arr=[0=>'异常',1=>'正常'];
+        $level_arr=[0=>'普通会员',1=>'县级代理',2=>'市级代理',3=>'省级代理'];
+
+    	$strTable ='<table width="500" border="1">';
+    	$strTable .= '<tr>';
+    	$strTable .= '<td style="text-align:center;font-size:12px; width:120px;">用户id</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px; width:120px;">用户名</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="100">等级</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">当前期数</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">加入代理时间</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">礼盒数量</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">每期发放数量</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">已发放数量</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">还剩发放数量</td>';
+    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">上期结束时间</td>';
+    	$strTable .= '</tr>';
+	    if(is_array($orderList)){
+	    	// $region	= get_region_list();
+	    	foreach($orderList as $k=>$val){
+	    		$strTable .= '<tr>';
+	    		$strTable .= '<td style="text-align:center;font-size:12px;">&nbsp;'.$val['user_id'].'</td>';
+	    		$strTable .= '<td style="text-align:center;font-size:12px;">&nbsp;'.$val['nickname'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$level_arr[$val['agent_level']].' </td>';	    		
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['default_period'].'</td>';
+                
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.date("Y-m-d",$val['add_agent_time']).'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.period_total($val['user_id']).'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.period_num($val['user_id']).'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.poped_num($val['user_id']).'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.less_num($val['user_id']).'</td>';
+	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.last_end_time($val['user_id']).'</td>';
+	    		$strTable .= '</tr>';
+	    	}
+	    }
+    	$strTable .='</table>';
+    	unset($orderList);
+    	downloadExcel($strTable,'order');
+    	exit();
+    }
+
+    /**
      * 退货单列表
      */
     public function return_list(){
