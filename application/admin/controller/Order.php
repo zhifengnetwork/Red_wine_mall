@@ -1446,9 +1446,10 @@ class Order extends Base {
 	    		$strGoods="";
                 $goods_num = 0;
 	    		foreach($orderGoods as $goods){
-                    $sec_goods=D('spec_goods_price')->where('goods_id='.$goods['goods_id'])->column('key_name');
-                    $spec_key_name=implode(",",$sec_goods);
-
+                    // $sec_goods=D('spec_goods_price')->where('goods_id='.$goods['goods_id'])->column('key_name');
+                    // $spec_key_name=implode(",",$sec_goods);
+                    $spec_key_name=Db::name('order_goods')->where(['order_id'=>$goods['order_id']])->value('spec_key_name');
+        
                     $goods_num = $goods_num + $goods['goods_num'];
 	    			$strGoods .= "商品编号：".$goods['goods_sn']." 商品名称：".$goods['goods_name'];
 	    			// if ($goods['spec_key_name'] != '') $strGoods .= " 规格：".$goods['spec_key_name'];
