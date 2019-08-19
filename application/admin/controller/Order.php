@@ -205,9 +205,12 @@ class Order extends Base {
         }
 
         $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
-        $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
-        $spec=implode(",",$spec_good);
-        $this->assign('spec',$spec);
+        // $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
+        // $spec=implode(",",$spec_good);
+        // $this->assign('spec',$spec);
+        $spec_key_name=Db::name('order_goods')->where(['order_id'=>$order_id])->value('spec_key_name');
+        $this->assign('spec',$spec_key_name);
+
         $this->assign('order',$order);
         $this->assign('orderGoods',$orderGoods);
         $this->assign('delivery_record',$delivery_record);//发货记录
@@ -252,10 +255,12 @@ class Order extends Base {
         }
 
         $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
-        $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
-        $spec=implode(",",$spec_good);
+        // $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
+        // $spec=implode(",",$spec_good);
 
-        $this->assign('spec',$spec);
+        // $this->assign('spec',$spec);
+        $spec_key_name=Db::name('order_goods')->where(['order_id'=>$order_id])->value('spec_key_name');
+        $this->assign('spec',$spec_key_name);
 
         $this->assign('order',$order);
         $this->assign('orderGoods',$orderGoods);
@@ -592,14 +597,16 @@ class Order extends Base {
         $order_id = input('order_id', 0);
         $orderModel = new OrderModel();
         $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();
-        $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
-        $spec=implode(",",$spec_good);
+        // $spec_good=Db::name('spec_goods_price')->where(['goods_id'=>$order_goods['goods_id']])->column("key_name");
+        // $spec=implode(",",$spec_good);
+        $spec_key_name=Db::name('order_goods')->where(['order_id'=>$order_id])->value('spec_key_name');
         $order = $orderModel::get(['order_id'=>$order_id]);
         if(empty($order)){
             $this->error('订单不存在或已被删除');
         }
         $this->assign('order', $order);
-        $this->assign('spec',$spec);
+        // $this->assign('spec',$spec);
+        $this->assign('spec',$spec_key_name);
         return $this->fetch();
     }
 
