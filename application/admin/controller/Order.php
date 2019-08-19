@@ -1066,7 +1066,9 @@ class Order extends Base {
     *批量发货
     */
     public function delivery_batch(){
-        return false;
+        // echo 111;die;
+        $this->error("暂时不开放批量发货");
+        // return false;
 
     }
 

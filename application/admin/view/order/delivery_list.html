@@ -106,7 +106,7 @@
     </div>
 
         <div class="tDiv">
-      <div class="tDiv2" id="deliver">
+      <!-- <div class="tDiv2" id="deliver">
         <div class="fbutton"> 
           <a href="javascript:void(0)" onclick="test(1);">
               <div class="add" title="选定行数据执行发货操作">
@@ -114,7 +114,7 @@
               </div>
             </a> 
           </div>
-      </div>
+      </div> -->
 
       <div class="tDiv2">
         <div class="fbutton"> 
@@ -239,10 +239,12 @@
     }
 
     function test(type){
+      // alert(type);return false;
       var ids='';
       $("tr[class='trSelected']").each(function(){ 
         ids+=$(this).attr('data-order-id')+',';
       }) 
+      // alert(ids);return false; //1,
       if(!ids){
         layer.msg('未选择订单', {icon: 2, time: 1000});
         return false;
