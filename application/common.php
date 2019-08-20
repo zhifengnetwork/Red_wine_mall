@@ -2116,7 +2116,7 @@ function getPhoneCode($data)
         return array('code' => 0, 'msg' => '获取验证码过于频繁，请稍后再试');
     }
     $code = rand(123456, 999999);
-    $tpl = '【壹圆集】您的手机验证码：' . $code . ' 若非您本人操作，请忽略本短信。';
+    $tpl = '【优客帮】您的手机验证码：' . $code . ' 若非您本人操作，请忽略本短信。';
     // $content=str_replace('{$code}',$code,$tpl);
     $content = $tpl;
     $result = sendSms($data['phone'], $content);
@@ -2165,8 +2165,8 @@ function sendSms($phone, $content)
 
     $smsCode = rand(123456, 999999);
     $post_data = array();
-    $post_data['userid'] = 2903;
-    $post_data['account'] = 'qx3902';
+    $post_data['userid'] = 3167;
+    $post_data['account'] = 'qx4020';
     $post_data['password'] = '123456789';
     $post_data['content'] = $content; // 短信的内容，内容需要UTF-8编码
     $post_data['mobile'] = $phone; // 发信发送的目的号码.多个号码之间用半角逗号隔开

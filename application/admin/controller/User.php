@@ -41,10 +41,13 @@ class User extends Base
         $id = intval(I('id'));
         $distribut_level = I('dist_level');
         if ($distribut_level) {
-            $level = M('agent_level')->where('level_name', 'like', "%$distribut_level%")->column('level');
-            $level ? $condition['distribut_level'] = ['in', $level] : $condition['user_id'] = ['<', 0];
+            $level = M('agent_level')->where('level_name', 'like', "%$distribut_level%")->value('level');
+            // $level ? $condition['leader_level'] = ['=', $level] : $condition['user_id'] = ['<', 0];
+            $condition['leader_level'] =$level;
+            $level?$level:$condition['user_id'] = ['<', 0];
             $this->assign('dist_level', $distribut_level);
         }
+        // echo json_encode($condition['leader_level']);die;
         $account ? $condition['email|mobile'] = ['like', "%$account%"] : false;
         $nickname ? $condition['nickname'] = ['like', "%$nickname%"] : false;
         $id ? $condition['user_id'] = $id : false;
@@ -132,6 +135,7 @@ class User extends Base
         $list = Db::query("select * from `tp_users` where `first_leader` > 0 and `first_leader` = $id");
         $count = count($list);
         $agnet_name = $this->all_level();
+        // dump($agnet_name);die;
         $this->assign('agnet_name', $agnet_name);
 
         $this->assign('list', $list);

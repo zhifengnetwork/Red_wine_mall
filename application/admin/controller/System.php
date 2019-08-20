@@ -728,23 +728,54 @@ class System extends Base
 
     //   每月定时发放极差奖领导奖  优化方法
       public function team_bonus(){
-        $time=time();
-        $allUserPerformace=Db::name('users')->alias('u')->join("agent_performance_log apl",'apl.user_id=u.user_id')->field('u.leader_level,u.user_id,u.mobile,u.nickname,u.distribut_money,u.user_money,sum(apl.money) as agent_per')->where('u.leader_level','<>','0')->where('apl.status','=','0')->where('apl.create_time','>',strtotime("-0 year -3 month -0 day"))->select();
-     
-        if($allUserPerformace){
-            $accountLogModel=Db::name('account_log');
-            foreach($allUserPerformace as $ak=>$av){
-                $one_agent_level=Db::name('agent_level')->where('level','=',$av['leader_level'])->find();  
-                if($av['agent_per']>=$one_agent_level['describe']){
-                    $this->update_perlog_status($av['user_id']);
-                    $bonus=$av['agent_per']*$one_agent_level['ratio']/100;
-                    // $addDistribut=$av['distribut_money']+$bonus;
-                    $addDistribut=$av['user_money']+$bonus;
-                    if($av['leader_level']==4){
-                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'奖励豪车','type'=>6]);
-                    }else{
-                        Db::name('users')->where('user_id','=',$av['user_id'])->update(['user_money'=>$addDistribut]);
-                        $accountLogModel->insert(['user_id'=>$av['user_id'],'user_money'=>$bonus,'pay_points'=>0,'change_time'=>$time,'desc'=>'月度绩效奖励','type'=>5]);
+       
+        $allUserPerformace = Db::name('users')->where('leader_level > 0')->field('user_id,leader_level,user_money')->select();
+        
+        if(!$allUserPerformace){
+            $this->ajaxReturn(['status' => -1, 'msg' => '没有新业绩可以发放']);
+        }else{
+            $accountLogModel = Db::name('account_log');
+            $time = time();
+            
+            foreach ($allUserPerformace as $ak => $av) {
+                //用户比例
+                $one_agent_level = Db::name('agent_level')->where('level', '=', $av['leader_level'])->find();
+                $get_all_lower = get_all_lower($av['user_id']);
+                $user_xaiji = Db::name('users')->where('user_id','in', $get_all_lower)->field('user_id,leader_level')->select();
+               
+                //消费业绩
+                $agent_money = 0;
+                $level = 0;
+                foreach ($user_xaiji as $key => $vael) { 
+
+                    //判断用户下级是否大于上级等级,大于直接强制退出本次奖励
+                    if($vael['leader_level']>=$av['leader_level']){
+                        break;
+                    }
+                    
+                    if($av['leader_level'] > $vael['leader_level']){
+                        $money_xiaji = Db::name('agent_performance_log')->where(['user_id' => $vael['user_id'], 'status' => 0])->whereTime('create_time', 'month')->sum('money'); 
+                        $agent_money += $money_xiaji;
+                    }
+                    // $level = $vael['leader_level'];
+                    // $this->update_perlog_status($vael['user_id']);
+                }
+                // die;
+                // dump($agent_money);
+                if($agent_money < 0 ){
+                    continue;
+                }
+                // dump($agent_money.'+++++++++'.$av['user_id']);
+                if ($agent_money >= $one_agent_level['describe']) {
+                   
+                    $bonus = $agent_money * $one_agent_level['ratio'] / 100;
+
+                    $addDistribut = $av['user_money'] + $bonus;
+                    if ($av['leader_level'] == 4) {
+                        $accountLogModel->insert(['user_id' => $av['user_id'], 'user_money' => $bonus, 'pay_points' => 0, 'change_time' => $time, 'desc' => '奖励豪车', 'type' => 6]);
+                    } else {
+                        Db::name('users')->where('user_id', '=', $av['user_id'])->update(['user_money' => $addDistribut]);
+                        $accountLogModel->insert(['user_id' => $av['user_id'], 'user_money' => $bonus, 'pay_points' => 0, 'change_time' => $time, 'desc' => '月度绩效奖励', 'type' => 5]);
                     }
                 }
             }

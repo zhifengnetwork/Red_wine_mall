@@ -290,10 +290,13 @@ class Cart extends MobileBase
             ->field('g.agent_good,or.total_amount,or.user_id,or.order_id')
             ->where('or.order_sn', '=', $order_sn)->find();
 
+         $time = time();
+         Db::name('agent_performance_log')->insert(['user_id'=>$order['user_id'],'money'=>$order['total_amount'],'create_time'=>$time,'note'=>'下单消费','order_id'=>$order['order_id'],'status'=>0]);
+
         $upArr = get_uper_user($order['user_id']);
         foreach ($upArr['recUser'] as $k => $v) {
             $user_agent = Db::name('agent_performance')->where('user_id', '=', $v['user_id'])->find();
-            $time = time();
+
             $ind_per = $user_agent['ind_per'] + $order['total_amount'];
             if ($order['user_id'] == $v['user_id']) {
                 if ($user_agent) {
@@ -308,7 +311,7 @@ class Cart extends MobileBase
                 } else {
                     Db::name('agent_performance')->insert(['user_id' => $v['user_id'], 'agent_per' => $agent_per, 'create_time' => $time]);
                 }
-                Db::name('agent_performance_log')->insert(['user_id'=>$v['user_id'],'money'=>$order['total_amount'],'create_time'=>$time,'note'=>'下单消费','order_id'=>$order['order_id'],'status'=>0]);
+//                Db::name('agent_performance_log')->insert(['user_id'=>$v['user_id'],'money'=>$order['total_amount'],'create_time'=>$time,'note'=>'下单消费','order_id'=>$order['order_id'],'status'=>0]);
             }
             $this->check_user_upgrade($v['user_id']);
         }
