@@ -310,7 +310,7 @@ class Distribution extends Base
         $type = input('type', 0);
         $ctime = urldecode(I('ctime'));
         $user_name = urldecode(I('user_name'));
-        $order_sn = I('order_sn');
+        $fanli_type = urldecode(I('fanli_type'));
         $user_type = I('user_type');
         $start_time = I('start_time');
         $end_time = I('end_time');
@@ -337,8 +337,26 @@ class Distribution extends Base
             $gap = explode(' - ', $ctime);
             $where['change_time'] = [['>= time', strtotime($start_time)], ['< time', strtotime($end_time . " 23:59:59")], 'and'];;
         }
-        if ($order_sn) {
-            $where['order_sn'] = ['like', "%$order_sn%"];
+     
+        if ($fanli_type) {
+        	// 0:未定义  22:二级返佣;23:差价返佣 2邀请奖励  3晋升奖励上级  4晋升奖励上上级 5月度绩效奖励  6领导奖奖励豪车  7平台扣除手续费 ',
+        	if($fanli_type=='邀请奖励'){
+        		$tem_type=2;
+        	}
+        	if($fanli_type=='晋升奖励上级'){
+        		$tem_type=3;
+        	}
+        	if($fanli_type=='晋升奖励上上级'){
+        		$tem_type=4;
+        	}
+        	if($fanli_type=='月度绩效奖励'){
+        		$tem_type=5;
+        	}
+        	if($fanli_type=='领导奖奖励豪车'){
+        		$tem_type=6;
+        	}
+            $where['type'] = ['=', $tem_type];
+            $this->assign('fanli_type',$fanli_type);
         }
 
         $res = $Ad->where($where)->where(["type" => ["in", "2,3,4,5,6"]])->order('change_time', 'desc')->page($p . ',20')->select();

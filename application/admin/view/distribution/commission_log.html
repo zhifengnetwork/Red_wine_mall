@@ -65,7 +65,7 @@
 				<h5>(共{$count}条记录)</h5>
 			</div>
 			<div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
-			<form class="navbar-form form-inline" id="search-form" method="get" action="{:U('Distribution/commission_log')}" onsubmit="return check_form();">
+			<form class="navbar-form form-inline" id="search-form" method="post" action="{:U('Distribution/commission_log')}" onsubmit="return check_form();">
 				<input type="hidden" name="ctime" id="ctime" value="{$ctime}">
 				<input type="hidden" name="log_ids" value="{$log_ids}" id="log_ids" />
 				<input type="hidden" name="type" value="{$type}" id="type"/>
@@ -77,7 +77,7 @@
 						<input type="text" size="30" id="end_time" name="end_time" value="{$end_time}" placeholder="截止时间" class="qsbox">
 					</div>
 					<div class="sDiv2" style="margin-right: 10px;">
-						<input type="text" size="30" id="order_sn" name="order_sn" value="{$order_sn}" placeholder="订单编号" class="qsbox">
+						<input type="text" size="30" id="fanli_type" name="fanli_type" value="{$fanli_type}" placeholder="返利类型" class="qsbox">
 					</div>
 					<div class="sDiv2">
 						<select class="form-control" id="user_type" name="user_type" style="border: none;">
