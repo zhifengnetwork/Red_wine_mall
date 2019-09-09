@@ -813,7 +813,7 @@ class User extends MobileBase
     public function mixi()
     {
         $user_id = $this->user_id;
-        $account_log = M('account_log')->where(['user_id' => $user_id, 'type' => ['in', '2,3,4,5,8,9']])->select();
+        $account_log = M('account_log')->where(['user_id' => $user_id, 'type' => ['in', '2,3,4,5,8,9']])->order('change_time desc')->select();
         $this->assign('account_log', $account_log);
         return $this->fetch();
     }
