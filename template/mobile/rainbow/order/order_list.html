@@ -191,18 +191,13 @@
                         <span>&nbsp;&nbsp;&nbsp;{$periodword}第{$op['period']}期</span>
 
                     </span>
-                            <if condition="$order.pay_btn eq 1">
-                                <a class="shop-rebuy paysoon" href="{:U('Mobile/Cart/cart4',array('order_id'=>$order['order_id']))}">立即付款</a>
-                            </if>
-                            <if condition="($order.cancel_btn eq 1) and ($order.is_distribut neq 1)">
-                                <if condition="$order.pay_status eq 0">
-                                    <a class="shop-rebuy " onClick="cancel_order({$order.order_id})">取消订单</a>
-                                </if>
-                             
-                            </if>
-                            <if condition="$order.receive_btn eq 1 && order.pay_status eq 1">
-                                <a class="shop-rebuy paysoon" onclick="orderConfirm({$order.order_id})">确认收货</a>
-                            </if>
+                     <!--<a class="shop-rebuy paysoon">确认收货{$op.order_status}</a>-->
+                            <if condition="$op.order_status eq 1 && $op.pay_status eq 1 && $op.is_receive eq 0">
+                            <a class="shop-rebuy paysoon" onclick="PeriodReceive({$op['id']})">确认收货</a>
+                            </if>  
+                            <if condition="$op.order_status eq 1 && $op.pay_status eq 1 && $op.is_receive eq 1">
+                            <a class="shop-rebuy paysoon" href="javascript:void(0);">订单已完成</a>
+                            </if>  
                             <if condition="$order.comment_btn eq 1">
                                 <a class="shop-rebuy" href="{:U('/Mobile/Order/comment')}">评价</a>
                             </if>
@@ -255,6 +250,26 @@
         if(!confirm("确定收到该订单商品吗?"))
             return false;
         location.href = "/index.php?m=Mobile&c=Order&a=order_confirm&id="+id;
+    }
+    
+     //期数订单确定收货
+    function PeriodReceive(id){
+        if(!confirm("确定收到该订单商品吗？"))
+        return false;
+        $.ajax({
+            url:"{:U('mobile/order/period_confirm')}",
+            data:{
+                id:id
+            },
+            method:"post",
+            success:function(res){
+                var res=JSON.parse(res);
+                if(res.code==1){
+                       location.replace(location.href);
+                }
+            }
+        });
+      
     }
 
     var  page = 1;

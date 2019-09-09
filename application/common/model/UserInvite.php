@@ -151,7 +151,7 @@ class UserInvite extends Model
                                 $ind_res=$periodInfo['poped_per_num']+1;
                                 Db::name('pop_period')->where($whereStr)->update(['poped_per_num'=>$ind_res]);
                                 Db::name('users')->where(['user_id'=>$recommend_id])->update(['user_money'=>$user_money]);
-                                Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$pop_money,'pay_points'=>$addmoney,'change_time'=>$time,'desc'=>"邀请1个新会员【{$myInfo['nickname']}-id:{$myInfo['user_id']}】奖励50",'type'=>2]);
+                                Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$pop_money,'pay_points'=>$addmoney,'change_time'=>$time,'desc'=>"邀请1个新会员【{$myInfo['nickname']}-id:{$myInfo['user_id']}】奖励{$pop_money}",'type'=>2]);
                                 Db::name('account_log')->insert(['user_id'=>$recommend_id,'user_money'=>$minusmoney,'pay_points'=>$minusmoney,'change_time'=>$time,'desc'=>"邀请1个新会员【{$myInfo['nickname']}-id:{$myInfo['user_id']}】平台扣除手续费{$minusmoney}",'type'=>7]);
                                 
                                 //  Db::name('pop_period')->where($whereStr)->setInc('poped_per_num');

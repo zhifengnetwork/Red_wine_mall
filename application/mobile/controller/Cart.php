@@ -265,6 +265,9 @@ class Cart extends MobileBase
                     $this->set_pop_person($order['order_sn']);
                     //购买后增加自己的业绩和团队的业绩
                     $this->add_agent_performance($order['order_sn']);
+                    //购买分销产品给与奖励
+                    $this->shop_pay($order['order_sn']);
+                    
                 }
 
                 Db::commit();
@@ -276,6 +279,41 @@ class Cart extends MobileBase
             $this->ajaxReturn($error);
             Db::rollback();
         }
+    }
+    
+    public function shop_pay($order_sn){
+    	$receiving_commission = Db::name('order')
+            ->alias('or')
+            ->join('order_goods og', 'or.order_id=og.order_id', LEFT)
+            ->join('goods g', "g.goods_id=og.goods_id", LEFT)
+            ->field('g.is_receiving_commission,or.user_id,g.shop_price,or.order_id,g.goods_name')
+            ->where('or.order_sn', '=', $order_sn)->select();
+            $shop_rate=Db::name('config')->where("name","=","shop_first")->whereOr("name","=","shop_second")->column("*","name");
+            $users_model=Db::name('users');
+            $time=time();
+        foreach($receiving_commission as $rk =>$rv){
+        	if($rv['is_receiving_commission']==1){
+        		$user=$users_model->where(['user_id'=>$rv['user_id']])->find();
+        		if($user['first_leader']&&$shop_rate['shop_first']['value']){
+        			$firstLeader=$users_model->where(['user_id'=>$user['first_leader']])->find();
+        			$f_pay=$rv['shop_price']*$shop_rate['shop_first']['value']/100;
+        			$users_model->where(['user_id'=>$firstLeader['user_id']])->setInc("user_money",$f_pay);
+        			$f_desc="下级【{$user['nickname']}-{$user['user_id']}】购买分销商品【{$rv['goods_name']}】。获得奖励{$f_pay}元";
+        			Db::name('account_log')->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$f_pay,'frozen_money'=>0,'pay_points'=>$f_pay,'change_time'=>$time,'desc'=>$f_desc,'order_sn'=>$order_sn,'order_id'=>$rv['order_id'],'type'=>8]);
+        			if($firstLeader['first_leader']&&$shop_rate['shop_second']['value']){
+        				$secondLeader=$users_model->where(['user_id'=>$firstLeader['first_leader']])->find();
+        				if($$secondLeader&&$shop_rate['shop_second']['value']){
+        					$s_pay=$rv['shop_price']*$shop_rate['shop_second']['value']/100;
+        						$users_model->where(['user_id'=>$secondLeader['user_id']])->setInc("user_money",$s_pay);
+        							$s_desc="下级【{$user['nickname']}-{$user['user_id']}】购买分销商品【{$rv['goods_name']}】。获得奖励{$s_pay}元";
+				        			Db::name('account_log')->insert(['user_id'=>$firstLeader['user_id'],'user_money'=>$f_pay,'frozen_money'=>0,'pay_points'=>$s_pay,'change_time'=>$time,'desc'=>$s_desc,'order_sn'=>$order_sn,'order_id'=>$rv['order_id'],'type'=>9]);
+        						
+        				}
+        			}
+        		}
+        	}
+        }
+            
     }
 
 
@@ -357,7 +395,7 @@ class Cart extends MobileBase
             ->alias('or')
             ->join('order_goods og', 'or.order_id=og.order_id', LEFT)
             ->join('goods g', "g.goods_id=og.goods_id", LEFT)
-            ->field('g.agent_good,or.user_id')
+            ->field('g.agent_good,or.user_id,or.order_id')
             ->where('or.order_sn', '=', $order_sn)->find();
 
         if ($order['agent_good']) {  //是代理
@@ -403,7 +441,7 @@ class Cart extends MobileBase
             }
 
             //升级奖励上级和上上级
-            $this->pay_leader($order['user_id'], $order['agent_good']);
+            $this->pay_leader($order['user_id'], $order['agent_good'],$order['order_id']);
             $this->set_order_period($order_sn);
         }
     }
@@ -458,7 +496,7 @@ class Cart extends MobileBase
 
 
     //晋升为县代奖励上级
-    public function pay_leader($userid,$agent_level)
+    public function pay_leader($userid,$agent_level,$order_id)
     {
         // $userid=109;
         // $agent_level=2;
@@ -500,7 +538,7 @@ class Cart extends MobileBase
                
                 $userModel->update(['user_id' => $firstLeader['user_id'], 'distribut_money' => $distribut_money,'user_money'=>$user_money,'frozen_money'=>$total_pay_points]);
 
-                $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励", 'type' => 3]);
+                $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励",'order_id'=>$order_id, 'type' => 3]);
 
                 $kouchu=$firstBonus-$pay_points;
                 $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $kouchu, 'pay_points' =>$kouchu, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励平台扣除手续费".$kouchu, 'type' => 7]);
@@ -515,7 +553,7 @@ class Cart extends MobileBase
                     $pay_points=$firstBonus * $pop_commission / 100;
                     $total_pay_points=$firstLeader['frozen_money']+$pay_points;
                     $userModel->update(['user_id' => $firstLeader['user_id'], 'distribut_money' => $distribut_money,'user_money'=>$user_money,'frozen_money'=>$total_pay_points]);
-                    $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励", 'type' => 3]);
+                    $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励",'order_id'=>$order_id, 'type' => 3]);
 
                     $kouchu=$firstBonus-$pay_points;
                     $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' =>$kouchu, 'pay_points' => $kouchu, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励平台扣除手续费".$kouchu, 'type' => 7]);
@@ -530,7 +568,7 @@ class Cart extends MobileBase
                     $pay_points=$firstBonus * $pop_commission / 100;
                     $total_pay_points=$firstLeader['frozen_money']+$pay_points;
                     $userModel->update(['user_id' => $firstLeader['user_id'], 'distribut_money' => $distribut_money,'user_money'=>$user_money,'frozen_money'=>$total_pay_points]);
-                    $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励", 'type' => 3]);
+                    $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $firstBonus, 'pay_points' => $pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励", 'order_id'=>$order_id,'type' => 3]);
 
                     $kouchu=$firstBonus-$pay_points;
                     $accountLogModel->insert(['user_id' => $firstLeader['user_id'], 'user_money' => $kouchu, 'pay_points' => $kouchu, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励平台扣除手续费".$kouchu, 'type' => 7]);
@@ -551,7 +589,7 @@ class Cart extends MobileBase
 
                     $total_pay_points=$secondLeader['frozen_money']+$sec_pay_points;
                     $userModel->update(['user_id' => $secondLeader['user_id'], 'distribut_money' => $sec_distribut_money,'user_money'=>$sec_user_money,'frozen_money'=>$total_pay_points]);
-                    $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励", 'type' => 4]);
+                    $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励",'order_id'=>$order_id, 'type' => 4]);
 
                     $kouchu=$secondBonus-$sec_pay_points;
                     $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $kouchu, 'pay_points' => $kouchu, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励平台扣除手续费".$kouchu, 'type' => 7]);
@@ -565,7 +603,7 @@ class Cart extends MobileBase
                         $sec_pay_points= $secondBonus  * $pop_commission / 100;
                         $total_pay_points=$secondLeader['frozen_money']+$sec_pay_points;
                         $userModel->update(['user_id' => $secondLeader['user_id'], 'distribut_money' => $sec_distribut_money,'user_money'=>$sec_user_money,'frozen_money'=>$total_pay_points]);
-                        $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励", 'type' => 4]);
+                        $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励",'order_id'=>$order_id, 'type' => 4]);
                         $kouchu=$secondBonus-$sec_pay_points;
                         $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $kouchu, 'pay_points' => $kouchu, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励平台扣除手续费".$kouchu, 'type' => 7]);
                     }
@@ -579,7 +617,7 @@ class Cart extends MobileBase
                         $sec_pay_points= $secondBonus  * $pop_commission / 100;
                         $total_pay_points=$secondLeader['frozen_money']+$sec_pay_points;
                         $userModel->update(['user_id' => $secondLeader['user_id'], 'distribut_money' => $sec_distribut_money,'user_money'=>$sec_user_money,'frozen_money'=>$total_pay_points]);
-                        $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励", 'type' => 4]);
+                        $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $secondBonus, 'pay_points' => $sec_pay_points, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励", 'order_id'=>$order_id,'type' => 4]);
                         $kouchu=$secondBonus-$sec_pay_points;
                         $accountLogModel->insert(['user_id' => $secondLeader['user_id'], 'user_money' => $kouchu, 'pay_points' => $kouchu, 'change_time' => $time, 'desc' => "下级用户【'" . $user['nickname'] .'-'.$user['mobile']. "'】晋升为" . $agentLevel . "奖励平台扣除手续费".$kouchu, 'type' => 7]);
                     }

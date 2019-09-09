@@ -603,6 +603,19 @@ class OrderLogic
 				$update['order_status'] = 5;
 				$reduce = tpCache('shopping.reduce');
 				$order = Db::name('order')->where("order_id", $order_id)->find();
+				if($order['pay_status']==1&&$order['pay_name']=='余额支付'){
+                     Db::startTrans();
+                    try{
+                        Db::name('users')->where(['user_id'=>$order['user_id']])->setInc('user_money',$order['user_money']);
+                        $this->agent_per_dec($order['order_id']);
+                        $this->pop_person_dec($order['order_id']);
+                        $this->uper_money_dec($order['order_id'],$order['user_id']);
+                        Db::commit();
+                    }catch(TpshopException $t){
+                        Db::rollback();
+                    }
+                    
+                }
 				if(($reduce == 1 || empty($reduce)) || ($reduce == 2 && $order['pay_status'] == 1)){
 					$this->alterReturnGoodsInventory($order);
 				}
@@ -620,7 +633,71 @@ class OrderLogic
         }
         return Db::name('order')->where("order_id=$order_id")->save($update);//改变订单状态
     }
+    
+    
+    public function uper_money_dec($order_id,$user_id){
+	
+    	$time=time();
+    	$user=Db::name('users')->where(['user_id'=>$user_id])->find();
+    	// $all_account=Db::name('account_log')->where('type','=','3')->whereOr('type','=','4')->where('order_id','=',$order_id)->select();
+    	$all_account=Db::name('account_log')
+		->where('order_id','=',$order_id)
+		->where('type',['in',[3,4]])
+		->select();
+    	foreach($all_account as $ak => $av){
+    		Db::name('users')->where(['user_id'=>$av['user_id']])->setDec('user_money',$av['pay_points']);
+    		Db::name('account_log')->insert(['user_id'=>$av['user_id'],'user_money'=>'-'.$av['pay_points'],'frozen_money'=>0,'pay_points'=>0,'change_time'=>$time,'desc'=>"下级用户【{$user['nickname']}-{$user['mobile']}】撤销订单扣除{$av['pay_points']}"]);
+    	}
+    	
+    }
+    
+    
+    
+    public function agent_per_dec($order_id){
+        $order=Db::name('order')->where(['order_id'=>$order_id])->find();
 
+        Db::name('agent_performance_log')->where(['order_id'=>$order_id])->delete();
+
+        $upArr = get_uper_user($order['user_id']);
+        foreach ($upArr['recUser'] as $k => $v) {
+            $user_agent = Db::name('agent_performance')->where('user_id', '=', $v['user_id'])->find();
+            $time = time();
+            $ind_per = $user_agent['ind_per'] - $order['total_amount'];
+            if ($order['user_id'] == $v['user_id']) {
+                if ($user_agent) {
+                    Db::name('agent_performance')->where('performance_id', '=', $user_agent['performance_id'])->update(['user_id' => $v['user_id'], 'ind_per' => $ind_per, 'update_time' => $time]);
+                }
+            } else {
+                $agent_per = $user_agent['agent_per'] - $order['total_amount'];
+                if ($user_agent) {
+                    Db::name('agent_performance')->where('performance_id', '=', $user_agent['performance_id'])->update(['user_id' => $v['user_id'], 'agent_per' => $agent_per, 'update_time' => $time]);
+                }
+            }
+    	}
+	}
+
+
+
+	public function pop_person_dec($order_id){
+	
+	    $order = Db::name('order')
+	    ->alias('or')
+	    ->join('order_goods og', 'or.order_id=og.order_id', LEFT)
+	    ->join('goods g', "g.goods_id=og.goods_id", LEFT)
+	    ->field('g.agent_good,or.user_id,or.order_sn')
+	    ->where('or.order_id', '=', $order_id)->find();
+	
+	    if ($order['agent_good']) {  //是代理
+	            Db::name('pop_period')->where(['user_id'=>$order['user_id']])->delete();
+	
+	            Db::name('users')->where(['user_id'=>$order['user_id']])->update(['agent_level'=>0,'default_period'=>0,'add_agent_time'=>0]);
+	            Db::name('order_period')->where(['user_id'=>$order['user_id'],'order_sn'=>$order['order_sn']])->delete();
+	    }
+	}
+
+
+    
+    
 
     //管理员取消付款
     function order_pay_cancel($order_id)

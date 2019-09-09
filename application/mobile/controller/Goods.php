@@ -242,6 +242,14 @@ class Goods extends MobileBase
                 'isAgentGoods'=>$agentStatus
             ]);
         }
+        
+        $agent_level=Db::name('users')->where('user_id',$user_id)->value('agent_level');
+        $agent_level=$agent_level?$agent_level:0;
+        $this->assign([
+        		'agent_level'=>$agent_level
+        	]);
+        
+        
 
         # 用户通过二维码进来，且自身没有上级推荐人时，自动成为分享者的下级，发送微信消息推送通知分享者
         if($share_user && $user_id){
@@ -266,8 +274,8 @@ class Goods extends MobileBase
                 }
             }
         }
-
-
+        
+        
         $recommend_goods = M('goods')->where("is_recommend=1 and is_on_sale=1 and cat_id = {$goods['cat_id']}")->cache(7200)->limit(9)->field("goods_id, goods_name, shop_price")->select();
         
         # 二维码分享商品

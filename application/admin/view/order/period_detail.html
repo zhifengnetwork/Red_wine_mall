@@ -225,14 +225,14 @@
 
                    <td align="center" abbr="article_time" axis="col9" class="">
                       <if condition="$list['begin_time'] neq 0">
-                          <div style="text-align: center; width: 160px;" class="">{$list['begin_time']|date="Y-m-d h:i:s",###}</div>
+                          <div style="text-align: center; width: 160px;" class="">{$list['begin_time']|date="Y-m-d H:i:s",###}</div>
                     <else />
                            <div style="text-align: center; width: 160px;" class="">暂无日期</div>
                     </if>
                    </td>
                    <td align="center" abbr="article_time" axis="col10" class="">
                     <if condition="$list['end_time'] neq 0">
-                            <div style="text-align: center; width: 160px;" class="">{$list['end_time']|date="Y-m-d h:i:s",###}</div>
+                            <div style="text-align: center; width: 160px;" class="">{$list['end_time']|date="Y-m-d H:i:s",###}</div>
                       <else />
                              <div style="text-align: center; width: 160px;" class="">暂无日期</div>
                       </if>

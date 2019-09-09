@@ -38,11 +38,16 @@
           <div style="text-align: center; width: 60px;" class="">{$pay_status[$list[pay_status]]}</div>
         </td>
         <td align="center" abbr="article_time" axis="col8" class="">
-          <if condition="$list.shipping_status_or eq 1">
-              <div style="text-align: center; width: 60px;" class="">已发货</div>
-            <else />
-            <div style="text-align: center; width: 60px;" class="">未发货</div>
-            </if>
+          <!--<if condition="$list.shipping_status_or eq 1">-->
+          <!--    <div style="text-align: center; width: 60px;" class="">已发货</div>-->
+          <!--  <else />-->
+          <!--  <div style="text-align: center; width: 60px;" class="">未发货</div>-->
+          <!--  </if>-->
+                <if condition="$list.is_receive eq 1">
+                <div style="text-align: center; width: 60px;" class="">已收货</div>
+              <else />
+              <div style="text-align: center; width: 60px;" class="">未收货</div>
+              </if>
         </td>
         <td align="center" abbr="article_time" axis="col9" class="">
           <div style="text-align: center; width: 60px;" class="">{$list.pay_name|default='其他方式'}</div>
@@ -62,7 +67,7 @@
           <if condition="($list.order_status eq 1) and ($list.shipping_status eq 0)">
               <div style="text-align: left; width: 100px;">可以发放</div>
             <else />
-               <div style="text-align: left; width: 100px;">已发货</div>
+               <div style="text-align: left; width: 180px;">已发货<if condition="$list.is_receive eq 1">---客户已收货</if></div>
             </if>
         </td>
 		<td style="width: 100%;">

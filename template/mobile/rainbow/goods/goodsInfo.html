@@ -539,12 +539,25 @@
         </div>
         <div class="fr">
             <ul>
+            	<if condition="($agent_level  neq 0) and ($isAgentGoods==1)">
+                <li class="o" id="buy_now_tw" style="display: block;">
+                    <a class="pb_plusshopcar buy_button choise_num1" href="javascript:void(0);"> 加入购物车</a>
+                </li>
+                <else />
                 <li class="o" id="join_cart_li" style="display: none;">
                     <a class="pb_plusshopcar buy_button choise_num" href="javascript:void(0);"> 加入购物车</a>
                 </li>
+                </if>
+                
+                <if condition="($agent_level  neq 0) and ($isAgentGoods==1)">
+                <li class="r" id="buy_now_tw2" style="display: block;">
+                    <a class="choise_num1" style="display:block;" href="javascript:void(0);">立即购买</a>
+                </li> 
+                <else />
                 <li class="r" id="buy_now_li" style="display: none;">
                     <a class="choise_num" style="display:block;" href="javascript:void(0);">立即购买</a>
                 </li>
+                </if>
             </ul>
         </div>
     </div>
@@ -712,6 +725,9 @@
 	
 </script>
 <script type="text/javascript">
+    $("#buy_now_tw,#buy_now_tw2").on('click',function(){
+    	  layer.open({icon: 2, content: "代理身份不能再次购买", time: 2});
+    })
     
     $(function(){
         if(isWeiXin()){
@@ -1219,6 +1235,7 @@
     //普通商品库存和价格
     function setNormalGoodsPrice() {
         var goods_price = $("input[name='shop_price']").attr('value');// 商品本店价
+        // console.log(spec_goods_price);return false;
         var market_price =  $("input[name='market_price']").attr('value');// 商品市场价
         var store_count = $("input[name='store_count']").attr('value');// 商品库存
         var exchange_integral = $("input[name='exchange_integral']").attr('value');// 兑换积分
@@ -1233,7 +1250,9 @@
             });
             var spec_key = goods_spec_arr.sort(sortNumber).join('_');  //排序后组合成 key
             var spec_goods_price_item = search_spec_goods_price(spec_key);
+            
             goods_price = spec_goods_price_item['price']; // 找到对应规格的价格
+            // console.log(goods_price);return false;
             store_count = spec_goods_price_item['store_count']; // 找到对应规格的库存
         }
         var goods_num = parseInt($("input[name='goods_num']").attr('value'));

@@ -155,6 +155,16 @@
                     <p class="notic">推广奖励比例 用户实际到账金额为应得金额*奖励比例  单位：%</p>
                 </dd>
             </dl>
+            
+            <dl class="row">
+                <dt class="tit">
+                    <label>推广奖励积分</label>
+                </dt>
+                <dd class="opt">
+                    <input name="invite_points" id="distribut_first_rate" value="{$invite_points.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">推广奖励积分  单位：积分</p>
+                </dd>
+            </dl>
 
 
             <dl class="row">
@@ -182,6 +192,24 @@
                 <dd class="opt">
                     <input name="pop_num_province" id="distribut_first_rate" value="{$pop_num_province.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
                     <p class="notic">  单位：人数</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>购物奖励上一级</label>
+                </dt>
+                <dd class="opt">
+                    <input name="shop_first" id="distribut_first_rate" value="{$shop_first.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">购物返回上一级的奖励比例  单位： %</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>购物奖励上二级</label>
+                </dt>
+                <dd class="opt">
+                    <input name="shop_second" id="distribut_first_rate" value="{$shop_second.value}"onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" class="input-txt" type="text">
+                    <p class="notic">购物返回上二级的奖励比例 单位： %</p>
                 </dd>
             </dl>
             </div>

@@ -141,7 +141,7 @@ class Index extends Base
         $count['new_users'] = M('users')->where("reg_time>=$today")->count(); //新增会员
         $count['comment'] = M('comment')->where("is_show=0")->count(); //最新评论
         $count['order_money'] = M('order')->where("pay_status=1")->sum('total_amount'); //最新评论
-        $count['tixian_money'] = M('withdrawals')->where("status=2")->sum('money'); //最新评论
+        $count['tixian_money'] = M('withdrawals')->where("status=1")->sum('money'); //最新评论
         $this->assign('count', $count);
         return $this->fetch();
     }

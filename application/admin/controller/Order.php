@@ -176,7 +176,7 @@ class Order extends Base {
         
         $Page  = new AjaxPage($count,20);
         $show = $Page->show();
-        $orderList=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.order_status=:order_status",['order_status'=>1])->where($condition)->where('o.order_id','<>','null')->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id,op.order_id")->limit($Page->firstRow,$Page->listRows)->select();
+        $orderList=Db::name('order_period')->alias('op')->join('order o',"op.order_id=o.order_id",LEFT)->join("users u","u.user_id=op.user_id",left)->where("op.order_status=:order_status",['order_status'=>1])->where($condition)->where('o.order_id','<>','null')->field("op.period,op.order_sn,u.head_pic,op.goods_name,o.consignee,o.goods_price,op.order_status,o.pay_status,op.shipping_status,o.pay_name,op.shipping_name,o.add_time,op.id,op.order_id,op.is_receive")->limit($Page->firstRow,$Page->listRows)->select();
         $this->assign('orderList',$orderList);
 
         $this->assign('page',$show);// 赋值分页输出
@@ -226,7 +226,8 @@ class Order extends Base {
     public function send_handel()
     {
         $data=input();
-        $update_shipping=Db::name('order_period')->where(['id'=>$data['id']])->update(['shipping_name'=>$data['shipping_name'],'shipping_code'=>$data['shipping_code'],'shipping_status'=>1,'invoice_no'=>$data['invoice_no']]);
+        $time=time();
+        $update_shipping=Db::name('order_period')->where(['id'=>$data['id']])->update(['shipping_name'=>$data['shipping_name'],'shipping_code'=>$data['shipping_code'],'shipping_status'=>1,'invoice_no'=>$data['invoice_no'],'shipping_time'=>$time]);
         if($update_shipping!=false){
             $this->success('操作成功',U('Admin/order/order_period'));
         }else{
@@ -594,6 +595,7 @@ class Order extends Base {
      * @return mixed
      */
     public function detail(){
+    
         $order_id = input('order_id', 0);
         $orderModel = new OrderModel();
         $order_goods=Db::name('order_goods')->where(['order_id'=>$order_id])->find();

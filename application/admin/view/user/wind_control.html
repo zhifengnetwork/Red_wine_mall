@@ -37,7 +37,9 @@
 										{$lo.cash_alipay}
 									<else/>
 										未设置
-									</if></span>
+									</if>
+									
+									</span>
 									<span style="width:250px;">银联账号:　
 										<if condition="!empty($lo.cash_unionpay)">
 											<!-- <img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt=""> -->
@@ -185,16 +187,18 @@
 									<div style="text-align: center; width: 150px;">{$vo.realname}</div>
 							</td>
 							<td align="center" class="">
-								<if condition="!empty($lo.cash_alipay)">
+								<if condition="!empty($vo.cash_alipay)">
 									<div style="text-align: center; width: 200px;">{$vo.cash_alipay}</div>
 								<else/>
 									
 									<div style="text-align: center; width: 200px;">未设置</div>
 
 								</if>
+								
+						
                             </td>
 							<td align="center" class="">
-								<if condition="!empty($lo.cash_unionpay)">
+								<if condition="!empty($vo.cash_unionpay)">
 										<!-- <img src="{$vo.user_head_pic}" style="width:30px;height:30px;" alt=""> -->
 									<div style="text-align: center; width: 200px;">{$vo.cash_unionpay}</div>
 									<!-- {$lo.cash_alipay} -->

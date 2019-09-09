@@ -294,6 +294,11 @@ class System extends Base
         $pop_num_area= $confModel->where('name','=','pop_num_area')->find();
         $pop_num_city= $confModel->where('name','=','pop_num_city')->find();
         $pop_num_province= $confModel->where('name','=','pop_num_province')->find();
+        
+        $shop_first= $confModel->where('name','=','shop_first')->find();
+        $shop_second= $confModel->where('name','=','shop_second')->find();
+        
+        $invite_points= $confModel->where('name','=','invite_points')->find();
        
       
         $this->assign([
@@ -318,7 +323,12 @@ class System extends Base
 
             'pop_num_area'=>$pop_num_area,
             'pop_num_city'=>$pop_num_city,
-            'pop_num_province'=>$pop_num_province
+            'pop_num_province'=>$pop_num_province,
+            
+            'shop_first'=>$shop_first,
+            'shop_second'=>$shop_second,
+            'invite_points'=>$invite_points
+            
         ]);
          return $this->fetch();
     }
@@ -536,6 +546,27 @@ class System extends Base
                    $confModel->update(['id'=>$pop_num_province['id'],'name'=>'pop_num_province','value'=>$data['pop_num_province'],'inc_type'=>'commison_conf']);
             }else{
                 $confModel->insert(['name'=>'pop_num_province','value'=>$data['pop_num_province'],'inc_type'=>'commison_conf']);
+            }
+            
+            $shop_first= $confModel->where('name','=','shop_first')->find();
+            if($shop_first){
+                   $confModel->update(['id'=>$shop_first['id'],'name'=>'shop_first','value'=>$data['shop_first'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'shop_first','value'=>$data['shop_first'],'inc_type'=>'commison_conf']);
+            }
+            
+            $shop_second= $confModel->where('name','=','shop_second')->find();
+            if($shop_second){
+                   $confModel->update(['id'=>$shop_second['id'],'name'=>'shop_second','value'=>$data['shop_second'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'shop_second','value'=>$data['shop_second'],'inc_type'=>'commison_conf']);
+            }
+            
+               $invite_points= $confModel->where('name','=','invite_points')->find();
+            if($invite_points){
+                   $confModel->update(['id'=>$invite_points['id'],'name'=>'invite_points','value'=>$data['invite_points'],'inc_type'=>'commison_conf']);
+            }else{
+                $confModel->insert(['name'=>'invite_points','value'=>$data['invite_points'],'inc_type'=>'commison_conf']);
             }
             
             $this->success("操作成功!!!",U('Admin/System/commission'));
@@ -998,7 +1029,11 @@ class System extends Base
         $auto_confirm_date = tpCache('shopping.auto_confirm_date');
         $auto_confirm_date = $auto_confirm_date * (60 * 60 * 24); // 7天的时间戳
 		$time = time() - $auto_confirm_date; // 比如7天以前的可用自动确认收货
-        $order_id_arr = M('order')->where("order_status = 1 and shipping_status = 1 and shipping_time < $time")->getField('order_id',true);       
+        $order_id_arr = M('order')->where("order_status = 1 and shipping_status = 1 and shipping_time < $time")->getField('order_id',true);   
+         $period_order=M('order_period')->where(['shipping_status'=>1,'order_status'=>1,'is_receive'=>0,'shipping_time'=>['<',$time]])->select();
+        foreach($period_order as $pk=>$pv){
+            Db::name('order_period')->where(['id'=>$pv['id']])->update(['is_receive'=>1]);
+        }
         foreach($order_id_arr as $k => $v)
         {
             confirm_order($v);

@@ -339,7 +339,7 @@ class Distribution extends Base
         }
      
         if ($fanli_type) {
-        	// 0:未定义  22:二级返佣;23:差价返佣 2邀请奖励  3晋升奖励上级  4晋升奖励上上级 5月度绩效奖励  6领导奖奖励豪车  7平台扣除手续费 ',
+        
         	if($fanli_type=='邀请奖励'){
         		$tem_type=2;
         	}
@@ -359,7 +359,7 @@ class Distribution extends Base
             $this->assign('fanli_type',$fanli_type);
         }
 
-        $res = $Ad->where($where)->where(["type" => ["in", "2,3,4,5,6"]])->order('change_time', 'desc')->page($p . ',20')->select();
+        $res = $Ad->where($where)->where(["type" => ["in", "2,3,4,5,6,8,9"]])->order('change_time', 'desc')->page($p . ',20')->select();
 
         if ($res) {
             foreach ($res as $val) {
@@ -372,8 +372,7 @@ class Distribution extends Base
             $all_user_ids = array_merge($user_ids, $to_user_ids);
             $all_user_name = M('users')->whereIn('user_id', $all_user_ids)->column('user_id,nickname,mobile');
             $avatar = get_avatar($all_user_ids);
-
-            $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '月度绩效奖励', '6' => '领导奖奖励豪车');
+            $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '月度绩效奖励', '6' => '领导奖奖励豪车','8'=>'分销商品奖励上级','9'=>'分销商品奖励上上级');
             foreach ($list as $key => $value) {
                 $list[$key]['user_name'] = $all_user_name[$value['user_id']]['nickname'] ?: $all_user_name[$value['user_id']]['mobile'];
                 $list[$key]['to_user_name'] = $all_user_name[$value['to_user_id']]['nickname'] ?: $all_user_name[$value['to_user_id']]['mobile'];
@@ -421,61 +420,91 @@ class Distribution extends Base
     //购买返佣
     public function export_commission_log()
     {
-        $log_ids = I('log_ids');
-        $type = I('type', 0);
-        $title_name = array("返佣", "级别利润", "每台奖励", "同级奖励", "分红", "全球分红");
+    	
+    	$Ad = M('account_log');
 
+        $p = input('p/d');
+
+        $type = input('type', 0);
+        $ctime = urldecode(I('ctime'));
+        $user_name = urldecode(I('user_name'));
+        $fanli_type = urldecode(I('fanli_type'));
+        $user_type = I('user_type');
+        $start_time = I('start_time');
+        $end_time = I('end_time');
+        $where = [];
+        $log_ids = '';
+        $where = get_comm_condition($type); //获取条件
+        if ($user_name) {
+            $user['nickname'] = ['like', "%$user_name%"];
+            $id_list = M('users')->where($user)->column('user_id');
+
+            switch ($user_type) {
+                case 1:
+                    $where['user_id'] = [['in', $id_list], ['neq', 0], 'and'];
+                    break;
+                case 2:
+                    $where['to_user_id'] = [['in', $id_list], ['neq', 0], 'and'];
+                    break;
+                default:
+                    break;
+            }
+        }
+        if ($ctime) {
+            $gap = explode(' - ', $ctime);
+            $where['change_time'] = [['>= time', strtotime($start_time)], ['< time', strtotime($end_time . " 23:59:59")], 'and'];;
+        }
+     
+        if ($fanli_type) {
+        
+        	if($fanli_type=='邀请奖励'){
+        		$tem_type=2;
+        	}
+        	if($fanli_type=='晋升奖励上级'){
+        		$tem_type=3;
+        	}
+        	if($fanli_type=='晋升奖励上上级'){
+        		$tem_type=4;
+        	}
+        	if($fanli_type=='月度绩效奖励'){
+        		$tem_type=5;
+        	}
+        	if($fanli_type=='领导奖奖励豪车'){
+        		$tem_type=6;
+        	}
+            $where['type'] = ['=', $tem_type];
+           
+        }
+    $typeList = array('2' => '邀请奖励', '3' => '晋升奖励上级', '4' => '晋升奖励上上级', '5' => '月度绩效奖励', '6' => '领导奖奖励豪车');
+
+    	
         $strTable = '<table width="500" border="1">';
         $strTable .= '<tr >';
         $strTable .= '<td style="text-align:center;font-size:14px;width:120px;">ID</td>';
-        if ($type != 5) {
-            $strTable .= '<td style="text-align:center;font-size:14px;" width="*">用户名</td>';
-        }
-
-        $strTable .= '<td style="text-align:center;font-size:14px;" width="*">获得返利用户名</td>';
+        $strTable .= '<td style="text-align:center;font-size:14px;" width="*">用户ID</td>';
+        $strTable .= '<td style="text-align:center;font-size:14px;" width="*">用户名称</td>';
+        $strTable .= '<td style="text-align:center;font-size:14px;" width="*">返利类型</td>';
         $strTable .= '<td style="text-align:center;font-size:14px;" width="*">所得金额</td>';
-        if ($type != 5) {
-            $strTable .= '<td style="text-align:center;font-size:14px;" width="*">订单编号</td>';
-            $strTable .= '<td style="text-align:center;font-size:14px;" width="*">数量</td>';
-        }
-
         $strTable .= '<td style="text-align:center;font-size:14px;" width="*">时间</td>';
         $strTable .= '<td style="text-align:center;font-size:14px;" width="*">描述</td>';
         $strTable .= '</tr>';
-
-        $condition = array();
-        $condition = get_comm_condition($type); //获取条件
-        if ($log_ids) {
-            $condition['log_id'] = ['in', explode(',', $log_ids)];
-        }
-        $count = DB::name('distrbut_commission_log')->where($condition)->count();
+        $count= $Ad->where($where)->where(["type" => ["in", "2,3,4,5,6"]])->count();
         $p = ceil($count / 5000);
         for ($i = 0; $i < $p; $i++) {
             $start = $i * 5000;
             $end = ($i + 1) * 5000;
-            $log_list = M('distrbut_commission_log')->where($condition)->order('log_id')->limit($start, 5000)->select();
+            $log_list = $Ad->where($where)->where(["type" => ["in", "2,3,4,5,6"]])->order('change_time', 'desc')->page($start,5000)->select();
+            
             if (is_array($log_list)) {
-                $user_ids = array_column($log_list, 'user_id');
-                $to_user_ids = array_column($log_list, 'to_user_id');
-                $n_user_ids = array_merge($user_ids, $to_user_ids);
-                $n_user_ids = array_unique($n_user_ids);
-                $user_names = Db::name('users')->where('user_id', 'in', $n_user_ids)->column('user_id,nickname,mobile');
                 foreach ($log_list as $k => $val) {
-                    $username = $user_names[$val['user_id']]['nickname'] ? $user_names[$val['user_id']]['nickname'] : $user_names[$val['user_id']]['mobile'];
-                    $to_username = $user_names[$val['to_user_id']]['nickname'] ? $user_names[$val['to_user_id']]['nickname'] : $user_names[$val['to_user_id']]['mobile'];
-
+                	$user_name=Db::name('users')->where(['user_id'=>$val['user_id']])->value("nickname");
                     $strTable .= '<tr>';
                     $strTable .= '<td style="text-align:center;font-size:12px;">' . $val['log_id'] . '</td>';
-                    if ($type != 5) {
-                        $strTable .= '<td style="text-align:center;font-size:12px;">' . $username . ' </td>';
-                    }
-                    $strTable .= '<td style="text-align:center;font-size:12px;">' . $to_username . '</td>';
-                    $strTable .= '<td style="text-align:center;font-size:12px;">' . $val['money'] . '</td>';
-                    if ($type != 5) {
-                        $strTable .= '<td style="vnd.ms-excel.numberformat:@">' . $val['order_sn'] . '</td>';
-                        $strTable .= '<td style="text-align:center;font-size:12px;">' . $val['num'] . '</td>';
-                    }
-                    $strTable .= '<td style="text-align:center;font-size:12px;">' . date('Y-m-d H:i', $val['create_time']) . '</td>';
+                    $strTable .= '<td style="text-align:center;font-size:12px;">' . $val['user_id'] . ' </td>';
+                    $strTable .= '<td style="text-align:center;font-size:12px;">' . $user_name . '</td>';
+                    $strTable .= '<td style="text-align:center;font-size:12px;">' . $typeList[$val['type']] . '</td>';
+                    $strTable .= '<td style="vnd.ms-excel.numberformat:@">' . $val['user_money'] . '</td>';
+                    $strTable .= '<td style="text-align:center;font-size:12px;">' . date("Y-m-d h:i:s",$val['change_time']) . '</td>';
                     $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['desc'] . ' </td>';
                     $strTable .= '</tr>';
                 }

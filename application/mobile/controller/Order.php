@@ -395,6 +395,16 @@ class Order extends MobileBase
 
         $this->ajaxReturn($return);
     }
+    
+    
+     public function period_confirm(){
+        $id = I('id');
+        $res=Db::name('order_period')->where('id','=',$id)->update(['is_receive'=>1]);
+        if($res!==false){
+            $data=['code'=>1,'msg'=>'success'];
+            $this->ajaxReturn($data);
+        }
+    }
 
     /**
      * 申请退货

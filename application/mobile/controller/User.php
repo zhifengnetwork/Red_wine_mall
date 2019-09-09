@@ -188,7 +188,7 @@ class User extends MobileBase
             $poped_per_num += $veal['poped_per_num'];
         }
         //总佣金
-        $distribut_money = Db::name('account_log')->where(['user_id' => $user_id, 'type' => ['in', [2, 3, 4, 5]]])->sum('pay_points');
+        $distribut_money = Db::name('account_log')->where(['user_id' => $user_id, 'type' => ['in', [2, 3, 4, 5,8,9]]])->sum('pay_points');
         // dump($distribut_money);
         // die;
         $comm2 = Db::name('commission_log')->where(['user_id' => $user_id])->order('id', 'desc')->sum('money');
@@ -215,7 +215,7 @@ class User extends MobileBase
         $user_id = $this->user_id;
         $where['to_user_id'] = $user_id;
         $where['type'] = ['in', [1, 2, 3]];
-        $day_account_log = Db::name('account_log')->where(['user_id' => $user_id, 'type' => ['in', [2, 3, 4, 5]]])->whereTime('change_time', 'today')->sum('pay_points');
+        $day_account_log = Db::name('account_log')->where(['user_id' => $user_id, 'type' => ['in', [2, 3, 4, 5,8,9]]])->whereTime('change_time', 'today')->sum('pay_points');
         // $comm = Db::name('distrbut_commission_log')->where($where)->order('log_id','desc')->whereTime('create_time','today')->sum('money');
         // $vip  = Db::name('vip_commission_log')->where(['to_user_id' =>$user_id ])->order('log_id','desc')->whereTime('create_time','today')->sum('money');
         //邀请奖励
@@ -813,7 +813,7 @@ class User extends MobileBase
     public function mixi()
     {
         $user_id = $this->user_id;
-        $account_log = M('account_log')->where(['user_id' => $user_id, 'type' => ['in', '2,3,4,5']])->select();
+        $account_log = M('account_log')->where(['user_id' => $user_id, 'type' => ['in', '2,3,4,5,8,9']])->select();
         $this->assign('account_log', $account_log);
         return $this->fetch();
     }
